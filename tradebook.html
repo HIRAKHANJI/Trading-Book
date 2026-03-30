@@ -1,0 +1,1917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0a0e17">
+<title>The Trading Playbook</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=JetBrains+Mono:wght@400;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-primary: #0a0e17;
+    --bg-card: #111827;
+    --bg-card-alt: #0f1523;
+    --accent: #00e676;
+    --accent-dim: #00c853;
+    --accent-glow: rgba(0,230,118,0.15);
+    --red: #ff5252;
+    --red-dim: #d32f2f;
+    --amber: #ffc107;
+    --blue: #448aff;
+    --text-primary: #e8eaed;
+    --text-secondary: #9aa0a6;
+    --text-muted: #5f6368;
+    --border: #1e293b;
+    --font-display: 'DM Serif Display', serif;
+    --font-body: 'Outfit', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* ─── BOOK CONTAINER ─── */
+  #book {
+    width: 100%; height: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .page {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 2rem 1.5rem 5rem;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.35s ease, transform 0.35s ease;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+  .page::-webkit-scrollbar { width: 4px; }
+  .page::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .page.active {
+    display: block;
+    opacity: 1;
+    transform: translateX(0);
+  }
+  .page.slide-left { transform: translateX(-40px); opacity: 0; }
+  .page.slide-right { transform: translateX(40px); opacity: 0; }
+
+  /* ─── NAVIGATION ─── */
+  #nav-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 3.5rem;
+    background: linear-gradient(to top, var(--bg-primary) 60%, transparent);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1rem;
+    z-index: 100;
+  }
+  .nav-btn {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 0.5rem 1.2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .nav-btn:disabled { opacity: 0.3; pointer-events: none; }
+  #page-indicator {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+  }
+  #index-btn {
+    position: fixed;
+    top: 1rem; right: 1rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    cursor: pointer;
+    z-index: 100;
+    transition: all 0.2s;
+  }
+  #index-btn:hover { color: var(--accent); border-color: var(--accent); }
+
+  /* ─── COVER PAGE ─── */
+  .cover {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    text-align: center;
+    padding: 2rem;
+    position: relative;
+  }
+  .cover::before {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+    filter: blur(60px);
+    pointer-events: none;
+  }
+  .cover-label {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+  }
+  .cover h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 8vw, 4.5rem);
+    line-height: 1.1;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .cover-sub {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    font-weight: 300;
+    margin-bottom: 2rem;
+  }
+  .cover-meta {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    line-height: 2;
+  }
+  .cover-start {
+    margin-top: 2.5rem;
+    padding: 0.8rem 2rem;
+    background: var(--accent);
+    color: var(--bg-primary);
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.9rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .cover-start:hover { transform: scale(1.05); box-shadow: 0 0 30px var(--accent-glow); }
+
+  /* ─── INDEX PAGE ─── */
+  .index-list {
+    list-style: none;
+    margin-top: 1.5rem;
+  }
+  .index-list li {
+    border-bottom: 1px solid var(--border);
+  }
+  .index-list a {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.9rem 0.5rem;
+    color: var(--text-primary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 400;
+    transition: all 0.15s;
+  }
+  .index-list a:hover { color: var(--accent); padding-left: 1rem; }
+  .index-list .idx-num {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    min-width: 2rem;
+  }
+  .index-list .idx-phase {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent-dim);
+    padding: 0.15rem 0.5rem;
+    border: 1px solid var(--accent-dim);
+    border-radius: 3px;
+    margin-left: auto;
+    margin-right: 0.5rem;
+  }
+
+  /* ─── CONTENT STYLES ─── */
+  .page-inner { max-width: 640px; margin: 0 auto; }
+
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+
+  h2 {
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 5vw, 2.2rem);
+    line-height: 1.2;
+    margin-bottom: 1.2rem;
+  }
+
+  h3 {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--accent);
+    margin: 1.8rem 0 0.6rem;
+  }
+
+  h4 {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    margin: 1.2rem 0 0.4rem;
+  }
+
+  p, li {
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    margin-bottom: 0.8rem;
+  }
+
+  ul { padding-left: 1.2rem; margin-bottom: 1rem; }
+  li { margin-bottom: 0.4rem; }
+  li::marker { color: var(--accent-dim); }
+
+  strong { color: var(--text-primary); font-weight: 600; }
+  em { color: var(--amber); font-style: normal; font-weight: 500; }
+
+  .callout {
+    background: var(--bg-card);
+    border-left: 3px solid var(--accent);
+    padding: 1rem 1.2rem;
+    border-radius: 0 8px 8px 0;
+    margin: 1.2rem 0;
+  }
+  .callout p { margin: 0; }
+
+  .callout-red {
+    background: rgba(255,82,82,0.08);
+    border-left-color: var(--red);
+  }
+  .callout-amber {
+    background: rgba(255,193,7,0.08);
+    border-left-color: var(--amber);
+  }
+
+  .rule-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.2rem;
+    margin: 1rem 0;
+  }
+  .rule-box .rule-num {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    margin-bottom: 0.3rem;
+  }
+  .rule-box p { margin: 0; font-size: 0.85rem; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.8rem;
+  }
+  thead { border-bottom: 2px solid var(--accent-dim); }
+  th {
+    text-align: left;
+    padding: 0.6rem 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  td {
+    padding: 0.5rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  code {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    background: var(--bg-card);
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    color: var(--accent);
+  }
+
+  .formula {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--accent);
+    line-height: 1.8;
+    overflow-x: auto;
+  }
+
+  .source-tag {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    padding: 0.15rem 0.5rem;
+    border-radius: 3px;
+    margin: 0.2rem 0.2rem 0.2rem 0;
+  }
+
+  .checkpoint {
+    background: linear-gradient(135deg, rgba(0,230,118,0.08), rgba(0,200,83,0.03));
+    border: 1px solid rgba(0,230,118,0.2);
+    border-radius: 10px;
+    padding: 1.2rem;
+    margin: 1.5rem 0;
+  }
+  .checkpoint h4 { color: var(--accent); margin-top: 0; }
+
+  .swipe-hint {
+    position: fixed;
+    bottom: 4.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    opacity: 0.6;
+    pointer-events: none;
+    animation: fadeHint 4s ease forwards;
+  }
+  @keyframes fadeHint {
+    0%, 70% { opacity: 0.6; }
+    100% { opacity: 0; }
+  }
+
+  .lev-table td:nth-child(4) { color: var(--red); }
+  .lev-table td:nth-child(3) { color: var(--accent); }
+
+  .progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 2px;
+    background: var(--accent);
+    z-index: 200;
+    transition: width 0.35s ease;
+  }
+
+  @media (min-width: 768px) {
+    .page { padding: 3rem 2rem 5rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+<button id="index-btn" onclick="goTo(1)">INDEX</button>
+
+<div id="book">
+
+<div class="page active" data-page="0">
+<div class="cover">
+    <div class="cover-label">Edition 3.0 · Comprehensive · March 2026</div>
+    <h1>The Trading Playbook</h1>
+    <div class="cover-sub">Complete professional trading education — leveraged crypto, forex & beyond</div>
+    <div class="cover-meta">
+      
+      Platforms: TradingView · Bybit Testnet · Naga Demo<br>
+      Daily commitment: 45 minutes · Duration: 12 weeks<br>
+      31 chapters · Research-backed · Zero paid groups required
+    </div>
+    <button class="cover-start" onclick="goTo(1)">Open Book →</button>
+  </div>
+</div>
+
+<div class="page" data-page="1">
+<div class="page-inner">
+<div class="section-label">Table of Contents</div>
+<h2>Index</h2>
+<ul class="index-list">
+  <li><a href="#" onclick="goTo(2);return false"><span>The Non-Negotiable Rules</span><span class="idx-num">01</span></a></li>
+  <li><a href="#" onclick="goTo(3);return false"><span>Platform Setup</span><span class="idx-num">02</span></a></li>
+  <li><a href="#" onclick="goTo(4);return false"><span>How Markets & Leverage Work</span><span class="idx-phase">WK 1</span><span class="idx-num">03</span></a></li>
+  <li><a href="#" onclick="goTo(5);return false"><span>Candlesticks & Price Action</span><span class="idx-phase">WK 2</span><span class="idx-num">04</span></a></li>
+  <li><a href="#" onclick="goTo(6);return false"><span>Chart Patterns</span><span class="idx-phase">WK 2</span><span class="idx-num">05</span></a></li>
+  <li><a href="#" onclick="goTo(7);return false"><span>Support, Resistance & Structure</span><span class="idx-phase">WK 3</span><span class="idx-num">06</span></a></li>
+  <li><a href="#" onclick="goTo(8);return false"><span>Fibonacci Retracements & Extensions</span><span class="idx-phase">WK 3</span><span class="idx-num">07</span></a></li>
+  <li><a href="#" onclick="goTo(9);return false"><span>Indicators — Only What You Need</span><span class="idx-phase">WK 4</span><span class="idx-num">08</span></a></li>
+  <li><a href="#" onclick="goTo(10);return false"><span>Session Analysis</span><span class="idx-phase">WK 4</span><span class="idx-num">09</span></a></li>
+  <li><a href="#" onclick="goTo(11);return false"><span>Risk Management for Leverage</span><span class="idx-phase">WK 5</span><span class="idx-num">10</span></a></li>
+  <li><a href="#" onclick="goTo(12);return false"><span>Multiple Timeframe Analysis</span><span class="idx-phase">WK 5</span><span class="idx-num">11</span></a></li>
+  <li><a href="#" onclick="goTo(13);return false"><span>Building Your Strategy</span><span class="idx-phase">WK 6</span><span class="idx-num">12</span></a></li>
+  <li><a href="#" onclick="goTo(14);return false"><span>Volume Profile & Order Flow</span><span class="idx-phase">WK 6</span><span class="idx-num">13</span></a></li>
+  <li><a href="#" onclick="goTo(15);return false"><span>Trading Psychology & Journaling</span><span class="idx-phase">WK 7</span><span class="idx-num">14</span></a></li>
+  <li><a href="#" onclick="goTo(16);return false"><span>Liquidity, Smart Money & Judas Swing</span><span class="idx-phase">WK 7</span><span class="idx-num">15</span></a></li>
+  <li><a href="#" onclick="goTo(17);return false"><span>The Wyckoff Method</span><span class="idx-phase">WK 7</span><span class="idx-num">16</span></a></li>
+  <li><a href="#" onclick="goTo(18);return false"><span>SMRT Algo Verdict & Backtesting</span><span class="idx-phase">WK 8</span><span class="idx-num">17</span></a></li>
+  <li><a href="#" onclick="goTo(19);return false"><span>Macro & Fundamental Analysis</span><span class="idx-phase">WK 8</span><span class="idx-num">18</span></a></li>
+  <li><a href="#" onclick="goTo(20);return false"><span>Live Demo Execution</span><span class="idx-phase">WK 9–10</span><span class="idx-num">19</span></a></li>
+  <li><a href="#" onclick="goTo(21);return false"><span>Advanced Trade Management</span><span class="idx-phase">WK 10</span><span class="idx-num">20</span></a></li>
+  <li><a href="#" onclick="goTo(22);return false"><span>Strategy Refinement</span><span class="idx-phase">WK 11</span><span class="idx-num">21</span></a></li>
+  <li><a href="#" onclick="goTo(23);return false"><span>Correlation Analysis</span><span class="idx-phase">WK 11</span><span class="idx-num">22</span></a></li>
+  <li><a href="#" onclick="goTo(24);return false"><span>Go / No-Go Evaluation</span><span class="idx-phase">WK 12</span><span class="idx-num">23</span></a></li>
+  <li><a href="#" onclick="goTo(25);return false"><span>Leverage Reality Table</span><span class="idx-num">24</span></a></li>
+  <li><a href="#" onclick="goTo(26);return false"><span>Free Resources Master List</span><span class="idx-num">25</span></a></li>
+  <li><a href="#" onclick="goTo(27);return false"><span>Backtesting Methodology</span><span class="idx-num">26</span></a></li>
+  <li><a href="#" onclick="goTo(28);return false"><span>Your Formal Trading Plan</span><span class="idx-num">27</span></a></li>
+  <li><a href="#" onclick="goTo(29);return false"><span>Obsidian Trading Ledger Setup</span><span class="idx-num">28</span></a></li>
+  <li><a href="#" onclick="goTo(30);return false"><span>Traps That Will Tempt You</span><span class="idx-num">29</span></a></li>
+</ul>
+</div>
+</div>
+
+<div class="page" data-page="2">
+<div class="page-inner">
+    <div class="section-label">Foundation</div>
+    <h2>The Non-Negotiable Rules</h2>
+    <p>These rules exist because every single one was learned the hard way by traders who lost money. They are not suggestions.</p>
+
+    <div class="rule-box"><div class="rule-num">RULE 01</div><p><strong>No real money until you pass the Week 12 checklist.</strong> Your capital on exchanges stays untouched.</p></div>
+    <div class="rule-box"><div class="rule-num">RULE 02</div><p><strong>Every demo trade gets journaled.</strong> Entry, exit, reasoning, emotion, result. No journal entry = the trade didn't happen.</p></div>
+    <div class="rule-box"><div class="rule-num">RULE 03</div><p><strong>45 minutes/day. Hard cap: 60.</strong> Screen addiction is a documented problem in leveraged trading. Charts close when time's up.</p></div>
+    <div class="rule-box"><div class="rule-num">RULE 04</div><p><strong>Leverage progression is LOCKED.</strong> 2x → 3x → 5x → 10x. Each level requires 20 profitable demo trades before moving up. No skipping.</p></div>
+    <div class="rule-box"><div class="rule-num">RULE 05</div><p><strong>Two pairs only.</strong> BTC/USDT and ETH/USDT. No altcoins. No memecoins. No "this one's about to moon" plays.</p></div>
+    <div class="rule-box"><div class="rule-num">RULE 06</div><p><strong>Risk per trade: 1% of account.</strong> This is the professional standard confirmed by CME Group's education materials. Not 5%, not 10%.</p></div>
+    <div class="rule-box"><div class="rule-num">RULE 07</div><p><strong>After 2 consecutive losses: DONE for the day.</strong> Close the app. No exceptions. No "one more to make it back."</p></div>
+    <div class="rule-box"><div class="rule-num">RULE 08</div><p><strong>Stop loss on EVERY trade BEFORE entry.</strong> No stop = no trade. Especially with leverage.</p></div>
+    <div class="rule-box"><div class="rule-num">RULE 09</div><p><strong>No paid groups. No signal chats. No alpha calls.</strong> You're learning to think, not to follow.</p></div>
+
+    <div class="callout">
+      <p><strong>Source validation:</strong> The 1–3% risk rule for new traders is directly from CME Group's trade and risk management education — the world's largest derivatives exchange. The position sizing formula, stop-loss methodology, and risk-to-reward frameworks in this book are drawn from institutional-grade sources, not YouTube gurus.</p>
+    </div>
+    <div class="source-tag">CME Group Education</div>
+    <div class="source-tag">BabyPips School</div>
+    <div class="source-tag">Mark Douglas — Trading in the Zone</div>
+    <div class="source-tag">Steve Nison — Candlestick Charting</div>
+  </div>
+</div>
+
+<!-- ═══ PAGE 3: PLATFORM SETUP ═══ -->
+</div>
+
+<div class="page" data-page="3">
+<div class="page-inner">
+    <div class="section-label">Setup</div>
+    <h2>Platform Setup</h2>
+    <p>Complete this before Week 1 begins. Three platforms, three purposes.</p>
+
+    <h3>TradingView — Analysis Hub</h3>
+    <ul>
+      <li>Free tier is sufficient</li>
+      <li>Watchlist: BTC/USDT, ETH/USDT</li>
+      <li>Indicators: Volume, 20 EMA, 50 EMA, 200 SMA, RSI(14) — nothing else</li>
+      <li>This is where you <strong>analyze</strong>. Not where you execute.</li>
+    </ul>
+
+    <h3>Bybit Testnet — Crypto Leverage Demo</h3>
+    <ul>
+      <li>URL: <strong>testnet.bybit.com</strong></li>
+      <li>Separate account from your real Bybit</li>
+      <li>Free testnet USDT — unlimited practice</li>
+      <li>Mirrors real Bybit exactly: futures, leverage, all order types</li>
+      <li>This is where you <strong>execute</strong> crypto leverage demos</li>
+    </ul>
+
+    <h3>Naga Demo — Forex & Multi-Asset</h3>
+    <ul>
+      <li>Open a demo account (no deposit)</li>
+      <li>Use from <strong>Week 6 onward</strong> for forex pairs</li>
+      <li>MT5 platform — industry standard</li>
+      <li><em>Do NOT deposit real money</em> until you've verified their withdrawal reliability independently</li>
+    </ul>
+
+    <h3>SMRT Algo Pro v3/v4</h3>
+    <ul>
+      <li>Evaluate whether the subscription is worth keeping — evaluation timeline is built into the syllabus</li>
+      <li><strong>Week 4:</strong> Activate and OBSERVE only — watch signals alongside your manual learning</li>
+      <li><strong>Weeks 6–7:</strong> Active testing — compare signals against your strategy</li>
+      <li><strong>Week 8:</strong> Keep/cancel decision based on 4 weeks of data</li>
+      <li>Used as confirmation tool only, never primary signal</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══ PAGE 4: WEEK 1 ═══ -->
+</div>
+
+<div class="page" data-page="4">
+<div class="page-inner">
+    <div class="section-label">Phase 1 · Week 1</div>
+    <h2>How Markets & Leverage Actually Work</h2>
+
+    <h4>Daily 45-min split</h4>
+    <p>25 min study · 15 min TradingView exploration · 5 min write 3 things learned</p>
+
+    <h3>Core Concepts</h3>
+    <ul>
+      <li><strong>Order types:</strong> Market, Limit, Stop-Loss, Stop-Limit, Take-Profit, Trailing Stop</li>
+      <li><strong>Spot vs. Margin vs. Futures:</strong> Spot = you own the asset. Margin = borrowed money. Futures = contracts with expiry + leverage.</li>
+      <li><strong>Makers vs. Takers:</strong> Makers add liquidity (limit orders). Takers remove it (market orders). Takers pay more in fees.</li>
+      <li><strong>Funding rates:</strong> Holding leveraged positions costs money every 8 hours on Bybit. This erodes your margin if you hold too long.</li>
+    </ul>
+
+    <h3>How Leverage Works — The Math</h3>
+    <div class="callout-red callout">
+      <p>Leverage does NOT improve your win rate. It amplifies gains AND losses equally. A bad strategy at 10x loses money 10x faster.</p>
+    </div>
+
+    <table>
+      <thead><tr><th>Leverage</th><th>You control</th><th>Move to 2x</th><th>Move to $0</th></tr></thead>
+      <tbody>
+        <tr><td>2x</td><td>$200</td><td>+50%</td><td>-50%</td></tr>
+        <tr><td>5x</td><td>$500</td><td>+20%</td><td>-20%</td></tr>
+        <tr><td>10x</td><td>$1,000</td><td>+10%</td><td>-10%</td></tr>
+        <tr><td>20x</td><td>$2,000</td><td>+5%</td><td>-5%</td></tr>
+        <tr><td>50x</td><td>$5,000</td><td>+2%</td><td>-2%</td></tr>
+      </tbody>
+    </table>
+    <p>BTC moves 5% in a single 4H candle regularly. At 20x, that's a liquidation event.</p>
+
+    <h3>What Moves Crypto</h3>
+    <ul>
+      <li>Macro events (rate decisions, CPI, geopolitics)</li>
+      <li>BTC dominance — when BTC falls, alts fall harder</li>
+      <li>Halving cycles (~4 year pattern)</li>
+      <li>Whale movements and liquidation cascades</li>
+      <li>Funding rates and open interest extremes</li>
+    </ul>
+
+    <h3>Free Resources</h3>
+    <p><strong>BabyPips</strong> — Pre-School + Kindergarten sections (babypips.com/learn/forex)</p>
+    <p><strong>Bybit Learn</strong> — Leverage + Futures guides (learn.bybit.com)</p>
+    <p><strong>Investopedia</strong> — Any term you don't understand</p>
+    <p><strong>ImanTrading</strong> — Full beginner guide video (imantrading.org/beginners). Watch the intro-to-trading video this week — covers order types, candles, timeframes, and psychology from someone who documented his real journey.</p>
+
+    <div class="checkpoint">
+      <h4>✓ End-of-Week Checkpoint</h4>
+      <p>Someone gives you $100 to go 10x long on BTC at $65,000. BTC drops to $63,500. Calculate the exact dollar loss and whether you get liquidated. If you can't, repeat the week.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PAGE 5: WEEK 2 ═══ -->
+</div>
+
+<div class="page" data-page="5">
+<div class="page-inner">
+    <div class="section-label">Phase 1 · Week 2</div>
+    <h2>Candlestick Patterns & Price Action</h2>
+    <p>Candlestick charting was introduced to the Western world by Steve Nison, CMT, and is now the standard visualization used by institutional and retail traders globally. His work, originally drawing on Japanese rice trading techniques dating back centuries, forms the basis of modern price action reading.</p>
+
+    <h4>Daily 45-min split</h4>
+    <p>20 min study · 20 min chart pattern hunting on BTC/USDT 4H · 5 min journal</p>
+
+    <h3>Candlestick Anatomy</h3>
+    <ul>
+      <li><strong>Body:</strong> Distance between open and close. Green/white = bullish (close > open). Red/black = bearish (close < open).</li>
+      <li><strong>Wicks/Shadows:</strong> Show the high and low. Long lower wick = buyers pushed price back up. Long upper wick = sellers pushed price back down.</li>
+    </ul>
+
+    <h3>Timeframes</h3>
+    <table>
+      <thead><tr><th>Timeframe</th><th>Use</th><th>Signal quality</th></tr></thead>
+      <tbody>
+        <tr><td>1m / 5m</td><td>Scalping</td><td>Low — mostly noise</td></tr>
+        <tr><td>15m / 1H</td><td>Day trading entries</td><td>Medium</td></tr>
+        <tr><td><strong>4H</strong></td><td><strong>Your primary entry TF</strong></td><td><strong>High</strong></td></tr>
+        <tr><td><strong>Daily</strong></td><td><strong>Bias / direction</strong></td><td><strong>Highest</strong></td></tr>
+        <tr><td>Weekly</td><td>Macro trend</td><td>Context only</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Key Patterns to Learn</h3>
+    <h4>Single Candle</h4>
+    <ul>
+      <li><strong>Hammer:</strong> Small body, long lower wick. At support = potential reversal up.</li>
+      <li><strong>Shooting Star:</strong> Small body, long upper wick. At resistance = potential reversal down.</li>
+      <li><strong>Doji:</strong> Open ≈ close. Indecision. Context determines direction.</li>
+      <li><strong>Engulfing:</strong> Current candle completely engulfs previous. Strong signal at key levels.</li>
+    </ul>
+    <h4>Multi-Candle</h4>
+    <ul>
+      <li><strong>Morning/Evening Star:</strong> Three-candle reversal pattern</li>
+      <li><strong>Three White Soldiers / Black Crows:</strong> Three consecutive strong candles in one direction</li>
+    </ul>
+
+    <div class="callout">
+      <p><strong>THE critical concept from Nison:</strong> Candlestick patterns are CONTEXT-DEPENDENT. A hammer at a key support level with volume confirmation means something. A hammer floating in the middle of nowhere means nothing. Context is everything.</p>
+    </div>
+
+    <div class="checkpoint">
+      <h4>✓ End-of-Week Checkpoint</h4>
+      <p>Open any random BTC chart segment. Identify 3 patterns. For each: what does it say about buyer/seller pressure, and does the context support the signal?</p>
+    </div>
+    <div class="source-tag">Steve Nison — Japanese Candlestick Charting Techniques</div>
+  </div>
+</div>
+
+<!-- ═══ PAGE 6: WEEK 3 ═══ -->
+</div>
+
+<div class="page" data-page="6">
+<div class="page-inner">
+<div class="section-label">Phase 1 · Week 2 Supplement</div>
+    <h2>Chart Patterns</h2>
+    <p>Chart patterns are formations created by price movement that signal potential continuation or reversal. They work because thousands of traders see the same pattern and act on it, creating a self-fulfilling prophecy — but only when confirmed by volume.</p>
+    
+    <h3>Reversal Patterns</h3>
+    <h4>Head & Shoulders (and Inverse)</h4>
+    <p><strong>Structure:</strong> Three peaks — left shoulder, head (highest), right shoulder. The "neckline" connects the lows between them. A break below the neckline with volume confirms the reversal.</p>
+    <p><strong>Target:</strong> Measure the distance from head to neckline. Project that distance down from the neckline break point.</p>
+    <p><strong>Inverse H&S:</strong> Same pattern flipped — appears at bottoms, signals bullish reversal.</p>
+    
+    <h4>Double Top / Double Bottom</h4>
+    <p><strong>Double Top (M shape):</strong> Price hits resistance twice, fails both times. Break below the middle trough confirms. Bearish reversal.</p>
+    <p><strong>Double Bottom (W shape):</strong> Price hits support twice, holds both times. Break above the middle peak confirms. Bullish reversal.</p>
+    <p><em>Volume should decrease on the second touch and increase on the breakout.</em></p>
+
+    <h3>Continuation Patterns</h3>
+    <h4>Triangles</h4>
+    <table>
+      <thead><tr><th>Type</th><th>Shape</th><th>Bias</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Ascending</strong></td><td>Flat top, rising bottom</td><td>Usually bullish — buyers getting more aggressive</td></tr>
+        <tr><td><strong>Descending</strong></td><td>Flat bottom, falling top</td><td>Usually bearish — sellers getting more aggressive</td></tr>
+        <tr><td><strong>Symmetrical</strong></td><td>Converging lines</td><td>Neutral — breaks in direction of prior trend</td></tr>
+      </tbody>
+    </table>
+    
+    <h4>Flags & Pennants</h4>
+    <p><strong>Bull Flag:</strong> Sharp move up (flagpole), then tight downward channel (flag). Breakout continues upward. <strong>Bear Flag:</strong> Mirror image.</p>
+    <p><strong>Pennant:</strong> Like a flag but the consolidation forms a small symmetrical triangle instead of a channel.</p>
+    
+    <h4>Wedges</h4>
+    <p><strong>Rising Wedge:</strong> Both trendlines slope up but converge. Usually bearish — momentum is dying. <strong>Falling Wedge:</strong> Both slope down but converge. Usually bullish.</p>
+
+    <div class="callout">
+      <p><strong>The golden rule of chart patterns:</strong> A pattern is NOT confirmed until it BREAKS. Drawing a head and shoulders doesn't mean it will play out. Wait for the neckline break with volume. Anticipation without confirmation is how pattern traders lose money.</p>
+    </div>
+</div>
+</div>
+
+<div class="page" data-page="7">
+<div class="page-inner">
+    <div class="section-label">Phase 1 · Week 3</div>
+    <h2>Support, Resistance & Market Structure</h2>
+
+    <h4>Daily 45-min split</h4>
+    <p>20 min study · 20 min draw S/R levels on BTC/ETH daily charts · 5 min journal</p>
+
+    <h3>Support & Resistance</h3>
+    <p><strong>Support</strong> = price level where buying pressure historically prevents further decline. <strong>Resistance</strong> = where selling pressure prevents further advance. These form because of <em>order clusters</em> — many traders placed orders at similar levels.</p>
+
+    <div class="callout">
+      <p><strong>Key principle:</strong> S/R levels are ZONES, not exact lines. The market doesn't respect your precise horizontal line. Draw areas, not numbers.</p>
+    </div>
+
+    <h3>How to Draw Levels Properly</h3>
+    <ul>
+      <li>Use candle <strong>bodies</strong> primarily (not just wicks)</li>
+      <li>Look for <strong>multiple touches</strong> — the more times price respects a level, the stronger it is</li>
+      <li>Draw <strong>zones</strong> with some width, not single lines</li>
+      <li>Higher timeframe levels carry more weight than lower timeframe levels</li>
+    </ul>
+
+    <h3>Market Structure</h3>
+    <table>
+      <thead><tr><th>Structure</th><th>Pattern</th><th>Bias</th></tr></thead>
+      <tbody>
+        <tr><td>Bullish</td><td>Higher Highs (HH) + Higher Lows (HL)</td><td>Look for longs</td></tr>
+        <tr><td>Bearish</td><td>Lower Highs (LH) + Lower Lows (LL)</td><td>Look for shorts</td></tr>
+        <tr><td>Ranging</td><td>Price bouncing between S/R</td><td>Trade the range boundaries</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Key Structure Concepts</h3>
+    <ul>
+      <li><strong>Break of Structure (BOS):</strong> Price breaks a key swing point, confirming trend continuation</li>
+      <li><strong>Change of Character (CHoCH):</strong> Price breaks structure in the OPPOSITE direction — potential reversal signal</li>
+    </ul>
+
+    <div class="callout-red callout">
+      <p><strong>Why this matters for leverage:</strong> S/R levels are where you place stop losses and take profits. Wrong levels with leverage = liquidation. Right levels = controlled risk.</p>
+    </div>
+
+    <div class="checkpoint">
+      <h4>✓ End-of-Week Checkpoint</h4>
+      <p>Draw S/R on a blank BTC daily chart. Identify current structure (bullish/bearish/ranging). Identify the last BOS or CHoCH. Then zoom out to verify.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PAGE 7: WEEK 4 ═══ -->
+</div>
+
+<div class="page" data-page="8">
+<div class="page-inner">
+<div class="section-label">Phase 1 · Week 3 Supplement</div>
+    <h2>Fibonacci Retracements & Extensions</h2>
+    <p>Fibonacci levels are derived from the mathematical sequence discovered by Leonardo of Pisa. In trading, these ratios mark levels where price tends to find support or resistance during pullbacks and projections. They work because enough market participants watch them — creating order clusters at these levels.</p>
+    
+    <h3>Key Retracement Levels</h3>
+    <table>
+      <thead><tr><th>Level</th><th>Meaning</th><th>Strength</th></tr></thead>
+      <tbody>
+        <tr><td><strong>0.236 (23.6%)</strong></td><td>Shallow pullback — very strong trend</td><td>Weak</td></tr>
+        <tr><td><strong>0.382 (38.2%)</strong></td><td>First significant support in a pullback</td><td>Medium</td></tr>
+        <tr><td><strong>0.5 (50%)</strong></td><td>Halfway point — "equilibrium" (not a true Fib number but widely watched)</td><td>Strong</td></tr>
+        <tr><td><strong>0.618 (61.8%)</strong></td><td>The "golden ratio" — the most important retracement level</td><td>Strongest</td></tr>
+        <tr><td><strong>0.786 (78.6%)</strong></td><td>Deep pullback — trend may be weakening</td><td>Medium</td></tr>
+      </tbody>
+    </table>
+    
+    <h3>How to Draw Fibonacci Retracements</h3>
+    <ul>
+      <li><strong>In an uptrend:</strong> Draw from swing LOW to swing HIGH. The retracement levels show where the pullback might find support.</li>
+      <li><strong>In a downtrend:</strong> Draw from swing HIGH to swing LOW. Levels show where the bounce might find resistance.</li>
+      <li>Use significant swing points on your <strong>higher timeframe</strong> (Daily/4H), not every minor swing.</li>
+    </ul>
+
+    <h3>Extension Levels (Targets)</h3>
+    <table>
+      <thead><tr><th>Level</th><th>Use</th></tr></thead>
+      <tbody>
+        <tr><td><strong>1.272</strong></td><td>Conservative take-profit target</td></tr>
+        <tr><td><strong>1.618</strong></td><td>Standard extension target — very commonly hit</td></tr>
+        <tr><td><strong>2.618</strong></td><td>Aggressive target — only in strong trends</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout">
+      <p><strong>Confluence is king:</strong> A Fibonacci level alone is interesting. A Fibonacci level that ALSO aligns with a horizontal S/R zone AND a moving average is a high-probability level. Always look for Fib levels that stack with other technical evidence.</p>
+    </div>
+    
+    <h3>The 0.618 "Golden Pocket"</h3>
+    <p>The zone between the 0.618 and 0.65 retracement is called the "golden pocket." Professional traders consider this the highest-probability reversal zone in a trending market. If price pulls back to this zone and shows a candlestick reversal pattern with volume, it's one of the strongest trade setups in technical analysis.</p>
+</div>
+</div>
+
+<div class="page" data-page="9">
+<div class="page-inner">
+    <div class="section-label">Phase 1 · Week 4</div>
+    <h2>Indicators — Only What You Need</h2>
+
+    <h4>Daily 45-min split</h4>
+    <p>20 min study one indicator · 20 min observe on chart · 5 min journal</p>
+
+    <div class="callout">
+      <p>Indicators are <strong>confirmation tools</strong>, not prediction tools. They tell you what HAS happened, not what WILL happen. Price action comes first, indicators confirm.</p>
+    </div>
+
+    <table>
+      <thead><tr><th>Indicator</th><th>What It Tells You</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Volume</strong></td><td>Is the move real or fake? High volume = conviction. Low volume = likely trap. THE most important indicator.</td></tr>
+        <tr><td><strong>20 EMA</strong></td><td>Short-term trend. Price above = bullish short-term.</td></tr>
+        <tr><td><strong>50 EMA</strong></td><td>Medium-term momentum line.</td></tr>
+        <tr><td><strong>200 SMA</strong></td><td>Macro trend. Institutions watch this. Above = general uptrend.</td></tr>
+        <tr><td><strong>RSI (14)</strong></td><td>Momentum gauge. >70 = overbought. <30 = oversold. Most useful for DIVERGENCES.</td></tr>
+        <tr><td><strong>Funding Rate</strong></td><td>Crypto-specific. Very positive = over-leveraged long, often precedes dump. Check CoinGlass.</td></tr>
+        <tr><td><strong>Open Interest</strong></td><td>Total open leveraged positions. Rising OI + rising price = strong. Rising OI + flat price = squeeze coming.</td></tr>
+      </tbody>
+    </table>
+
+    <h3>What RSI Divergence Looks Like</h3>
+    <p><strong>Bearish divergence:</strong> Price makes a new high, but RSI makes a lower high. Momentum is weakening despite the price rise — the move is losing steam.</p>
+    <p><strong>Bullish divergence:</strong> Price makes a new low, but RSI makes a higher low. Selling pressure is exhausting — potential reversal forming.</p>
+
+    <h3>What to IGNORE (For Now)</h3>
+    <ul>
+      <li>MACD — redundant if you understand EMAs</li>
+      <li>Bollinger Bands — later</li>
+      <li>Stochastic — noise for beginners</li>
+      <li>Any "buy/sell signal" indicator</li>
+    </ul>
+
+    <h3>SMRT Algo — Start Observing NOW</h3>
+    <div class="callout-amber callout">
+      <p><strong>Evaluate your algo subscription within the syllabus timeline.</strong> Starting this week, activate SMRT Algo on your BTC/USDT 4H chart in TradingView. Do NOT trade its signals — just <em>watch</em>. Log what signals it gives and whether they align with what you're learning about price action. You're building an opinion through observation before active testing in Week 6.</p>
+    </div>
+
+    <h3>Bonus: ATR(1) for Volatility</h3>
+    <p>ImanTrading recommends changing the ATR (Average True Range) indicator period from the default 14 to <strong>1</strong>. This tells you the range of the most recent candle — a quick gauge of whether volatility is expanding or contracting. When ATR(1) spikes, the market is moving. When it's low, the market is quiet. This helps you adjust position sizing and avoid trading dead zones.</p>
+
+    <div class="checkpoint">
+      <h4>✓ End-of-Week Checkpoint</h4>
+      <p>Remove all indicators. Read the chart using only candles + S/R. Now add them back one by one. Does each <em>confirm</em> what you already see, or <em>confuse</em> you? If it confuses, drop it.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PAGE 8: WEEK 5 ═══ -->
+</div>
+
+<div class="page" data-page="10">
+<div class="page-inner">
+<div class="section-label">Phase 1 · Week 4 Supplement</div>
+    <h2>Session Analysis</h2>
+    <p>Markets behave differently depending on which global session is active. Understanding session characteristics helps you know WHEN to trade and when to sit out. This applies to both crypto (24/7 but volume varies) and forex.</p>
+    
+    <h3>The Three Major Sessions</h3>
+    <table>
+      <thead><tr><th>Session</th><th>NY Time</th><th>UTC+4 Example</th><th>Character</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Asian (Tokyo)</strong></td><td>7 PM – 4 AM</td><td>3 AM – 12 PM</td><td>Quiet, range-bound. Sets the range that London often fakes out.</td></tr>
+        <tr><td><strong>London</strong></td><td>3 AM – 12 PM</td><td>11 AM – 8 PM</td><td>Highest volume. Breakouts, trend initiation. Where the "Judas Swing" often occurs.</td></tr>
+        <tr><td><strong>New York</strong></td><td>8 AM – 5 PM</td><td>4 PM – 1 AM</td><td>Second highest volume. London-NY overlap (8-12 AM NY) is peak volatility.</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Kill Zones (ICT Concept)</h3>
+    <p>"Kill Zones" are specific windows within each session where the highest-probability moves occur:</p>
+    <ul>
+      <li><strong>London Kill Zone:</strong> 2–5 AM NY time (10 AM – 1 PM your time). This is where the Judas Swing typically forms.</li>
+      <li><strong>New York Kill Zone:</strong> 8:30–11 AM NY time (4:30–7 PM your time). Major economic data releases happen here.</li>
+      <li><strong>London Close Kill Zone:</strong> 10 AM – 12 PM NY time (6–8 PM your time). Reversal plays are common here.</li>
+    </ul>
+
+    <h3>Crypto-Specific Session Behavior</h3>
+    <p>Crypto trades 24/7, but volume and volatility still follow session patterns because institutional crypto traders operate during business hours. BTC volume spikes during London and NY sessions. Asian session often sets a range that gets swept during London open.</p>
+
+    <h3>The New York Midnight Open</h3>
+    <p>The candle that opens at 00:00 New York time is the most important reference point in ICT methodology. It serves as the daily "equilibrium." Bullish days tend to trade above it. Bearish days tend to trade below. The Judas Swing is measured relative to this level.</p>
+    
+    <div class="callout">
+      <p><strong>Practical rule:</strong> Don't trade during Asian session unless you have a specific range-trading strategy. Your best setups will come during London and NY sessions when volume supports the move.</p>
+    </div>
+</div>
+</div>
+
+<div class="page" data-page="11">
+<div class="page-inner">
+    <div class="section-label">Phase 2 · Week 5</div>
+    <h2>Risk Management for Leveraged Trading</h2>
+    <p><em>If you half-ass this week, everything else is pointless.</em></p>
+
+    <h4>Daily 45-min split</h4>
+    <p>30 min study + hand calculations · 15 min practice orders on Bybit Testnet</p>
+
+    <h3>The 1% Rule</h3>
+    <p>Never risk more than 1% of your total account on a single trade. This is your <strong>potential loss</strong> if stopped out — not your position size.</p>
+    <div class="source-tag">CME Group — Trade & Risk Management Education</div>
+
+    <h3>Position Sizing Formula</h3>
+    <div class="formula">
+Risk Amount = Account × 0.01<br>
+Position Size = Risk Amount ÷ (Entry − Stop Loss)<br>
+Margin Required = (Position Size × Entry) ÷ Leverage
+    </div>
+
+    <h3>Worked Example</h3>
+    <table>
+      <tbody>
+        <tr><td>Account</td><td>$10,000 demo</td></tr>
+        <tr><td>Risk (1%)</td><td>$100</td></tr>
+        <tr><td>Entry</td><td>BTC at $65,000</td></tr>
+        <tr><td>Stop Loss</td><td>$64,000</td></tr>
+        <tr><td>Position Size</td><td>$100 ÷ $1,000 = 0.1 BTC ($6,500)</td></tr>
+        <tr><td>At 5x leverage</td><td>Margin = $6,500 ÷ 5 = $1,300</td></tr>
+        <tr><td>If SL hit</td><td>You lose exactly $100 (1%). NOT liquidated.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout">
+      <p><strong>The insight:</strong> Leverage didn't change your risk. It changed how much margin you needed. Your stop loss protects you from liquidation. This is why stops with leverage are life or death.</p>
+    </div>
+
+    <h3>Risk-to-Reward Ratio</h3>
+    <table>
+      <thead><tr><th>R:R</th><th>Win rate needed to break even</th></tr></thead>
+      <tbody>
+        <tr><td>1:1</td><td>50%</td></tr>
+        <tr><td>1:2</td><td>34%</td></tr>
+        <tr><td>1:3</td><td>25%</td></tr>
+      </tbody>
+    </table>
+    <p>Good trading isn't about being right most of the time. It's about making your wins bigger than your losses.</p>
+    <p><strong>Watch:</strong> ImanTrading's video on risk-reward ratios and win rates — he explains how these two interact as you develop and refine your strategy. This directly applies to understanding why 1:2 R:R at 40% win rate is profitable.</p>
+
+    <h3>Leverage Progression</h3>
+    <table>
+      <thead><tr><th>Phase</th><th>Max Lev.</th><th>To Advance</th></tr></thead>
+      <tbody>
+        <tr><td>Wk 5–8</td><td>2–3x</td><td>20+ profitable demos</td></tr>
+        <tr><td>Wk 9–10</td><td>5x</td><td>20+ profitable at 2–3x, ≥40% WR</td></tr>
+        <tr><td>Wk 11–12</td><td>10x</td><td>20+ profitable at 5x, ≥45% WR</td></tr>
+        <tr><td>Post-12</td><td>10–20x</td><td>50+ real trades, 3+ month track record</td></tr>
+      </tbody>
+    </table>
+
+    <div class="checkpoint">
+      <h4>✓ End-of-Week Checkpoint</h4>
+      <p>$5,000 account. BTC at $70,000. Stop loss at $68,500. Risk 1%. Leverage 5x. Calculate: risk amount, position size, margin required. Solve in under 2 minutes.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PAGE 9: WEEK 6 ═══ -->
+</div>
+
+<div class="page" data-page="12">
+<div class="page-inner">
+<div class="section-label">Phase 2 · Week 5 Supplement</div>
+    <h2>Multiple Timeframe Analysis</h2>
+    <p>Professional traders never make decisions on a single timeframe. Top-down analysis means starting from the highest timeframe for direction and drilling down for entry precision. This is the difference between trading and guessing.</p>
+    
+    <h3>The Three-Screen Method</h3>
+    <p>Developed by Dr. Alexander Elder (author of "Trading for a Living"), this approach uses three timeframes simultaneously:</p>
+    <table>
+      <thead><tr><th>Screen</th><th>Timeframe</th><th>Purpose</th></tr></thead>
+      <tbody>
+        <tr><td><strong>1: Trend</strong></td><td>Daily / Weekly</td><td>Determine the DIRECTION. Are you bullish or bearish?</td></tr>
+        <tr><td><strong>2: Trigger</strong></td><td>4H</td><td>Find the SETUP. Is there a pattern at a key level?</td></tr>
+        <tr><td><strong>3: Entry</strong></td><td>1H / 15m</td><td>Time the ENTRY. Get the best price with a tight stop.</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Top-Down Workflow</h3>
+    <ul>
+      <li><strong>Step 1 (Daily):</strong> What's the macro trend? Price above 200 SMA = bullish bias. Market structure = HH/HL? You ONLY look for longs.</li>
+      <li><strong>Step 2 (4H):</strong> Where is price relative to key S/R and Fibonacci levels? Is there a setup forming? Candlestick pattern at a zone?</li>
+      <li><strong>Step 3 (1H/15m):</strong> Zoom in to find your exact entry. Look for a market structure shift, FVG, or order block entry on the lower timeframe.</li>
+    </ul>
+
+    <div class="callout-red callout">
+      <p><strong>The cardinal sin:</strong> Trading AGAINST the higher timeframe trend. If the Daily is bearish and you're trying to long on the 15-minute chart, you're fighting the current. The lower timeframe trade MUST align with the higher timeframe direction.</p>
+    </div>
+
+    <h3>Timeframe Alignment Principle</h3>
+    <p>The strongest trades occur when ALL three timeframes agree. Daily bullish + 4H at support + 1H showing reversal pattern = high-probability long. When timeframes conflict, the highest timeframe wins. Always.</p>
+</div>
+</div>
+
+<div class="page" data-page="13">
+<div class="page-inner">
+    <div class="section-label">Phase 2 · Week 6</div>
+    <h2>Building Your Strategy</h2>
+
+    <h4>Daily 45-min split</h4>
+    <p>15 min study · 20 min backtest on TradingView · 10 min observe EUR/USD on Naga demo</p>
+
+    <h3>Your Starter Strategy Checklist</h3>
+    <p>ALL conditions must be met before entry. Give your strategy a name — treat it as a system.</p>
+
+    <div class="rule-box"><div class="rule-num">CHECK 1</div><p><strong>Trend (Daily):</strong> Price above or below 50 EMA? → Determines longs vs shorts</p></div>
+    <div class="rule-box"><div class="rule-num">CHECK 2</div><p><strong>Key Level (4H):</strong> Price at a significant S/R zone?</p></div>
+    <div class="rule-box"><div class="rule-num">CHECK 3</div><p><strong>Candle Signal (4H):</strong> Reversal pattern at the level?</p></div>
+    <div class="rule-box"><div class="rule-num">CHECK 4</div><p><strong>Volume:</strong> Above average on signal candle?</p></div>
+    <div class="rule-box"><div class="rule-num">CHECK 5</div><p><strong>RSI:</strong> Not overbought for longs (<70), not oversold for shorts (>30)</p></div>
+    <div class="rule-box"><div class="rule-num">CHECK 6</div><p><strong>Funding Rate:</strong> Extreme funding in your direction = caution</p></div>
+    <div class="rule-box"><div class="rule-num">CHECK 7</div><p><strong>Risk Calculated:</strong> 1% risk, stop placed, R:R ≥ 1:2, position sized</p></div>
+
+    <div class="callout-red callout">
+      <p>If ANY checkbox is unchecked → <strong>NO TRADE.</strong> The setup isn't there. Wait. There will always be another one.</p>
+    </div>
+
+    <h3>Execution Rules</h3>
+    <ul>
+      <li><strong>Entry:</strong> At close of confirmation candle or on pullback to level</li>
+      <li><strong>Stop Loss:</strong> Below S/R zone (longs) or above (shorts). Use signal candle wick.</li>
+      <li><strong>Take Profit:</strong> Next S/R level or 2x your risk distance</li>
+      <li><strong>Leverage:</strong> 2–3x ONLY at this stage</li>
+    </ul>
+
+    <h3>SMRT Algo — Active Testing Begins</h3>
+    <div class="callout-amber callout">
+      <p><strong>Weeks 6–7 are your SMRT Algo evaluation window.</strong> You've observed it for 2 weeks. Now actively compare: for every setup your strategy identifies, does SMRT Algo agree? Track agreement rate in your journal. When they align = higher confidence. When they disagree = NO TRADE (for now). You're collecting data to decide keep vs cancel by Week 8.</p>
+    </div>
+
+    <h3>Systematic vs Discretionary — The Critical Distinction</h3>
+    <p>ImanTrading makes a point that applies directly to SMRT Algo and every indicator: most popular trading strategies have already been automated with perfect precision and are available free on TradingView. If they worked mechanically, everyone would be rich. They don't. The edge comes from <strong>your discretion</strong> — knowing <em>when</em> and <em>how</em> to apply the system. The algo is a tool. You are the trader.</p>
+
+    <div class="checkpoint">
+      <h4>✓ End-of-Week Checkpoint</h4>
+      <p>Write your complete strategy on ONE index card. Entry, exit, stop, size, conditions. If it doesn't fit on one card, it's too complicated. Simplify.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PAGE 10: WEEK 7 ═══ -->
+</div>
+
+<div class="page" data-page="14">
+<div class="page-inner">
+<div class="section-label">Phase 2 · Week 6 Supplement</div>
+    <h2>Volume Profile & Order Flow</h2>
+    <p>Basic volume bars show you HOW MUCH was traded. Volume Profile shows you WHERE it was traded. This is significantly more useful because it reveals the price levels where the most activity concentrated — the levels institutions care about.</p>
+    
+    <h3>Key Volume Profile Concepts</h3>
+    <table>
+      <thead><tr><th>Term</th><th>What It Is</th><th>How To Use It</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Point of Control (POC)</strong></td><td>Price level with the highest traded volume</td><td>Acts as a magnet — price tends to return to it. Strong S/R.</td></tr>
+        <tr><td><strong>Value Area High (VAH)</strong></td><td>Upper boundary of 70% volume zone</td><td>Resistance level. Price above = premium territory.</td></tr>
+        <tr><td><strong>Value Area Low (VAL)</strong></td><td>Lower boundary of 70% volume zone</td><td>Support level. Price below = discount territory.</td></tr>
+        <tr><td><strong>High Volume Nodes</strong></td><td>Price areas with heavy trading</td><td>Price moves slowly through these — consolidation zones.</td></tr>
+        <tr><td><strong>Low Volume Nodes</strong></td><td>Price areas with minimal trading</td><td>Price moves FAST through these — breakout zones.</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Practical Application</h3>
+    <ul>
+      <li><strong>Buy at VAL, sell at VAH:</strong> When price is ranging, the Value Area acts as the range boundaries.</li>
+      <li><strong>POC as target:</strong> If price moves away from POC, it often returns. Use as a take-profit level.</li>
+      <li><strong>Low Volume Node breakouts:</strong> When price enters an LVN, expect fast movement. These are the "air pockets" in the volume profile.</li>
+    </ul>
+
+    <h3>TradingView Setup</h3>
+    <p>On TradingView, add "Volume Profile — Visible Range" (VPVR) from indicators. This overlays the volume profile on your chart showing exactly where the most trading occurred at each price level. It's free on the paid plan, but even the fixed range version is available on free tier.</p>
+
+    <div class="callout">
+      <p><strong>Why this matters for leverage:</strong> Volume Profile tells you which levels are "defended" by heavy volume and which are "air." Placing your stop loss behind a High Volume Node means your stop is protected by a wall of orders. Placing it in a Low Volume Node means it could get run through easily.</p>
+    </div>
+</div>
+</div>
+
+<div class="page" data-page="15">
+<div class="page-inner">
+    <div class="section-label">Phase 2 · Week 7</div>
+    <h2>Trading Psychology & Journaling</h2>
+    <p>Mark Douglas, a pioneer in trading psychology and author of <em>Trading in the Zone</em>, established that trading success is approximately 80% psychology and 20% strategy. His work demonstrated that most traders fail not from bad analysis, but from the inability to execute their own plan under emotional pressure.</p>
+
+    <h3>The Five Emotional Killers</h3>
+    <table>
+      <thead><tr><th>Emotion</th><th>What It Looks Like</th><th>The Rule</th></tr></thead>
+      <tbody>
+        <tr><td><strong>FOMO</strong></td><td>"It's running! Get in NOW!"</td><td>Missed entry = missed. Another setup will come. Chasing = buying the top.</td></tr>
+        <tr><td><strong>Revenge</strong></td><td>"One more to make it back"</td><td>2 consecutive losses = DONE. This is the #1 leverage account killer.</td></tr>
+        <tr><td><strong>Hope</strong></td><td>"It'll come back..."</td><td>SL hit = you're OUT. Never move stops further away.</td></tr>
+        <tr><td><strong>Overconfidence</strong></td><td>"I'm on fire, size up!"</td><td>3 consecutive wins = reduce size next trade.</td></tr>
+        <tr><td><strong>Tilt</strong></td><td>Angry, distracted, emotional</td><td>Don't trade. Emotional state + leverage = financial self-harm.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout">
+      <p><strong>From Douglas:</strong> The goal is to think in probabilities. Each trade is one event in a larger statistical series. Your job is to execute your edge consistently — not to be right on any single trade. When you can take a loss without emotional disturbance, you've accepted the risk. Until then, the market controls you.</p>
+    </div>
+
+    <h3>Your Trading Journal</h3>
+    <p>Build this in Google Sheets. Every trade. No exceptions.</p>
+    <table>
+      <tbody>
+        <tr><td>Date/Time</td><td>Pair</td><td>Direction</td><td>Leverage</td></tr>
+        <tr><td>Entry Price</td><td>Stop Loss</td><td>Take Profit</td><td>Position Size</td></tr>
+        <tr><td>Margin Used</td><td>Risk Amount</td><td>R:R Ratio</td><td>Checklist Score (x/7)</td></tr>
+        <tr><td>Entry Reason</td><td>Exit Reason</td><td>Result (+/-$)</td><td>Rule Violations</td></tr>
+        <tr><td colspan="2">Emotion BEFORE</td><td colspan="2">Emotion AFTER</td></tr>
+        <tr><td colspan="4">Lesson (one sentence)</td></tr>
+      </tbody>
+    </table>
+
+    <div class="checkpoint">
+      <h4>✓ End-of-Week Checkpoint</h4>
+      <p>Journal template built. Pre-trade checklist saved on phone. At least 3 demo trades completed with full journal entries.</p>
+    </div>
+    <div class="source-tag">Mark Douglas — Trading in the Zone (2000)</div>
+    <div class="source-tag">Mark Douglas — The Disciplined Trader (1990)</div>
+  </div>
+</div>
+
+<!-- ═══ PAGE 11: WEEK 8 ═══ -->
+</div>
+
+<div class="page" data-page="16">
+<div class="page-inner">
+<div class="section-label">Phase 2 · Week 7 Supplement</div>
+    <h2>Liquidity, Smart Money & The Judas Swing</h2>
+    <p>Smart Money Concepts (SMC) is a framework developed primarily by Michael Huddleston (Inner Circle Trader / ICT) that explains HOW institutional traders manipulate price to fill their orders. This section covers the most practically useful concepts.</p>
+    
+    <h3>Liquidity — Why Stops Get Hunted</h3>
+    <p>Institutions need liquidity to fill large orders. Retail stop losses are clusters of orders sitting at predictable levels (below support, above resistance). Smart money drives price INTO these stops to fill their own positions, then reverses.</p>
+    <ul>
+      <li><strong>Buy-side liquidity:</strong> Stop losses of short sellers sitting above resistance = pool of buy orders</li>
+      <li><strong>Sell-side liquidity:</strong> Stop losses of long traders sitting below support = pool of sell orders</li>
+      <li><strong>Liquidity sweep:</strong> Price briefly spikes through a key level, triggers stops, then reverses</li>
+    </ul>
+
+    <h3>Order Blocks</h3>
+    <p>An order block is the last candle (or group of candles) before a strong impulsive move. It marks where institutional orders were placed. When price returns to this zone, it often finds support/resistance because unfilled institutional orders are still there.</p>
+    <ul>
+      <li><strong>Bullish OB:</strong> Last bearish candle before a strong up-move. When price returns, expect a bounce.</li>
+      <li><strong>Bearish OB:</strong> Last bullish candle before a strong down-move. When price returns, expect rejection.</li>
+    </ul>
+
+    <h3>Fair Value Gaps (FVGs)</h3>
+    <p>A Fair Value Gap is a three-candle pattern where the middle candle's body is so large that the wicks of candle 1 and candle 3 don't overlap, creating a "gap" in price. The market tends to return and fill these gaps before continuing.</p>
+    <p>FVGs are excellent entry zones — when price returns to fill the gap, you enter in the direction of the original move.</p>
+
+    <h3>The Judas Swing</h3>
+    <div class="callout-amber callout">
+      <p>The Judas Swing is a false move at the start of a session designed to trap retail traders on the wrong side before the real move begins. Named after the biblical betrayal — the price "leads you to slaughter" then reverses.</p>
+    </div>
+    <ul>
+      <li>Typically occurs between <strong>NY midnight and 5:00 AM NY time</strong> (8 AM – 1 PM your time)</li>
+      <li>Price breaks the Asian session range high or low, triggering breakout traders</li>
+      <li>Then reverses sharply, stopping out those traders and moving in the true daily direction</li>
+      <li>Look for it relative to the <strong>New York Midnight Opening Price</strong> — the daily equilibrium</li>
+    </ul>
+
+    <h3>How to Trade the Judas Swing</h3>
+    <ul>
+      <li><strong>Determine daily bias</strong> from higher timeframe analysis first</li>
+      <li><strong>Mark the Asian range</strong> high and low</li>
+      <li><strong>Wait for the fake breakout</strong> during London open — price sweeps Asian high or low</li>
+      <li><strong>Wait for Market Structure Shift (MSS)</strong> — a break of a swing point confirming reversal</li>
+      <li><strong>Enter on the FVG or Order Block</strong> created by the reversal</li>
+      <li><strong>Stop loss above/below the Judas Swing high/low</strong></li>
+      <li><strong>Target: opposite side of the Asian range</strong> or next liquidity pool</li>
+    </ul>
+
+    <div class="callout-red callout">
+      <p><strong>Warning:</strong> SMC/ICT concepts require significant screen time and practice to identify in real-time. Do NOT trade these live until you've backtested extensively on bar replay. The Judas Swing is an intermediate-to-advanced concept — master basic S/R, candlesticks, and risk management first.</p>
+    </div>
+    <div class="source-tag">ICT / Inner Circle Trader methodology</div>
+    <div class="source-tag">Smart Money Concepts (SMC)</div>
+</div>
+</div>
+
+<div class="page" data-page="17">
+<div class="page-inner">
+<div class="section-label">Phase 2 · Week 7 Supplement</div>
+    <h2>The Wyckoff Method</h2>
+    <p>Richard Wyckoff (1873–1934) studied how legendary operators like JP Morgan and Jesse Livermore moved markets. He codified their methods into a framework that explains how institutions build and unload massive positions. The Wyckoff Method has passed 100+ years of continuous use and remains the foundation of institutional price analysis.</p>
+    
+    <h3>The Composite Man</h3>
+    <p>Wyckoff's central concept: imagine all institutional activity as ONE entity — the "Composite Man." This entity accumulates (buys) at lows, marks up (drives price higher), distributes (sells) at highs, then marks down (allows price to fall). Your job is to identify what the Composite Man is doing and trade WITH him, not against him.</p>
+
+    <h3>The Four Market Phases</h3>
+    <table>
+      <thead><tr><th>Phase</th><th>What Happens</th><th>Your Action</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Accumulation</strong></td><td>Sideways range after downtrend. Institutions quietly buy. Volume decreases on drops, increases on rises.</td><td>Prepare to go long. Watch for the "Spring."</td></tr>
+        <tr><td><strong>Markup</strong></td><td>Breakout above range. Strong uptrend with pullbacks to support. Higher highs and higher lows.</td><td>Hold long positions. Add on pullbacks to S/R.</td></tr>
+        <tr><td><strong>Distribution</strong></td><td>Sideways range after uptrend. Institutions sell to retail. Volume increases on drops.</td><td>Prepare to exit longs. Watch for the "Upthrust."</td></tr>
+        <tr><td><strong>Markdown</strong></td><td>Breakdown below range. Strong downtrend. Lower highs and lower lows.</td><td>Short or stay flat. Don't try to catch the falling knife.</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Key Wyckoff Events</h3>
+    <ul>
+      <li><strong>Spring:</strong> Price dips BELOW accumulation range support, shakes out weak holders, then reverses back inside. This is the buy signal. (Similar to a liquidity sweep in SMC.)</li>
+      <li><strong>Upthrust (UT):</strong> Price spikes ABOVE distribution range resistance, traps late buyers, then reverses back inside. This is the sell signal.</li>
+      <li><strong>Sign of Strength (SOS):</strong> A strong move up within accumulation range — institutions are ready.</li>
+      <li><strong>Last Point of Support (LPS):</strong> Final pullback before the markup begins. Ideal entry.</li>
+    </ul>
+
+    <h3>Wyckoff in Crypto</h3>
+    <p>Crypto markets exhibit textbook Wyckoff patterns because they're heavily influenced by whale activity (the Composite Man equivalent). Bitcoin's 2015-2016 accumulation before the 2017 bull run, and the 2022 accumulation before the 2023-2024 rally, both followed classic Wyckoff schematics.</p>
+
+    <div class="callout">
+      <p><strong>Practical application:</strong> When BTC is in a long sideways range after a significant downtrend, apply Wyckoff. Is volume decreasing on red candles? Is the price holding support? Is there a Spring event? If yes — accumulation is likely in progress. The markup phase will follow.</p>
+    </div>
+    <div class="source-tag">Richard D. Wyckoff (1920s)</div>
+    <div class="source-tag">Stock Market Institute</div>
+    <div class="source-tag">StockCharts Wyckoff Tutorial</div>
+</div>
+</div>
+
+<div class="page" data-page="18">
+<div class="page-inner">
+    <div class="section-label">Phase 2 · Week 8</div>
+    <h2>SMRT Algo Verdict & Deep Backtesting</h2>
+
+    <h4>Daily 45-min split</h4>
+    <p>15 min SMRT Algo final evaluation · 20 min backtesting · 10 min journal</p>
+
+    <h3>SMRT Algo — Keep or Cancel Decision</h3>
+    <div class="callout-amber callout">
+      <p><strong>Decide by end of this week whether to keep or cancel your algo subscription. Give yourself time to cancel before the next billing cycle.</strong></p>
+    </div>
+
+    <p>You've observed the algo for 4 weeks (since Week 4) and actively tested it for 2 weeks (Weeks 6–7). Answer these questions with your journal data:</p>
+
+    <table>
+      <thead><tr><th>Question</th><th>Keep Signal</th><th>Cancel Signal</th></tr></thead>
+      <tbody>
+        <tr><td>Does it confirm setups you already see?</td><td>Often — adds confidence</td><td>Rarely — redundant or confusing</td></tr>
+        <tr><td>Has it flagged setups you missed?</td><td>Yes, and they were valid</td><td>No, or they were bad signals</td></tr>
+        <tr><td>Can you trade without it?</td><td>Yes, but it helps</td><td>No — you depend on it (bad)</td></tr>
+        <tr><td>Agreement rate with your strategy?</td><td>>60% alignment</td><td><40% alignment</td></tr>
+        <tr><td>Has it improved your demo results?</td><td>Data shows improvement</td><td>No measurable difference</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout-red callout">
+      <p><strong>If you can't trade profitably without the algo, the algo won't save you.</strong> It's a confirmation tool. If your strategy doesn't work on its own, no indicator subscription fixes that. Cancel and save the money if the data doesn't justify it.</p>
+    </div>
+
+    <h3>Backtesting Deep Dive</h3>
+    <ul>
+      <li>TradingView <strong>bar replay</strong>: go back 3 months on BTC/USDT 4H</li>
+      <li>Play through candle by candle, apply your full 7-check strategy</li>
+      <li>Journal every hypothetical trade with the full template</li>
+      <li><strong>Goal: 50+ backtested setups logged</strong></li>
+      <li>Calculate: win rate, average R:R, best/worst conditions</li>
+    </ul>
+
+    <h3>Forex First Demo (Naga)</h3>
+    <ul>
+      <li>Take 1–2 demo trades on EUR/USD using same strategy framework</li>
+      <li>Check <strong>ForexFactory.com</strong> for economic calendar</li>
+      <li><em>Don't hold leveraged positions through major news releases</em></li>
+    </ul>
+
+    <div class="checkpoint">
+      <h4>✓ End-of-Week Checkpoint</h4>
+      <p>SMRT Algo decision made (keep or cancel). 50+ backtested scenarios logged. Win rate and R:R calculated. If win rate < 35%, revisit entry criteria before Phase 3.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PAGE 12: WEEKS 9-10 ═══ -->
+</div>
+
+<div class="page" data-page="19">
+<div class="page-inner">
+<div class="section-label">Phase 2 · Week 8 Supplement</div>
+    <h2>Macro & Fundamental Analysis</h2>
+    <p>Technical analysis tells you what IS happening. Fundamental analysis tells you WHY. For leveraged trading, knowing when major economic events drop is not optional — it's survival. A single CPI print can move BTC 5% in minutes. At 10x leverage, that's liquidation territory.</p>
+    
+    <h3>Events That Move Markets</h3>
+    <table>
+      <thead><tr><th>Event</th><th>Frequency</th><th>Impact</th><th>How It Affects Crypto</th></tr></thead>
+      <tbody>
+        <tr><td><strong>FOMC Rate Decision</strong></td><td>8x/year</td><td>Extreme</td><td>Rate hikes = risk-off = crypto drops. Cuts = risk-on = crypto rallies.</td></tr>
+        <tr><td><strong>CPI (Inflation)</strong></td><td>Monthly</td><td>High</td><td>Higher than expected = hawkish Fed = bearish. Lower = bullish.</td></tr>
+        <tr><td><strong>NFP (Jobs Data)</strong></td><td>Monthly</td><td>High</td><td>Strong jobs = less likely to cut rates = bearish for risk assets.</td></tr>
+        <tr><td><strong>PPI (Producer Prices)</strong></td><td>Monthly</td><td>Medium</td><td>Leading indicator for CPI. Surprise = volatility.</td></tr>
+        <tr><td><strong>GDP</strong></td><td>Quarterly</td><td>Medium</td><td>Recession signals = complex. Flight to safety initially, then stimulus hope.</td></tr>
+      </tbody>
+    </table>
+
+    <h3>DXY — The Dollar Index</h3>
+    <p>The DXY measures USD strength against a basket of major currencies. It has a general <strong>inverse correlation</strong> with crypto and risk assets:</p>
+    <ul>
+      <li><strong>DXY rising:</strong> Dollar strengthening → capital flows OUT of risk assets → bearish for BTC</li>
+      <li><strong>DXY falling:</strong> Dollar weakening → capital flows INTO risk assets → bullish for BTC</li>
+      <li>Add DXY to your TradingView watchlist. Check it daily.</li>
+    </ul>
+
+    <h3>Your Economic Calendar</h3>
+    <p><strong>ForexFactory.com</strong> — free, color-coded by impact (red = high impact). Check it every morning before trading. Red folder events = close leveraged positions or reduce size 30 minutes before.</p>
+
+    <div class="callout-red callout">
+      <p><strong>Leverage rule during major events:</strong> Do NOT hold leveraged positions through FOMC, CPI, or NFP releases. The initial candle can wick 3-5% in both directions within seconds. Even a correct directional bias can get stopped out by the initial volatility spike. Either close positions 30 min before, or sit flat and trade the aftermath.</p>
+    </div>
+    
+    <h3>Bitcoin-Specific Fundamentals</h3>
+    <ul>
+      <li><strong>Halving cycle:</strong> ~every 4 years, mining reward halves. Historically precedes major bull runs. Next halving was April 2024 — we're in the post-halving cycle.</li>
+      <li><strong>ETF flows:</strong> Track Bitcoin and Ethereum ETF inflows/outflows. Sustained inflows = institutional demand = bullish.</li>
+      <li><strong>Exchange reserves:</strong> BTC flowing off exchanges = accumulation. Onto exchanges = potential selling. Check on CryptoQuant.</li>
+    </ul>
+</div>
+</div>
+
+<div class="page" data-page="20">
+<div class="page-inner">
+    <div class="section-label">Phase 3 · Weeks 9–10</div>
+    <h2>Live Demo Execution</h2>
+    <p>You've studied for 8 weeks. Now you execute. Same rules, real-time decisions, demo money.</p>
+
+    <h4>Daily 45-min split</h4>
+    <p>10 min daily analysis · 20 min execute/manage demos · 15 min journal</p>
+
+    <h3>Execution Rules</h3>
+    <ul>
+      <li>Max leverage: <strong>5x</strong> (only if 20+ profitable trades at 2–3x)</li>
+      <li>Max 2 trades per day across ALL platforms</li>
+      <li>1% risk per trade, 2% daily drawdown cap</li>
+      <li>After 2 consecutive losses: done for the day</li>
+      <li>After 3 consecutive wins: reduce size 50% on next trade</li>
+      <li>Every trade scores 7/7 on setup checklist</li>
+      <li><strong>Journal EVERY trade. Missing even one = gambling.</strong></li>
+    </ul>
+
+    <h3>Forex Pairs (Naga Demo)</h3>
+    <ul>
+      <li><strong>EUR/USD:</strong> Most liquid, tightest spreads, best for learning</li>
+      <li><strong>GBP/USD:</strong> Slightly more volatile, good for crypto-trained eye</li>
+      <li>Do NOT touch exotic pairs, gold, or oil yet</li>
+    </ul>
+
+    <h3>Weekly Review (Sunday, 30 min)</h3>
+    <ul>
+      <li>Total trades this week?</li>
+      <li>Win rate? Average R:R achieved?</li>
+      <li>Did you follow every rule?</li>
+      <li>Any revenge trades? (Red flag if yes)</li>
+      <li>Biggest mistake? Best trade? What made each?</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══ PAGE 13: WEEK 11 ═══ -->
+</div>
+
+<div class="page" data-page="21">
+<div class="page-inner">
+<div class="section-label">Phase 3 · Week 10 Supplement</div>
+    <h2>Advanced Trade Management</h2>
+    <p>The v1 playbook said "hit TP or hit SL." That's beginner-level trade management. Real trading involves managing open positions actively to maximize winners and minimize losers. These techniques come from professional trading desks and prop firms.</p>
+    
+    <h3>Moving Stop to Breakeven</h3>
+    <p>Once your trade moves 1R in profit (risk amount), move your stop loss to your entry price. You're now in a risk-free trade. The worst outcome is $0 instead of -1R.</p>
+    <p><em>Don't move to breakeven too early.</em> Give the trade room to breathe. If you move to BE when the trade is only +0.3R, normal volatility will stop you out at zero on trades that would have been winners.</p>
+
+    <h3>Partial Take Profits</h3>
+    <p>Instead of all-or-nothing (full TP or full SL), take profits in stages:</p>
+    <ul>
+      <li><strong>At 1R profit:</strong> Close 33% of position, move stop to breakeven on the rest</li>
+      <li><strong>At 2R profit:</strong> Close another 33%, trail stop to +1R</li>
+      <li><strong>Let the final 33% run</strong> with a trailing stop — this is where outsized winners come from</li>
+    </ul>
+
+    <h3>Trailing Stop Methods</h3>
+    <table>
+      <thead><tr><th>Method</th><th>How It Works</th><th>Best For</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Structure-based</strong></td><td>Move stop below each new higher low (longs) or above each new lower high (shorts)</td><td>Swing trades — respects market structure</td></tr>
+        <tr><td><strong>EMA trail</strong></td><td>Trail stop below the 20 EMA — exit when price closes below it</td><td>Trending markets — stays in trade longer</td></tr>
+        <tr><td><strong>ATR trail</strong></td><td>Stop = current price minus 1.5-2x ATR</td><td>Volatile markets — adapts to conditions</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Scaling In (Pyramiding)</h3>
+    <p>Adding to a winning position — but ONLY if the original position is already in profit and the setup still valid. Never scale into a loser.</p>
+    <ul>
+      <li>First position at your initial entry with full risk</li>
+      <li>Second position on a confirmed pullback to support — half the size of the first</li>
+      <li>Total risk on the combined position must still not exceed 2% of account</li>
+    </ul>
+
+    <div class="callout-red callout">
+      <p><strong>The #1 rule:</strong> NEVER add to a losing position with leverage. "Averaging down" with leverage is the fastest way to liquidation. Your stop was hit for a reason. Accept the loss.</p>
+    </div>
+</div>
+</div>
+
+<div class="page" data-page="22">
+<div class="page-inner">
+    <div class="section-label">Phase 3 · Week 11</div>
+    <h2>Strategy Refinement</h2>
+
+    <h4>Daily 45-min split</h4>
+    <p>10 min morning analysis · 20 min trade execution · 15 min deep journal review</p>
+
+    <h3>Pattern Mining Your Own Data</h3>
+    <p>Review ALL journal entries from Weeks 7–10. You're looking for patterns in YOUR trading, not the market.</p>
+
+    <ul>
+      <li>Which setups win most? Which lose?</li>
+      <li>What time of day produces your best trades?</li>
+      <li>What conditions were present in your best wins?</li>
+      <li>What emotional state preceded your worst losses?</li>
+      <li>Are there specific situations where you consistently break rules?</li>
+    </ul>
+
+    <h3>Adjust Based on DATA</h3>
+    <ul>
+      <li><strong>Kill</strong> any setup type that loses more than it wins</li>
+      <li><strong>Double down</strong> on conditions that produce your best trades</li>
+      <li>Adjust entry timing if a pattern emerges (e.g., "my 4H entries during Asian session are consistently worse")</li>
+      <li>All adjustments come from your journal data. Not feelings. Not hunches.</li>
+    </ul>
+
+    <h3>10x Leverage Test</h3>
+    <ul>
+      <li>If consistently profitable at 5x: test 10x on a <strong>small portion</strong> of demo (max 20% of margin)</li>
+      <li>Track 10x trades separately in your journal</li>
+      <li>Notice: the emotional intensity increases significantly at 10x. Document this.</li>
+    </ul>
+
+    <div class="callout-amber callout">
+      <p>Douglas's key insight applies here: your last result should not influence your next decision. Lose, and you get timid. Win, and you get reckless. Treat each trade as an independent event. Master this, and you break the emotional cycle.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PAGE 14: WEEK 12 ═══ -->
+</div>
+
+<div class="page" data-page="23">
+<div class="page-inner">
+<div class="section-label">Phase 3 · Week 11 Supplement</div>
+    <h2>Correlation Analysis</h2>
+    <p>No asset trades in isolation. Understanding what moves together (positive correlation) and what moves opposite (negative correlation) gives you an informational edge and prevents you from taking conflicting positions.</p>
+    
+    <h3>Key Correlations for Crypto Traders</h3>
+    <table>
+      <thead><tr><th>Pair</th><th>Correlation</th><th>Implication</th></tr></thead>
+      <tbody>
+        <tr><td>BTC ↔ ETH</td><td>Strong positive</td><td>They move together 80%+ of the time. Don't long both thinking you're "diversified" — you're doubling exposure.</td></tr>
+        <tr><td>BTC ↔ DXY</td><td>Generally inverse</td><td>Dollar up = BTC down, and vice versa. Check DXY before any crypto trade.</td></tr>
+        <tr><td>BTC ↔ S&P 500</td><td>Moderate positive</td><td>BTC increasingly trades as a risk asset. When stocks sell off hard, crypto follows.</td></tr>
+        <tr><td>BTC ↔ Gold</td><td>Weakly positive, varies</td><td>Both considered "stores of value" but behave differently in crises.</td></tr>
+        <tr><td>BTC Dominance ↔ Alts</td><td>Strong inverse</td><td>When BTC dominance rises, alts bleed harder. When it falls, altseason begins.</td></tr>
+      </tbody>
+    </table>
+
+    <h3>SMT Divergence (Smart Money Technique)</h3>
+    <p>An ICT concept: when two correlated assets (like BTC and ETH) make new highs/lows but one DOESN'T confirm the other, it signals a potential reversal. Example:</p>
+    <ul>
+      <li>BTC makes a new low, but ETH makes a higher low → bullish SMT divergence</li>
+      <li>BTC makes a new high, but ETH makes a lower high → bearish SMT divergence</li>
+    </ul>
+    <p>This works because if smart money is buying, they'd buy BOTH. If only one is making new extremes, it's likely a fake move.</p>
+
+    <h3>Practical Correlation Workflow</h3>
+    <ul>
+      <li>Check DXY direction before ANY crypto trade</li>
+      <li>Check BTC before trading ETH — if BTC is weak, ETH will be weaker</li>
+      <li>Check S&P 500 futures during overlap hours for risk sentiment</li>
+      <li>Don't hold long BTC AND long ETH simultaneously — that's doubled risk, not diversification</li>
+    </ul>
+</div>
+</div>
+
+<div class="page" data-page="24">
+<div class="page-inner">
+    <div class="section-label">Phase 3 · Week 12</div>
+    <h2>Go / No-Go Evaluation</h2>
+    <p>This week decides if you're ready for real money. Be brutally honest.</p>
+
+    <h3>Minimum Criteria for Live Trading</h3>
+    <table>
+      <thead><tr><th>Criteria</th><th>Required</th></tr></thead>
+      <tbody>
+        <tr><td>Total demo trades logged</td><td>≥ 50 with full journal</td></tr>
+        <tr><td>Win rate</td><td>≥ 40% (at 1:2+ R:R)</td></tr>
+        <tr><td>Average R:R achieved</td><td>≥ 1:2</td></tr>
+        <tr><td>Revenge trades (last 2 weeks)</td><td>0</td></tr>
+        <tr><td>2-loss daily stop rule</td><td>Followed every time</td></tr>
+        <tr><td>Can explain strategy in 60 seconds</td><td>Yes</td></tr>
+        <tr><td>Every loss has documented reason</td><td>Yes</td></tr>
+        <tr><td>Zero trades on "feeling" or tips</td><td>Yes</td></tr>
+        <tr><td>Position sizing correct every trade</td><td>Yes</td></tr>
+        <tr><td>Stop loss on every trade</td><td>Yes</td></tr>
+      </tbody>
+    </table>
+
+    <h3>If ALL Met</h3>
+    <ul>
+      <li>Go live with the <strong>smallest possible amount</strong> on your exchange. NOT your full capital.</li>
+      <li>Same strategy, same rules, same journal, same leverage level</li>
+      <li>Keep at 3–5x for first 30 real trades minimum</li>
+      <li>Scale capital ONLY after 30+ profitable real trades</li>
+    </ul>
+
+    <h3>If NOT Met</h3>
+    <div class="callout">
+      <p>Repeat Weeks 9–12. Identify the specific failure point. There is <strong>zero shame</strong> in this. Most professional traders demo for 3–6 months. Some do it for a year. The goal is not to go live fast — it's to go live <em>ready</em>.</p>
+    </div>
+
+    <h3>Future Path: Prop Firms</h3>
+    <p>Once you're consistently profitable on demo, <strong>prop firms</strong> are worth exploring as an alternative to risking your own capital. You pay a small fee ($50–150) for an evaluation. Pass it, and you trade with the firm's money — keeping 80–90% of profits. Fail, and you only lose the eval fee, not your full trading account.</p>
+    <p>ImanTrading has a complete free prop firm guide at imantrading.org/firmfaq/prop-firm-trading-guide. But this is a <strong>post-Week 12 consideration only</strong>. Don't even think about it until your demo results justify it.</p>
+  </div>
+</div>
+
+<!-- ═══ PAGE 15: LEVERAGE TABLE ═══ -->
+</div>
+
+<div class="page" data-page="25">
+<div class="page-inner">
+    <div class="section-label">Reference</div>
+    <h2>Leverage Reality Table</h2>
+    <p>Print this. Tape it next to your screen. Look at it before every leveraged trade.</p>
+
+    <table class="lev-table">
+      <thead><tr><th>Leverage</th><th>Control per $100</th><th>Move to 2x</th><th>Move to $0</th></tr></thead>
+      <tbody>
+        <tr><td>1x (spot)</td><td>$100</td><td>+100%</td><td>N/A</td></tr>
+        <tr><td>2x</td><td>$200</td><td>+50%</td><td>-50%</td></tr>
+        <tr><td>3x</td><td>$300</td><td>+33%</td><td>-33%</td></tr>
+        <tr><td>5x</td><td>$500</td><td>+20%</td><td>-20%</td></tr>
+        <tr><td>10x</td><td>$1,000</td><td>+10%</td><td>-10%</td></tr>
+        <tr><td>20x</td><td>$2,000</td><td>+5%</td><td>-5%</td></tr>
+        <tr><td>50x</td><td>$5,000</td><td>+2%</td><td>-2%</td></tr>
+        <tr><td>100x</td><td>$10,000</td><td>+1%</td><td>-1%</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout-red callout">
+      <p><strong>BTC regularly moves 5% in a single 4H candle.</strong> At 20x, that's liquidation. At 100x, a 1% wick that reverses immediately still kills you. Respect the progression.</p>
+    </div>
+
+    <h3>Your Progression</h3>
+    <p>You start at 2–3x. You earn the right to higher leverage through demonstrated discipline and profitability. Higher leverage is earned through demonstrated discipline and profitability over months of consistent trading.</p>
+  </div>
+</div>
+
+<!-- ═══ PAGE 16: RESOURCES ═══ -->
+</div>
+
+<div class="page" data-page="26">
+<div class="page-inner">
+    <div class="section-label">Reference</div>
+    <h2>Free Resources Master List</h2>
+    <p>Everything you need. Zero cost. No paid groups required.</p>
+
+    <h3>Structured Education</h3>
+    <table>
+      <thead><tr><th>Resource</th><th>Focus</th></tr></thead>
+      <tbody>
+        <tr><td><strong>BabyPips.com</strong></td><td>Complete beginner course — applies to all markets</td></tr>
+        <tr><td><strong>Bybit Learn</strong></td><td>Crypto futures, leverage, order types</td></tr>
+        <tr><td><strong>Binance Academy</strong></td><td>Crypto fundamentals, blockchain</td></tr>
+        <tr><td><strong>CME Group Education</strong></td><td>Institutional-grade risk management</td></tr>
+        <tr><td><strong>Investopedia</strong></td><td>Any term/concept reference</td></tr>
+        <tr><td><strong>ForexFactory</strong></td><td>Economic calendar — critical for forex</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Crypto Data (Free Tiers)</h3>
+    <table>
+      <thead><tr><th>Tool</th><th>What It Shows</th></tr></thead>
+      <tbody>
+        <tr><td><strong>CoinGlass</strong></td><td>Funding rates, open interest, liquidation heatmaps</td></tr>
+        <tr><td><strong>CryptoQuant</strong></td><td>On-chain analytics</td></tr>
+        <tr><td><strong>Glassnode</strong></td><td>On-chain metrics</td></tr>
+        <tr><td><strong>CoinDesk / The Block</strong></td><td>News (not signals)</td></tr>
+        <tr><td><strong>Fear & Greed Index</strong></td><td>Market sentiment gauge</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Essential Reading</h3>
+    <table>
+      <thead><tr><th>Book</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Trading in the Zone</strong> — Mark Douglas</td><td>THE psychology book. Trading is 80% mindset.</td></tr>
+        <tr><td><strong>Japanese Candlestick Charting</strong> — Steve Nison</td><td>The definitive guide. Nison brought candlesticks to the West.</td></tr>
+        <tr><td><strong>Atomic Habits</strong> — James Clear</td><td>Building the daily discipline system.</td></tr>
+      </tbody>
+    </table>
+
+    <h3>ImanTrading — Recommended YouTube & Guides</h3>
+    <p>100% free. No courses, no paid mentorships, no hidden motives. Documented his entire journey transparently. Trades futures through prop firms — not a full-time trader, which makes his perspective more honest than most.</p>
+    <table>
+      <thead><tr><th>Content</th><th>When to Watch</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Full Trading Guide</strong> (imantrading.org/beginners)</td><td>Week 1–2: 1.5-hour guide filmed from real experience across every learning phase</td></tr>
+        <tr><td><strong>Systematic vs Discretionary Trading</strong></td><td>Week 6: The critical distinction — why no indicator or algo works on its own</td></tr>
+        <tr><td><strong>Risk Reward & Win Rate Relationship</strong></td><td>Week 5: Understanding how R:R and win rate interact as you develop your strategy</td></tr>
+        <tr><td><strong>Fractal Price Action Test</strong></td><td>Week 3: Can you tell the timeframe from a chart? Implications for market structure</td></tr>
+        <tr><td><strong>ATR Period 1 Volatility Tip</strong></td><td>Week 4: Quick volatility gauge for position sizing and avoiding dead zones</td></tr>
+        <tr><td><strong>Prop Firm Trading Guide</strong></td><td>Post-Week 12: Only relevant once you're consistently profitable on demo</td></tr>
+      </tbody>
+    </table>
+    <div class="source-tag">imantrading.org</div>
+    <div class="source-tag">YouTube: @ImanTrading</div>
+    <div class="source-tag">YouTube: @ImanTradingLive</div>
+
+    <h3>Twitter/X Filter</h3>
+    <p>Follow accounts that explain reasoning with charts. Avoid anyone who posts "BUY NOW" without reasoning, sells courses, or only shows wins.</p>
+    <p><strong>Litmus test:</strong> Do they talk about their losses? If never, they're selling you a fantasy.</p>
+  </div>
+</div>
+
+<!-- ═══ PAGE 17: TRAPS ═══ -->
+</div>
+
+<div class="page" data-page="27">
+<div class="page-inner">
+<div class="section-label">Reference</div>
+    <h2>Backtesting Methodology</h2>
+    <p>Backtesting is how you validate your strategy before risking money. But bad backtesting gives you false confidence, which is worse than no backtesting at all. Here's how to do it properly.</p>
+    
+    <h3>The Right Way to Backtest</h3>
+    <ul>
+      <li><strong>Use bar replay on TradingView.</strong> Scroll the chart left so you can't see the future. Advance candle by candle. Make decisions in real-time, not hindsight.</li>
+      <li><strong>Sample size: minimum 50 trades.</strong> Below 50, your statistics are meaningless. Random variance dominates.</li>
+      <li><strong>Test across different market conditions:</strong> trending up, trending down, ranging. A strategy that only works in uptrends is useless half the time.</li>
+      <li><strong>Record EVERYTHING</strong> in your journal — same template as live trades.</li>
+    </ul>
+
+    <h3>Metrics to Track</h3>
+    <table>
+      <thead><tr><th>Metric</th><th>Formula</th><th>Target</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Win Rate</strong></td><td>Winning trades ÷ total trades</td><td>≥ 40% (at 1:2 R:R)</td></tr>
+        <tr><td><strong>Average R:R</strong></td><td>Average win ÷ average loss</td><td>≥ 1.5:1</td></tr>
+        <tr><td><strong>Expectancy</strong></td><td>(Win% × Avg Win) − (Loss% × Avg Loss)</td><td>Positive number</td></tr>
+        <tr><td><strong>Max Drawdown</strong></td><td>Largest peak-to-trough decline</td><td>< 15% of account</td></tr>
+        <tr><td><strong>Profit Factor</strong></td><td>Gross profits ÷ gross losses</td><td>> 1.5</td></tr>
+        <tr><td><strong>Max Consecutive Losses</strong></td><td>Longest losing streak</td><td>Know this number. It WILL happen live.</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Common Backtesting Mistakes</h3>
+    <ul>
+      <li><strong>Hindsight bias:</strong> "I would have taken that trade" — if you can see the outcome, your brain cheats. Use bar replay ONLY.</li>
+      <li><strong>Cherry-picking:</strong> Only testing on periods where your strategy works. Test on BAD periods too.</li>
+      <li><strong>Curve-fitting:</strong> Tweaking rules until they fit historical data perfectly. Overfitted strategies fail on new data.</li>
+      <li><strong>Ignoring slippage and fees:</strong> On leveraged trades, funding rates and fees eat into profits. Account for them.</li>
+    </ul>
+
+    <div class="callout">
+      <p><strong>The backtest litmus test:</strong> If your backtested win rate is above 70%, something is wrong. Either you're using hindsight, cherry-picking, or curve-fitting. Real-world strategies typically have 40-60% win rates with good R:R. Suspiciously good results are a red flag, not a green one.</p>
+    </div>
+</div>
+</div>
+
+<div class="page" data-page="28">
+<div class="page-inner">
+<div class="section-label">Reference</div>
+    <h2>Your Formal Trading Plan</h2>
+    <p>A trading plan is a written document that codifies your ENTIRE system. It's separate from your journal. The journal tracks what happened. The plan dictates what SHOULD happen. Write this and print it. Read it before every trading session.</p>
+    
+    <h3>Template</h3>
+    <div class="rule-box"><div class="rule-num">SECTION 1: IDENTITY</div>
+      <p>My name: ___<br>Strategy name: ___<br>Markets: BTC/USDT, ETH/USDT<br>Platforms: Bybit (execution), TradingView (analysis)<br>Session: ___ to ___ (your active trading window)<br>Max daily screen time: 45 minutes</p>
+    </div>
+
+    <div class="rule-box"><div class="rule-num">SECTION 2: RISK RULES</div>
+      <p>Risk per trade: 1% of account<br>Max daily drawdown: 2%<br>Max leverage: ___ (current progression level)<br>Max trades per day: 2<br>Consecutive loss limit: 2 (then stop for the day)<br>Consecutive win rule: Reduce size after 3 wins</p>
+    </div>
+
+    <div class="rule-box"><div class="rule-num">SECTION 3: ENTRY CRITERIA</div>
+      <p>All 7 checklist items from Week 6 must be met.<br>Higher timeframe trend confirmed (Daily).<br>Setup identified on entry timeframe (4H).<br>Entry timed on lower timeframe (1H/15m) if applicable.<br>SMRT Algo confirmation (if subscription active).</p>
+    </div>
+
+    <div class="rule-box"><div class="rule-num">SECTION 4: EXIT RULES</div>
+      <p>Stop loss: Set BEFORE entry, based on structure.<br>Take profit: Next S/R level or Fibonacci extension, minimum 1:2 R:R.<br>Partial TP: 33% at 1R, 33% at 2R, trail remainder.<br>Move to breakeven after 1R profit.</p>
+    </div>
+
+    <div class="rule-box"><div class="rule-num">SECTION 5: EMOTIONAL RULES</div>
+      <p>No trading when: angry, tired, distracted, after family conflict, after 2 consecutive losses.<br>Pre-trade check: Am I calm? Is this a setup or am I forcing it?<br>Post-trade: Journal immediately. No next trade until current one is logged.</p>
+    </div>
+
+    <div class="rule-box"><div class="rule-num">SECTION 6: REVIEW SCHEDULE</div>
+      <p>Daily: Journal every trade.<br>Weekly (Sunday 30 min): Review all trades, calculate metrics.<br>Monthly: Full performance audit. Strategy adjustments based on data only.<br>Quarterly: Reassess entire trading plan.</p>
+    </div>
+</div>
+</div>
+
+<div class="page" data-page="29">
+<div class="page-inner">
+<div class="section-label">Reference</div>
+    <h2>Obsidian Trading Ledger Setup</h2>
+    <p>Obsidian is a free, local-first markdown note-taking app. It's perfect for a trading ledger because: your data stays on your device (privacy), it's searchable, linkable, and you can build a knowledge base that grows with your trading career. No subscription needed for core features.</p>
+    
+    <h3>Step 1: Install & Create Your Vault</h3>
+    <ul>
+      <li>Download Obsidian from <strong>obsidian.md</strong> (free for personal use)</li>
+      <li>Create a new vault called <strong>"Trading Vault"</strong></li>
+      <li>Go to Settings → Community Plugins → Enable community plugins</li>
+      <li>Install: <strong>Templater</strong> (for trade templates), <strong>Dataview</strong> (for dashboards), <strong>Calendar</strong> (for daily navigation)</li>
+      <li>Optional: Install <strong>Journalit</strong> plugin — purpose-built for trading journals with built-in templates</li>
+    </ul>
+
+    <h3>Step 2: Folder Structure</h3>
+    <div class="formula">
+Trading Vault/<br>
+├── 01-Daily-Journal/     (one note per trading day)<br>
+├── 02-Trade-Log/         (one note per trade)<br>
+├── 03-Setups/            (documented setups with screenshots)<br>
+├── 04-Strategy/          (your trading plan, rules, checklists)<br>
+├── 05-Education/         (notes from books, videos, concepts)<br>
+├── 06-Weekly-Reviews/    (weekly performance analysis)<br>
+├── 07-Monthly-Reviews/   (monthly audits)<br>
+├── 08-Screenshots/       (chart screenshots as attachments)<br>
+└── Templates/            (reusable templates)<br>
+    </div>
+
+    <h3>Step 3: Trade Log Template</h3>
+    <p>Create a file in Templates/ called "Trade Template.md" with this structure:</p>
+    <div class="formula">
+---<br>
+date: {{date}}<br>
+pair: <br>
+direction: long/short<br>
+leverage: <br>
+entry: <br>
+stop_loss: <br>
+take_profit: <br>
+position_size: <br>
+risk_amount: <br>
+rr_ratio: <br>
+result: <br>
+pnl: <br>
+emotion_before: <br>
+emotion_after: <br>
+checklist_score: /7<br>
+tags: [trade]<br>
+---<br>
+## Entry Reason<br>
+(Why did I take this trade? What was the setup?)<br><br>
+## Exit Reason<br>
+(Why did I exit? SL/TP/Manual?)<br><br>
+## Screenshot<br>
+![[paste chart screenshot here]]<br><br>
+## Lesson<br>
+(One sentence. What did this trade teach me?)<br><br>
+## Rule Violations<br>
+(Any rules broken? Be honest.)
+    </div>
+
+    <h3>Step 4: Daily Journal Template</h3>
+    <div class="formula">
+---<br>
+date: {{date}}<br>
+market_bias: bullish/bearish/neutral<br>
+trades_taken: 0<br>
+daily_pnl: 0<br>
+rules_followed: yes/no<br>
+tags: [daily]<br>
+---<br>
+## Pre-Session Plan<br>
+(What am I looking for today? Key levels?)<br><br>
+## Session Notes<br>
+(What happened? What did I observe?)<br><br>
+## Trades<br>
+- [[link to trade notes]]<br><br>
+## End-of-Day Review<br>
+(Did I follow my plan? Emotional state?)
+    </div>
+
+    <h3>Step 5: Dataview Dashboard</h3>
+    <p>Create a note called "Dashboard.md" and add this Dataview query to see all your trades with stats:</p>
+    <div class="formula">
+```dataview<br>
+TABLE pair, direction, leverage, result, pnl, rr_ratio<br>
+FROM "02-Trade-Log"<br>
+SORT date DESC<br>
+```
+    </div>
+    <p>This automatically generates a table of all your trades. You can filter by pair, result (win/loss), or date range. As your trade log grows, this becomes your personal analytics dashboard.</p>
+
+    <div class="callout">
+      <p><strong>The key habit:</strong> After EVERY trade, create a new note from the trade template, fill it in, and link it from your daily journal. Screenshot your chart and paste it in. This takes 5 minutes and it's the single most valuable thing you can do for your development as a trader. The traders who journal consistently improve. The ones who don't, repeat the same mistakes forever.</p>
+    </div>
+</div>
+</div>
+
+<div class="page" data-page="30">
+<div class="page-inner">
+    <div class="section-label">Final Warning</div>
+    <h2>Traps That Will Tempt You</h2>
+
+    <div class="rule-box"><div class="rule-num">TRAP 01</div><p><strong>Jumping to 10x+ before you're ready.</strong> "Someone I know does it" is not a strategy. They have years of pattern recognition you don't have yet.</p></div>
+    <div class="rule-box"><div class="rule-num">TRAP 02</div><p><strong>Altcoin leverage.</strong> Alts move 30–50% in a day. At 3x that's potential liquidation. BTC/ETH only until you have months of data.</p></div>
+    <div class="rule-box"><div class="rule-num">TRAP 03</div><p><strong>Holding overnight "because it'll recover."</strong> Funding rates eat your margin. Hope is not a strategy.</p></div>
+    <div class="rule-box"><div class="rule-num">TRAP 04</div><p><strong>Trading through major news.</strong> FOMC, CPI, rate decisions create massive wicks that liquidate in seconds. Check ForexFactory. Stay flat.</p></div>
+    <div class="rule-box"><div class="rule-num">TRAP 05</div><p><strong>Averaging down with leverage.</strong> "Scaling into a loser" turns a 1% loss into liquidation. Your stop was hit for a reason.</p></div>
+    <div class="rule-box"><div class="rule-num">TRAP 06</div><p><strong>Copy trading on Naga.</strong> You learn nothing. When they draw down, you panic-exit at the worst time.</p></div>
+    <div class="rule-box"><div class="rule-num">TRAP 07</div><p><strong>Indicator shopping.</strong> Adding 10 indicators doesn't make you 10x better. It makes you 10x more confused.</p></div>
+    <div class="rule-box"><div class="rule-num">TRAP 08</div><p><strong>Trading on your phone in bed at 2am.</strong> Leverage trading from bed is financial self-harm. Desktop. 45 minutes. At a desk.</p></div>
+
+    <div class="callout" style="margin-top: 2rem;">
+      <p><strong>The final truth:</strong> The goal of trading education is not to make money. It's to stop losing money. Profits come after.</p>
+      <p style="margin-top: 0.5rem; margin-bottom: 0;">The traders who made it took years. Respect the process, build YOUR system, and the results will follow — on your own terms.</p>
+    </div>
+
+    <p style="text-align: center; color: var(--text-muted); margin-top: 2rem; font-family: var(--font-mono); font-size: 0.7rem;">— END OF PLAYBOOK —</p>
+  </div>
+</div>
+
+</div><!-- end #book -->
+
+<div id="nav-bar">
+  <button class="nav-btn" id="prevBtn" onclick="prev()">← Prev</button>
+  <span id="page-indicator">0 / 30</span>
+  <button class="nav-btn" id="nextBtn" onclick="next()">Next →</button>
+</div>
+
+<div class="swipe-hint" id="swipeHint">← SWIPE TO NAVIGATE →</div>
+
+<script>
+  let current = 0;
+  const pages = document.querySelectorAll('.page');
+  const total = pages.length - 1;
+  const indicator = document.getElementById('page-indicator');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const progressBar = document.getElementById('progressBar');
+
+  function goTo(n) {
+    if (n < 0 || n > total || n === current) return;
+    const dir = n > current ? 'left' : 'right';
+    pages[current].classList.remove('active');
+    pages[current].classList.add(dir === 'left' ? 'slide-left' : 'slide-right');
+    current = n;
+    pages[current].style.display = 'block';
+    pages[current].classList.remove('slide-left', 'slide-right');
+    pages[current].classList.add(dir === 'left' ? 'slide-right' : 'slide-left');
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        pages[current].classList.remove('slide-left', 'slide-right');
+        pages[current].classList.add('active');
+        pages[current].scrollTop = 0;
+      });
+    });
+    // Clean up old page after transition
+    const old = dir === 'left' ? current - 1 : current + 1;
+    if (old >= 0 && old <= total && old !== current) {
+      setTimeout(() => {
+        pages[old].classList.remove('slide-left', 'slide-right', 'active');
+        pages[old].style.display = '';
+      }, 400);
+    }
+    // Clean all non-current
+    setTimeout(() => {
+      pages.forEach((p, i) => {
+        if (i !== current) {
+          p.classList.remove('active', 'slide-left', 'slide-right');
+          p.style.display = '';
+        }
+      });
+    }, 450);
+    updateUI();
+  }
+
+  function next() { goTo(current + 1); }
+  function prev() { goTo(current - 1); }
+
+  function updateUI() {
+    indicator.textContent = current + ' / ' + total;
+    prevBtn.disabled = current === 0;
+    nextBtn.disabled = current === total;
+    progressBar.style.width = (current / total * 100) + '%';
+  }
+
+  // Keyboard
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') next();
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') prev();
+  });
+
+  // Touch swipe
+  let touchStartX = 0, touchStartY = 0, touchStartTime = 0;
+  document.addEventListener('touchstart', e => {
+    touchStartX = e.changedTouches[0].screenX;
+    touchStartY = e.changedTouches[0].screenY;
+    touchStartTime = Date.now();
+  }, { passive: true });
+
+  document.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].screenX - touchStartX;
+    const dy = e.changedTouches[0].screenY - touchStartY;
+    const dt = Date.now() - touchStartTime;
+    // Only trigger on horizontal swipe that's faster than a scroll
+    if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5 && dt < 500) {
+      if (dx < 0) next();
+      else prev();
+    }
+  }, { passive: true });
+
+  updateUI();
+</script>
+</body>
+</html>
