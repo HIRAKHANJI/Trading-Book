@@ -2753,84 +2753,107 @@ Margin Required = (Position Size × Entry) ÷ Leverage
 <div class="section-label">Your Trading Ledger</div>
 <h2>Trading Ledger</h2>
 
+<!-- Tabs -->
+<div class="ledger-tabs">
+  <button class="ledger-tab active" onclick="switchLedgerTab('trades',this)">Trades</button>
+  <button class="ledger-tab" onclick="switchLedgerTab('journal',this)">Journal</button>
+  <button class="ledger-tab" onclick="switchLedgerTab('log',this)">Log Trade</button>
+</div>
+
+<!-- ═══ TRADES PANEL ═══ -->
+<div class="ledger-panel active" id="panelTrades">
+
 <!-- Stats Dashboard -->
 <div class="ledger-stats" id="ledgerStats">
-<div class="stat-grid">
-<div class="stat-box"><div class="stat-num" id="statTrades">0</div><div class="stat-label">Trades</div></div>
-<div class="stat-box"><div class="stat-num" id="statWinRate">0%</div><div class="stat-label">Win Rate</div></div>
-<div class="stat-box"><div class="stat-num" id="statAvgRR">0</div><div class="stat-label">Avg R:R</div></div>
-<div class="stat-box"><div class="stat-num" id="statPnL">$0</div><div class="stat-label">Total P&L</div></div>
-<div class="stat-box"><div class="stat-num" id="statPF">0</div><div class="stat-label">Profit Factor</div></div>
-<div class="stat-box"><div class="stat-num" id="statStreak">0</div><div class="stat-label">Streak</div></div>
-</div>
+  <div class="ledger-stat"><div class="stat-value" id="statTrades">0</div><div class="stat-label">Trades</div></div>
+  <div class="ledger-stat"><div class="stat-value" id="statWinRate">0%</div><div class="stat-label">Win Rate</div></div>
+  <div class="ledger-stat"><div class="stat-value" id="statAvgRR">0</div><div class="stat-label">Avg R:R</div></div>
+  <div class="ledger-stat"><div class="stat-value" id="statPnL">$0</div><div class="stat-label">Total P&L</div></div>
+  <div class="ledger-stat"><div class="stat-value" id="statPF">0</div><div class="stat-label">Profit Factor</div></div>
+  <div class="ledger-stat"><div class="stat-value" id="statStreak">0</div><div class="stat-label">Streak</div></div>
 </div>
 
 <!-- Filter Buttons -->
-<div class="ledger-filters">
-<button class="filter-btn active" onclick="filterTrades('all')">All</button>
-<button class="filter-btn" onclick="filterTrades('win')">Wins</button>
-<button class="filter-btn" onclick="filterTrades('loss')">Losses</button>
-<button class="filter-btn" onclick="filterTrades('BTC')">BTC</button>
-<button class="filter-btn" onclick="filterTrades('ETH')">ETH</button>
+<div class="ledger-tabs" style="margin-bottom:1rem;">
+  <button class="ledger-tab active" onclick="filterTrades('all',this)">All</button>
+  <button class="ledger-tab" onclick="filterTrades('win',this)">Wins</button>
+  <button class="ledger-tab" onclick="filterTrades('loss',this)">Losses</button>
+  <button class="ledger-tab" onclick="filterTrades('BTC',this)">BTC</button>
+  <button class="ledger-tab" onclick="filterTrades('ETH',this)">ETH</button>
 </div>
 
 <!-- Trade History -->
 <div class="ledger-history" id="tradeHistory">
-<p style="color:var(--text-muted);text-align:center;padding:2rem 0;">No trades logged yet. Add your first trade below.</p>
-</div>
-
-<!-- Add Trade Form -->
-<h3 style="margin-top:2rem;">Log a Closed Trade</h3>
-<p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:1rem;">Log each trade <strong style="color:var(--accent);">after it closes</strong> — when you know the result, final P&L, and can reflect honestly on your emotions and decisions.</p>
-<div class="ledger-form" id="tradeForm">
-<div class="form-row">
-<div class="form-group"><label>Date Closed</label><input type="date" id="tfDate"></div>
-<div class="form-group"><label>Pair</label><input type="text" id="tfPair" list="pairList" placeholder="BTC/USDT" autocomplete="off"><datalist id="pairList"><option value="BTC/USDT"><option value="ETH/USDT"><option value="SOL/USDT"><option value="XRP/USDT"><option value="EUR/USD"><option value="GBP/USD"></datalist></div>
-</div>
-<div class="form-row">
-<div class="form-group"><label>Direction</label>
-<div class="toggle-group"><button class="toggle-btn active" data-val="Long" onclick="toggleBtn(this)">Long</button><button class="toggle-btn" data-val="Short" onclick="toggleBtn(this)">Short</button></div></div>
-<div class="form-group"><label>Leverage</label><input type="number" id="tfLev" placeholder="e.g. 5" min="1" max="125"></div>
-</div>
-<div class="form-row">
-<div class="form-group"><label>Entry Price</label><input type="number" id="tfEntry" step="any" placeholder="65000"></div>
-<div class="form-group"><label>Stop Loss</label><input type="number" id="tfSL" step="any" placeholder="64000"></div>
-<div class="form-group"><label>Take Profit</label><input type="number" id="tfTP" step="any" placeholder="67000"></div>
-</div>
-<div class="form-row">
-<div class="form-group"><label>Position Size ($)</label><input type="number" id="tfSize" step="any" placeholder="1000"></div>
-<div class="form-group"><label>R:R Ratio</label><input type="number" id="tfRR" step="any" placeholder="2.0"></div>
-</div>
-<div class="form-row">
-<div class="form-group"><label>Result</label>
-<div class="toggle-group"><button class="toggle-btn" data-val="Win" onclick="toggleBtn(this)">Win</button><button class="toggle-btn" data-val="Loss" onclick="toggleBtn(this)">Loss</button><button class="toggle-btn" data-val="BE" onclick="toggleBtn(this)">BE</button></div></div>
-<div class="form-group"><label>P&L ($)</label><input type="number" id="tfPnL" step="any" placeholder="+150 or -100"></div>
-</div>
-<div class="form-row">
-<div class="form-group"><label>Checklist Score</label><select id="tfScore"><option>7/7</option><option>6/7</option><option>5/7</option><option>4/7</option><option>3/7</option><option>2/7</option><option>1/7</option><option>0/7</option></select></div>
-<div class="form-group"><label>Emotion Before Entry</label><select id="tfEmoBefore"><option>Calm</option><option>Confident</option><option>Anxious</option><option>Excited</option><option>FOMO</option><option>Revenge</option><option>Tired</option><option>Tilted</option></select></div>
-<div class="form-group"><label>Emotion After Close</label><select id="tfEmoAfter"><option>Calm</option><option>Satisfied</option><option>Frustrated</option><option>Relieved</option><option>Angry</option><option>Confident</option></select></div>
-</div>
-<div class="form-group" style="width:100%"><label>Notes</label><textarea id="tfNotes" rows="3" placeholder="Entry reason, exit reason, lessons learned..."></textarea></div>
-<button class="ledger-save" onclick="saveTrade()">Save Trade</button>
-</div>
-
-<!-- Daily Journal -->
-<h3 style="margin-top:2rem;">Daily Journal</h3>
-<div class="ledger-form">
-<div class="form-row">
-<div class="form-group"><label>Date</label><input type="date" id="jDate"></div>
-<div class="form-group"><label>Market Bias</label>
-<div class="toggle-group"><button class="toggle-btn" data-val="Bullish" onclick="toggleBtn(this)">Bullish</button><button class="toggle-btn" data-val="Bearish" onclick="toggleBtn(this)">Bearish</button><button class="toggle-btn" data-val="Neutral" onclick="toggleBtn(this)">Neutral</button></div></div>
-</div>
-<div class="form-group" style="width:100%"><label>Notes</label><textarea id="jNotes" rows="4" placeholder="Pre-session plan, session observations, end-of-day review..."></textarea></div>
-<button class="ledger-save" onclick="saveJournal()">Save Journal Entry</button>
+  <p style="color:var(--text-muted);text-align:center;padding:2rem 0;font-size:0.85rem;">No trades logged yet. Tap "Log Trade" to add your first.</p>
 </div>
 
 <!-- Export -->
-<div style="text-align:center;margin-top:2rem;">
-<button class="ledger-save" onclick="exportCSV()" style="background:var(--blue);">Export All Trades to CSV</button>
+<button class="ledger-export" onclick="exportCSV()">Export All Trades to CSV</button>
+
+</div><!-- end panelTrades -->
+
+<!-- ═══ LOG TRADE PANEL ═══ -->
+<div class="ledger-panel" id="panelLog">
+<p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:1.2rem;">Log each trade <strong style="color:var(--accent);">after it closes</strong> — when you know the result, final P&L, and can reflect honestly.</p>
+
+<div class="ledger-form" id="tradeForm">
+  <div class="ledger-row">
+    <div class="ledger-field"><label>Date Closed</label><input type="date" id="tfDate"></div>
+    <div class="ledger-field"><label>Pair</label><input type="text" id="tfPair" list="pairList" placeholder="BTC/USDT" autocomplete="off"><datalist id="pairList"><option value="BTC/USDT"><option value="ETH/USDT"><option value="SOL/USDT"><option value="XRP/USDT"><option value="EUR/USD"><option value="GBP/USD"></datalist></div>
+  </div>
+  <div class="ledger-row">
+    <div class="ledger-field"><label>Direction</label>
+      <div class="ledger-toggle" id="toggleDir"><button class="ledger-toggle-btn active-long" data-val="Long" onclick="ledgerToggle(this,'dir')">Long</button><button class="ledger-toggle-btn" data-val="Short" onclick="ledgerToggle(this,'dir')">Short</button></div>
+    </div>
+    <div class="ledger-field"><label>Leverage</label><input type="number" id="tfLev" placeholder="e.g. 5" min="1" max="125"></div>
+  </div>
+  <div class="ledger-row">
+    <div class="ledger-field"><label>Entry Price</label><input type="number" id="tfEntry" step="any" placeholder="65000"></div>
+    <div class="ledger-field"><label>Exit Price</label><input type="number" id="tfExit" step="any" placeholder="66500"></div>
+  </div>
+  <div class="ledger-row">
+    <div class="ledger-field"><label>Stop Loss</label><input type="number" id="tfSL" step="any" placeholder="64000"></div>
+    <div class="ledger-field"><label>Take Profit</label><input type="number" id="tfTP" step="any" placeholder="67000"></div>
+  </div>
+  <div class="ledger-row">
+    <div class="ledger-field"><label>Position Size ($)</label><input type="number" id="tfSize" step="any" placeholder="1000"></div>
+    <div class="ledger-field"><label>R:R Ratio</label><input type="number" id="tfRR" step="any" placeholder="2.0"></div>
+  </div>
+  <div class="ledger-row">
+    <div class="ledger-field"><label>Result</label>
+      <div class="ledger-toggle" id="toggleRes"><button class="ledger-toggle-btn" data-val="Win" onclick="ledgerToggle(this,'res')">Win</button><button class="ledger-toggle-btn" data-val="Loss" onclick="ledgerToggle(this,'res')">Loss</button><button class="ledger-toggle-btn" data-val="BE" onclick="ledgerToggle(this,'res')">BE</button></div>
+    </div>
+    <div class="ledger-field"><label>P&L ($)</label><input type="number" id="tfPnL" step="any" placeholder="+150 or -100"></div>
+  </div>
+  <div class="ledger-row">
+    <div class="ledger-field"><label>Checklist Score</label><select id="tfScore"><option>7/7</option><option>6/7</option><option>5/7</option><option>4/7</option><option>3/7</option><option>2/7</option><option>1/7</option><option>0/7</option></select></div>
+    <div class="ledger-field"><label>Emotion Before Entry</label><select id="tfEmoBefore"><option>Calm</option><option>Confident</option><option>Anxious</option><option>Excited</option><option>FOMO</option><option>Revenge</option><option>Tired</option><option>Tilted</option></select></div>
+  </div>
+  <div class="ledger-field"><label>Emotion After Close</label><select id="tfEmoAfter"><option>Calm</option><option>Satisfied</option><option>Frustrated</option><option>Relieved</option><option>Angry</option><option>Confident</option></select></div>
+  <div class="ledger-field"><label>Notes</label><textarea id="tfNotes" rows="3" placeholder="Entry reason, exit reason, what I learned..."></textarea></div>
+  <button class="ledger-save" onclick="saveTrade()">Save Trade</button>
 </div>
+</div><!-- end panelLog -->
+
+<!-- ═══ JOURNAL PANEL ═══ -->
+<div class="ledger-panel" id="panelJournal">
+<p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:1.2rem;">Daily notes — pre-session plan, observations, end-of-day review.</p>
+
+<div class="ledger-form" id="journalForm">
+  <div class="ledger-row">
+    <div class="ledger-field"><label>Date</label><input type="date" id="jDate"></div>
+    <div class="ledger-field"><label>Market Bias</label>
+      <div class="ledger-toggle" id="toggleBias"><button class="ledger-toggle-btn" data-val="Bullish" onclick="ledgerToggle(this,'bias')">Bullish</button><button class="ledger-toggle-btn" data-val="Bearish" onclick="ledgerToggle(this,'bias')">Bearish</button><button class="ledger-toggle-btn" data-val="Neutral" onclick="ledgerToggle(this,'bias')">Neutral</button></div>
+    </div>
+  </div>
+  <div class="ledger-field"><label>Notes</label><textarea id="jNotes" rows="5" placeholder="What am I looking for today? Key levels? What happened? Did I follow my plan?"></textarea></div>
+  <button class="ledger-save" onclick="saveJournal()">Save Journal Entry</button>
+</div>
+
+<!-- Past Journal Entries -->
+<div id="journalHistory" style="margin-top:1.5rem;"></div>
+</div><!-- end panelJournal -->
+
 </div>
 </div>
 
@@ -3060,76 +3083,148 @@ Margin Required = (Position Size × Entry) ÷ Leverage
   }
   function saveTrades(trades) { localStorage.setItem('tradingbook_trades', JSON.stringify(trades)); }
 
+  // Tab switching
+  function switchLedgerTab(tab, btn) {
+    document.querySelectorAll('.ledger-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.ledger-panel').forEach(p => p.classList.remove('active'));
+    var panelMap = { trades: 'panelTrades', log: 'panelLog', journal: 'panelJournal' };
+    var panel = document.getElementById(panelMap[tab]);
+    if (panel) panel.classList.add('active');
+  }
+
+  // Toggle buttons (direction, result, bias)
+  function ledgerToggle(btn, group) {
+    var parent = btn.parentElement;
+    parent.querySelectorAll('.ledger-toggle-btn').forEach(function(b) {
+      b.className = 'ledger-toggle-btn';
+    });
+    var val = btn.dataset.val;
+    if (group === 'dir') {
+      btn.classList.add(val === 'Long' ? 'active-long' : 'active-short');
+    } else if (group === 'res') {
+      btn.classList.add(val === 'Win' ? 'active-win' : val === 'Loss' ? 'active-loss' : 'active-be');
+    } else if (group === 'bias') {
+      btn.classList.add(val === 'Bullish' ? 'active-long' : val === 'Bearish' ? 'active-short' : 'active-be');
+    }
+  }
+
+  function getActiveToggleVal(containerId) {
+    var active = document.querySelector('#' + containerId + ' .ledger-toggle-btn[class*="active-"]');
+    return active ? active.dataset.val : '';
+  }
+
   function saveTrade() {
-    const dir = document.querySelector('#tradeForm .toggle-group:first-of-type .toggle-btn.active');
-    const res = document.querySelector('#tradeForm .toggle-group:nth-of-type(2) .toggle-btn.active');
-    const trade = {
+    var dir = getActiveToggleVal('toggleDir') || 'Long';
+    var res = getActiveToggleVal('toggleRes');
+    if (!res) { alert('Select a result (Win / Loss / BE)'); return; }
+    var pair = document.getElementById('tfPair').value.trim();
+    if (!pair) { alert('Enter a trading pair'); return; }
+
+    var trade = {
       id: Date.now(),
       date: document.getElementById('tfDate').value || new Date().toISOString().split('T')[0],
-      pair: document.getElementById('tfPair').value,
-      direction: dir ? dir.dataset.val : 'Long',
+      pair: pair,
+      direction: dir,
       leverage: parseFloat(document.getElementById('tfLev').value) || 1,
       entry: parseFloat(document.getElementById('tfEntry').value) || 0,
+      exit: parseFloat(document.getElementById('tfExit')?.value) || 0,
       sl: parseFloat(document.getElementById('tfSL').value) || 0,
       tp: parseFloat(document.getElementById('tfTP').value) || 0,
       size: parseFloat(document.getElementById('tfSize').value) || 0,
       rr: parseFloat(document.getElementById('tfRR').value) || 0,
-      result: res ? res.dataset.val : 'Win',
+      result: res,
       pnl: parseFloat(document.getElementById('tfPnL').value) || 0,
       score: document.getElementById('tfScore').value,
       emoBefore: document.getElementById('tfEmoBefore').value,
       emoAfter: document.getElementById('tfEmoAfter').value,
       notes: document.getElementById('tfNotes').value
     };
-    const trades = getTrades();
+    var trades = getTrades();
     trades.unshift(trade);
     saveTrades(trades);
     renderTrades(trades);
     updateStats(trades);
-    // Clear form
-    document.getElementById('tfEntry').value = '';
-    document.getElementById('tfSL').value = '';
-    document.getElementById('tfTP').value = '';
-    document.getElementById('tfSize').value = '';
-    document.getElementById('tfRR').value = '';
-    document.getElementById('tfPnL').value = '';
-    document.getElementById('tfNotes').value = '';
+    // Clear form fields
+    ['tfEntry','tfExit','tfSL','tfTP','tfSize','tfRR','tfPnL','tfNotes'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    // Switch to trades view
+    switchLedgerTab('trades', document.querySelector('.ledger-tab'));
   }
 
   function renderTrades(trades, filter) {
-    const el = document.getElementById('tradeHistory');
-    let filtered = trades;
-    if (filter === 'win') filtered = trades.filter(t => t.result === 'Win');
-    else if (filter === 'loss') filtered = trades.filter(t => t.result === 'Loss');
-    else if (filter === 'BTC') filtered = trades.filter(t => t.pair.includes('BTC'));
-    else if (filter === 'ETH') filtered = trades.filter(t => t.pair.includes('ETH'));
+    var el = document.getElementById('tradeHistory');
+    var filtered = trades;
+    if (filter === 'win') filtered = trades.filter(function(t) { return t.result === 'Win'; });
+    else if (filter === 'loss') filtered = trades.filter(function(t) { return t.result === 'Loss'; });
+    else if (filter === 'BTC') filtered = trades.filter(function(t) { return t.pair.includes('BTC'); });
+    else if (filter === 'ETH') filtered = trades.filter(function(t) { return t.pair.includes('ETH'); });
 
     if (filtered.length === 0) {
-      el.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:2rem 0;">No trades found.</p>';
+      el.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:2rem 0;font-size:0.85rem;">No trades found.</p>';
       return;
     }
-    let html = '<table><thead><tr><th>Date</th><th>Pair</th><th>Dir</th><th>Lev</th><th>Result</th><th>P&L</th><th>R:R</th></tr></thead><tbody>';
-    filtered.forEach(t => {
-      const color = t.result === 'Win' ? 'var(--accent)' : t.result === 'Loss' ? 'var(--red)' : 'var(--amber)';
-      html += '<tr><td>' + t.date + '</td><td>' + t.pair + '</td><td>' + t.direction + '</td><td>' + t.leverage + 'x</td><td style="color:' + color + '">' + t.result + '</td><td style="color:' + color + '">$' + t.pnl + '</td><td>' + t.rr + '</td></tr>';
+    var html = '';
+    filtered.forEach(function(t) {
+      var dirClass = t.direction === 'Long' ? 'long' : 'short';
+      var resClass = t.result === 'Win' ? 'win' : t.result === 'Loss' ? 'loss' : 'be';
+      var pnlColor = t.pnl >= 0 ? 'var(--accent)' : 'var(--red)';
+      var pnlSign = t.pnl >= 0 ? '+' : '';
+
+      html += '<div class="ledger-trade-card" onclick="this.querySelector(\'.ledger-trade-detail\').style.display=this.querySelector(\'.ledger-trade-detail\').style.display===\'block\'?\'none\':\'block\'">';
+      html += '<div class="ledger-trade-header"><span class="ledger-trade-pair">' + t.pair + '</span><span class="ledger-trade-date">' + t.date + '</span></div>';
+      html += '<div class="ledger-trade-meta">';
+      html += '<span class="ledger-trade-tag ' + dirClass + '">' + t.direction + ' ' + t.leverage + 'x</span>';
+      html += '<span class="ledger-trade-tag ' + resClass + '">' + t.result + '</span>';
+      html += '<span style="font-family:var(--font-mono);font-size:0.8rem;font-weight:600;color:' + pnlColor + '">' + pnlSign + '$' + t.pnl + '</span>';
+      if (t.rr) html += '<span style="font-family:var(--font-mono);font-size:0.65rem;color:var(--text-muted);">' + t.rr + 'R</span>';
+      html += '</div>';
+      // Expandable detail
+      html += '<div class="ledger-trade-detail" style="display:none;margin-top:0.8rem;padding-top:0.8rem;border-top:1px solid var(--border);font-size:0.8rem;color:var(--text-secondary);line-height:1.6;">';
+      if (t.entry) html += 'Entry: <strong>' + t.entry + '</strong>';
+      if (t.exit) html += ' → Exit: <strong>' + t.exit + '</strong>';
+      if (t.sl) html += ' | SL: ' + t.sl;
+      if (t.tp) html += ' | TP: ' + t.tp;
+      if (t.size) html += '<br>Size: $' + t.size;
+      html += ' | Score: ' + (t.score || '-');
+      html += '<br>Emotion: ' + (t.emoBefore || '-') + ' → ' + (t.emoAfter || '-');
+      if (t.notes) html += '<br><em style="color:var(--text-muted);">' + t.notes + '</em>';
+      html += '<br><button onclick="event.stopPropagation();deleteTrade(' + t.id + ')" style="margin-top:0.5rem;padding:0.3rem 0.8rem;font-size:0.7rem;font-family:var(--font-mono);background:transparent;color:var(--red);border:1px solid var(--red-dim);border-radius:4px;cursor:pointer;">Delete</button>';
+      html += '</div>';
+      html += '</div>';
     });
-    html += '</tbody></table>';
     el.innerHTML = html;
   }
 
-  function updateStats(trades) {
-    if (!trades.length) return;
-    const wins = trades.filter(t => t.result === 'Win');
-    const losses = trades.filter(t => t.result === 'Loss');
-    const winRate = Math.round((wins.length / trades.length) * 100);
-    const totalPnL = trades.reduce((s, t) => s + (t.pnl || 0), 0);
-    const avgRR = trades.length ? (trades.reduce((s, t) => s + (t.rr || 0), 0) / trades.length).toFixed(1) : 0;
-    const grossWins = wins.reduce((s, t) => s + Math.abs(t.pnl || 0), 0);
-    const grossLosses = losses.reduce((s, t) => s + Math.abs(t.pnl || 0), 0);
-    const pf = grossLosses > 0 ? (grossWins / grossLosses).toFixed(2) : grossWins > 0 ? '∞' : '0';
+  function deleteTrade(id) {
+    if (!confirm('Delete this trade?')) return;
+    var trades = getTrades().filter(function(t) { return t.id !== id; });
+    saveTrades(trades);
+    renderTrades(trades, currentFilter);
+    updateStats(trades);
+  }
 
-    let streak = 0, streakType = '';
-    for (let i = 0; i < trades.length; i++) {
+  function updateStats(trades) {
+    if (!trades.length) {
+      ['statTrades','statWinRate','statAvgRR','statPnL','statPF','statStreak'].forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) { el.textContent = id === 'statPnL' ? '$0' : id === 'statWinRate' ? '0%' : '0'; el.className = 'stat-value'; }
+      });
+      return;
+    }
+    var wins = trades.filter(function(t) { return t.result === 'Win'; });
+    var losses = trades.filter(function(t) { return t.result === 'Loss'; });
+    var winRate = Math.round((wins.length / trades.length) * 100);
+    var totalPnL = trades.reduce(function(s, t) { return s + (t.pnl || 0); }, 0);
+    var avgRR = (trades.reduce(function(s, t) { return s + (t.rr || 0); }, 0) / trades.length).toFixed(1);
+    var grossWins = wins.reduce(function(s, t) { return s + Math.abs(t.pnl || 0); }, 0);
+    var grossLosses = losses.reduce(function(s, t) { return s + Math.abs(t.pnl || 0); }, 0);
+    var pf = grossLosses > 0 ? (grossWins / grossLosses).toFixed(2) : grossWins > 0 ? '∞' : '0';
+
+    var streak = 0, streakType = '';
+    for (var i = 0; i < trades.length; i++) {
       if (i === 0) { streakType = trades[i].result; streak = 1; }
       else if (trades[i].result === streakType) streak++;
       else break;
@@ -3138,48 +3233,62 @@ Margin Required = (Position Size × Entry) ÷ Leverage
     document.getElementById('statTrades').textContent = trades.length;
     document.getElementById('statWinRate').textContent = winRate + '%';
     document.getElementById('statAvgRR').textContent = avgRR;
-    document.getElementById('statPnL').textContent = '$' + totalPnL.toFixed(0);
-    document.getElementById('statPnL').style.color = totalPnL >= 0 ? 'var(--accent)' : 'var(--red)';
+    var pnlEl = document.getElementById('statPnL');
+    pnlEl.textContent = (totalPnL >= 0 ? '+$' : '-$') + Math.abs(totalPnL).toFixed(0);
+    pnlEl.className = 'stat-value ' + (totalPnL >= 0 ? 'positive' : 'negative');
     document.getElementById('statPF').textContent = pf;
     document.getElementById('statStreak').textContent = streak + (streakType === 'Win' ? 'W' : streakType === 'Loss' ? 'L' : '');
   }
 
-  let currentFilter = 'all';
-  function filterTrades(f) {
+  var currentFilter = 'all';
+  function filterTrades(f, btn) {
     currentFilter = f;
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    event.target.classList.add('active');
+    if (btn) {
+      btn.parentElement.querySelectorAll('.ledger-tab').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+    }
     renderTrades(getTrades(), f);
   }
 
-  function toggleBtn(btn) {
-    btn.parentElement.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-  }
-
   function saveJournal() {
-    const entry = {
+    var notes = document.getElementById('jNotes').value.trim();
+    if (!notes) { alert('Write something in the notes first.'); return; }
+    var entry = {
       date: document.getElementById('jDate').value || new Date().toISOString().split('T')[0],
-      bias: document.querySelector('#tradeForm ~ div .toggle-group .toggle-btn.active')?.dataset.val || 'Neutral',
-      notes: document.getElementById('jNotes').value
+      bias: getActiveToggleVal('toggleBias') || 'Neutral',
+      notes: notes
     };
-    const journal = JSON.parse(localStorage.getItem('tradingbook_journal') || '[]');
+    var journal = JSON.parse(localStorage.getItem('tradingbook_journal') || '[]');
     journal.unshift(entry);
     localStorage.setItem('tradingbook_journal', JSON.stringify(journal));
     document.getElementById('jNotes').value = '';
-    alert('Journal entry saved!');
+    renderJournal();
+  }
+
+  function renderJournal() {
+    var el = document.getElementById('journalHistory');
+    if (!el) return;
+    var journal = JSON.parse(localStorage.getItem('tradingbook_journal') || '[]');
+    if (!journal.length) { el.innerHTML = ''; return; }
+    var html = '<h4 style="color:var(--text-muted);font-size:0.75rem;font-family:var(--font-mono);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.8rem;">Past Entries</h4>';
+    journal.slice(0, 10).forEach(function(j) {
+      var biasColor = j.bias === 'Bullish' ? 'var(--accent)' : j.bias === 'Bearish' ? 'var(--red)' : 'var(--amber)';
+      html += '<div class="ledger-trade-card"><div class="ledger-trade-header"><span class="ledger-trade-pair" style="color:' + biasColor + '">' + j.bias + '</span><span class="ledger-trade-date">' + j.date + '</span></div>';
+      html += '<p style="margin:0.4rem 0 0;font-size:0.8rem;color:var(--text-secondary);line-height:1.6;">' + j.notes + '</p></div>';
+    });
+    el.innerHTML = html;
   }
 
   function exportCSV() {
-    const trades = getTrades();
+    var trades = getTrades();
     if (!trades.length) { alert('No trades to export.'); return; }
-    const headers = ['Date','Pair','Direction','Leverage','Entry','SL','TP','Size','RR','Result','PnL','Score','EmoBefore','EmoAfter','Notes'];
-    let csv = headers.join(',') + '\n';
-    trades.forEach(t => {
-      csv += [t.date,t.pair,t.direction,t.leverage,t.entry,t.sl,t.tp,t.size,t.rr,t.result,t.pnl,t.score,t.emoBefore,t.emoAfter,'"'+(t.notes||'').replace(/"/g,'""')+'"'].join(',') + '\n';
+    var headers = ['Date','Pair','Direction','Leverage','Entry','Exit','SL','TP','Size','RR','Result','PnL','Score','EmoBefore','EmoAfter','Notes'];
+    var csv = headers.join(',') + '\n';
+    trades.forEach(function(t) {
+      csv += [t.date,t.pair,t.direction,t.leverage,t.entry,t.exit||'',t.sl,t.tp,t.size,t.rr,t.result,t.pnl,t.score,t.emoBefore,t.emoAfter,'"'+(t.notes||'').replace(/"/g,'""')+'"'].join(',') + '\n';
     });
-    const blob = new Blob([csv], {type:'text/csv'});
-    const a = document.createElement('a');
+    var blob = new Blob([csv], {type:'text/csv'});
+    var a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = 'trading_ledger_' + new Date().toISOString().split('T')[0] + '.csv';
     a.click();
@@ -3188,8 +3297,9 @@ Margin Required = (Position Size × Entry) ÷ Leverage
   // Initialize on load
   document.getElementById('tfDate').value = new Date().toISOString().split('T')[0];
   document.getElementById('jDate').value = new Date().toISOString().split('T')[0];
-  const loadedTrades = getTrades();
+  var loadedTrades = getTrades();
   if (loadedTrades.length) { renderTrades(loadedTrades); updateStats(loadedTrades); }
+  renderJournal();
   initQuizzes();
 </script>
 </body>
