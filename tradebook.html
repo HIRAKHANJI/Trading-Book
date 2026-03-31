@@ -5,8 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0a0e17">
 <link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='22' fill='%230a0e17'/><text x='90' y='125' font-size='100' text-anchor='middle' fill='%2300e676' font-family='serif'>T</text></svg>">
 <title>The Trading Playbook</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=JetBrains+Mono:wght@400;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -29,415 +31,331 @@
     --font-body: 'Outfit', sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
   }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
   html, body {
-    width: 100%; height: 100%;
-    overflow: hidden;
-    background: var(--bg-primary);
-    color: var(--text-primary);
+    width: 100%; height: 100%; overflow: hidden;
+    background: var(--bg-primary); color: var(--text-primary);
     font-family: var(--font-body);
-    -webkit-user-select: none;
-    user-select: none;
+    -webkit-user-select: none; user-select: none;
     -webkit-tap-highlight-color: transparent;
   }
-
-  /* ─── BOOK CONTAINER ─── */
-  #book {
-    width: 100%; height: 100%;
-    position: relative;
-    overflow: hidden;
-  }
-
+  #book { width: 100%; height: 100%; position: relative; overflow: hidden; }
   .page {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 2rem 1.5rem 5rem;
-    display: none;
-    opacity: 0;
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    overflow-y: auto; overflow-x: hidden;
+    padding: 2rem 1.5rem 5rem; display: none; opacity: 0;
     transition: opacity 0.35s ease, transform 0.35s ease;
     -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
-    scrollbar-color: var(--border) transparent;
+    scrollbar-width: thin; scrollbar-color: var(--border) transparent;
   }
   .page::-webkit-scrollbar { width: 4px; }
   .page::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-  .page.active {
-    display: block;
-    opacity: 1;
-    transform: translateX(0);
-  }
+  .page.active { display: block; opacity: 1; transform: translateX(0); }
   .page.slide-left { transform: translateX(-40px); opacity: 0; }
   .page.slide-right { transform: translateX(40px); opacity: 0; }
-
-  /* ─── NAVIGATION ─── */
   #nav-bar {
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    height: 3.5rem;
+    position: fixed; bottom: 0; left: 0; right: 0; height: 3.5rem;
     background: linear-gradient(to top, var(--bg-primary) 60%, transparent);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 1rem;
-    z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 1rem; z-index: 100;
   }
   .nav-btn {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    color: var(--text-primary);
-    font-family: var(--font-body);
-    font-size: 0.85rem;
-    font-weight: 500;
-    padding: 0.5rem 1.2rem;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
+    background: var(--bg-card); border: 1px solid var(--border);
+    color: var(--text-primary); font-family: var(--font-body);
+    font-size: 0.85rem; font-weight: 500; padding: 0.5rem 1.2rem;
+    border-radius: 8px; cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; gap: 0.4rem;
   }
   .nav-btn:hover { border-color: var(--accent); color: var(--accent); }
   .nav-btn:disabled { opacity: 0.3; pointer-events: none; }
   #page-indicator {
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    letter-spacing: 0.05em;
+    font-family: var(--font-mono); font-size: 0.75rem;
+    color: var(--text-muted); letter-spacing: 0.05em;
   }
   #index-btn {
-    position: fixed;
-    top: 1rem; right: 1rem;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    color: var(--text-secondary);
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 0.4rem 0.8rem;
-    border-radius: 6px;
-    cursor: pointer;
-    z-index: 100;
-    transition: all 0.2s;
+    position: fixed; top: 1rem; right: 1rem;
+    background: var(--bg-card); border: 1px solid var(--border);
+    color: var(--text-secondary); font-family: var(--font-mono);
+    font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 0.4rem 0.8rem; border-radius: 6px; cursor: pointer;
+    z-index: 100; transition: all 0.2s;
   }
   #index-btn:hover { color: var(--accent); border-color: var(--accent); }
-
-  /* ─── COVER PAGE ─── */
   .cover {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    text-align: center;
-    padding: 2rem;
-    position: relative;
+    display: flex; flex-direction: column; justify-content: center;
+    align-items: center; min-height: 100vh; text-align: center;
+    padding: 2rem; position: relative;
   }
   .cover::before {
-    content: '';
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 300px; height: 300px;
+    content: ''; position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%); width: 300px; height: 300px;
     background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
-    filter: blur(60px);
-    pointer-events: none;
+    filter: blur(60px); pointer-events: none;
   }
   .cover-label {
-    font-family: var(--font-mono);
-    font-size: 0.65rem;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 1.5rem;
+    font-family: var(--font-mono); font-size: 0.65rem;
+    letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 1.5rem;
   }
   .cover h1 {
-    font-family: var(--font-display);
-    font-size: clamp(2.5rem, 8vw, 4.5rem);
-    line-height: 1.1;
-    margin-bottom: 0.5rem;
+    font-family: var(--font-display); font-size: clamp(2.5rem, 8vw, 4.5rem);
+    line-height: 1.1; margin-bottom: 0.5rem;
     background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
   }
-  .cover-sub {
-    font-size: 1.1rem;
-    color: var(--text-secondary);
-    font-weight: 300;
-    margin-bottom: 2rem;
-  }
-  .cover-meta {
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    color: var(--text-muted);
-    line-height: 2;
-  }
+  .cover-sub { font-size: 1.1rem; color: var(--text-secondary); font-weight: 300; margin-bottom: 2rem; }
+  .cover-meta { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted); line-height: 2; }
   .cover-start {
-    margin-top: 2.5rem;
-    padding: 0.8rem 2rem;
-    background: var(--accent);
-    color: var(--bg-primary);
-    font-family: var(--font-body);
-    font-weight: 600;
-    font-size: 0.9rem;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s;
+    margin-top: 2.5rem; padding: 0.8rem 2rem; background: var(--accent);
+    color: var(--bg-primary); font-family: var(--font-body); font-weight: 600;
+    font-size: 0.9rem; border: none; border-radius: 8px; cursor: pointer; transition: all 0.2s;
   }
   .cover-start:hover { transform: scale(1.05); box-shadow: 0 0 30px var(--accent-glow); }
-
-  /* ─── INDEX PAGE ─── */
-  .index-list {
-    list-style: none;
-    margin-top: 1.5rem;
-  }
-  .index-list li {
-    border-bottom: 1px solid var(--border);
-  }
+  .index-list { list-style: none; margin-top: 1.5rem; }
+  .index-list li { border-bottom: 1px solid var(--border); }
   .index-list a {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.9rem 0.5rem;
-    color: var(--text-primary);
-    text-decoration: none;
-    font-size: 0.9rem;
-    font-weight: 400;
-    transition: all 0.15s;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0.9rem 0.5rem; color: var(--text-primary); text-decoration: none;
+    font-size: 0.9rem; font-weight: 400; transition: all 0.15s;
   }
   .index-list a:hover { color: var(--accent); padding-left: 1rem; }
-  .index-list .idx-num {
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    color: var(--text-muted);
-    min-width: 2rem;
-  }
+  .index-list .idx-num { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted); min-width: 2rem; }
   .index-list .idx-phase {
-    font-family: var(--font-mono);
-    font-size: 0.6rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--accent-dim);
-    padding: 0.15rem 0.5rem;
-    border: 1px solid var(--accent-dim);
-    border-radius: 3px;
-    margin-left: auto;
-    margin-right: 0.5rem;
+    font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--accent-dim);
+    padding: 0.15rem 0.5rem; border: 1px solid var(--accent-dim);
+    border-radius: 3px; margin-left: auto; margin-right: 0.5rem;
   }
-
-  /* ─── CONTENT STYLES ─── */
   .page-inner { max-width: 640px; margin: 0 auto; }
-
   .section-label {
-    font-family: var(--font-mono);
-    font-size: 0.6rem;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 0.5rem;
+    font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.25em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 0.5rem;
   }
-
-  h2 {
-    font-family: var(--font-display);
-    font-size: clamp(1.6rem, 5vw, 2.2rem);
-    line-height: 1.2;
-    margin-bottom: 1.2rem;
-  }
-
-  h3 {
-    font-family: var(--font-body);
-    font-weight: 600;
-    font-size: 1.1rem;
-    color: var(--accent);
-    margin: 1.8rem 0 0.6rem;
-  }
-
-  h4 {
-    font-family: var(--font-body);
-    font-weight: 600;
-    font-size: 0.95rem;
-    color: var(--text-primary);
-    margin: 1.2rem 0 0.4rem;
-  }
-
-  p, li {
-    font-size: 0.9rem;
-    line-height: 1.7;
-    color: var(--text-secondary);
-    margin-bottom: 0.8rem;
-  }
-
+  h2 { font-family: var(--font-display); font-size: clamp(1.6rem, 5vw, 2.2rem); line-height: 1.2; margin-bottom: 1.2rem; }
+  h3 { font-family: var(--font-body); font-weight: 600; font-size: 1.1rem; color: var(--accent); margin: 1.8rem 0 0.6rem; }
+  h4 { font-family: var(--font-body); font-weight: 600; font-size: 0.95rem; color: var(--text-primary); margin: 1.2rem 0 0.4rem; }
+  p, li { font-size: 0.9rem; line-height: 1.7; color: var(--text-secondary); margin-bottom: 0.8rem; }
   ul { padding-left: 1.2rem; margin-bottom: 1rem; }
   li { margin-bottom: 0.4rem; }
   li::marker { color: var(--accent-dim); }
-
   strong { color: var(--text-primary); font-weight: 600; }
   em { color: var(--amber); font-style: normal; font-weight: 500; }
-
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
   .callout {
-    background: var(--bg-card);
-    border-left: 3px solid var(--accent);
-    padding: 1rem 1.2rem;
-    border-radius: 0 8px 8px 0;
-    margin: 1.2rem 0;
+    background: var(--bg-card); border-left: 3px solid var(--accent);
+    padding: 1rem 1.2rem; border-radius: 0 8px 8px 0; margin: 1.2rem 0;
   }
   .callout p { margin: 0; }
-
-  .callout-red {
-    background: rgba(255,82,82,0.08);
-    border-left-color: var(--red);
-  }
-  .callout-amber {
-    background: rgba(255,193,7,0.08);
-    border-left-color: var(--amber);
-  }
-
+  .callout-red { background: rgba(255,82,82,0.08); border-left-color: var(--red); }
+  .callout-amber { background: rgba(255,193,7,0.08); border-left-color: var(--amber); }
   .rule-box {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 1.2rem;
-    margin: 1rem 0;
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 1.2rem; margin: 1rem 0;
   }
   .rule-box .rule-num {
-    font-family: var(--font-mono);
-    font-size: 0.65rem;
-    color: var(--accent);
-    letter-spacing: 0.1em;
-    margin-bottom: 0.3rem;
+    font-family: var(--font-mono); font-size: 0.65rem; color: var(--accent);
+    letter-spacing: 0.1em; margin-bottom: 0.3rem;
   }
   .rule-box p { margin: 0; font-size: 0.85rem; }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 1rem 0;
-    font-size: 0.8rem;
-  }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.8rem; }
   thead { border-bottom: 2px solid var(--accent-dim); }
   th {
-    text-align: left;
-    padding: 0.6rem 0.5rem;
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    color: var(--accent);
-    font-weight: 600;
+    text-align: left; padding: 0.6rem 0.5rem; font-family: var(--font-mono);
+    font-size: 0.7rem; letter-spacing: 0.05em; text-transform: uppercase;
+    color: var(--accent); font-weight: 600;
   }
-  td {
-    padding: 0.5rem;
-    border-bottom: 1px solid var(--border);
-    color: var(--text-secondary);
-    line-height: 1.5;
-  }
-
+  td { padding: 0.5rem; border-bottom: 1px solid var(--border); color: var(--text-secondary); line-height: 1.5; }
   code {
-    font-family: var(--font-mono);
-    font-size: 0.8rem;
-    background: var(--bg-card);
-    padding: 0.15rem 0.4rem;
-    border-radius: 4px;
-    color: var(--accent);
+    font-family: var(--font-mono); font-size: 0.8rem; background: var(--bg-card);
+    padding: 0.15rem 0.4rem; border-radius: 4px; color: var(--accent);
   }
-
   .formula {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 1rem;
-    margin: 1rem 0;
-    font-family: var(--font-mono);
-    font-size: 0.8rem;
-    color: var(--accent);
-    line-height: 1.8;
-    overflow-x: auto;
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 8px; padding: 1rem; margin: 1rem 0;
+    font-family: var(--font-mono); font-size: 0.8rem;
+    color: var(--accent); line-height: 1.8; overflow-x: auto;
   }
-
   .source-tag {
-    display: inline-block;
-    font-family: var(--font-mono);
-    font-size: 0.6rem;
-    letter-spacing: 0.05em;
-    color: var(--text-muted);
-    border: 1px solid var(--border);
-    padding: 0.15rem 0.5rem;
-    border-radius: 3px;
-    margin: 0.2rem 0.2rem 0.2rem 0;
+    display: inline-block; font-family: var(--font-mono); font-size: 0.6rem;
+    letter-spacing: 0.05em; color: var(--text-muted);
+    border: 1px solid var(--border); padding: 0.15rem 0.5rem;
+    border-radius: 3px; margin: 0.2rem 0.2rem 0.2rem 0;
   }
-
   .checkpoint {
     background: linear-gradient(135deg, rgba(0,230,118,0.08), rgba(0,200,83,0.03));
-    border: 1px solid rgba(0,230,118,0.2);
-    border-radius: 10px;
-    padding: 1.2rem;
-    margin: 1.5rem 0;
+    border: 1px solid rgba(0,230,118,0.2); border-radius: 10px;
+    padding: 1.2rem; margin: 1.5rem 0;
   }
   .checkpoint h4 { color: var(--accent); margin-top: 0; }
-
   .swipe-hint {
-    position: fixed;
-    bottom: 4.5rem;
-    left: 50%;
-    transform: translateX(-50%);
-    font-family: var(--font-mono);
-    font-size: 0.65rem;
-    color: var(--text-muted);
-    letter-spacing: 0.1em;
-    opacity: 0.6;
-    pointer-events: none;
+    position: fixed; bottom: 4.5rem; left: 50%; transform: translateX(-50%);
+    font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted);
+    letter-spacing: 0.1em; opacity: 0.6; pointer-events: none;
     animation: fadeHint 4s ease forwards;
   }
-  @keyframes fadeHint {
-    0%, 70% { opacity: 0.6; }
-    100% { opacity: 0; }
-  }
-
+  @keyframes fadeHint { 0%, 70% { opacity: 0.6; } 100% { opacity: 0; } }
   .lev-table td:nth-child(4) { color: var(--red); }
   .lev-table td:nth-child(3) { color: var(--accent); }
-
   .progress-bar {
-    position: fixed;
-    top: 0; left: 0;
-    height: 2px;
-    background: var(--accent);
-    z-index: 200;
-    transition: width 0.35s ease;
+    position: fixed; top: 0; left: 0; height: 2px;
+    background: var(--accent); z-index: 200; transition: width 0.35s ease;
   }
-
-  @media (min-width: 768px) {
-    .page { padding: 3rem 2rem 5rem; }
+  #update-banner {
+    display: none; position: fixed; top: 0; left: 0; right: 0;
+    background: var(--accent); color: var(--bg-primary);
+    font-family: var(--font-body); font-size: 0.85rem; font-weight: 600;
+    text-align: center; padding: 0.6rem 1rem; z-index: 300; cursor: pointer;
   }
+  #update-banner.show { display: block; }
+  /* ─── QUIZ SYSTEM ─── */
+  .quiz-container { position: relative; margin: 2.5rem 0 1.5rem; padding: 1.8rem 0 0; border-top: 2px solid var(--border); }
+  .quiz-container .quiz-title { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.2rem; }
+  .quiz-question { margin-bottom: 1.8rem; }
+  .quiz-question .quiz-q-text { font-family: var(--font-body); font-size: 0.9rem; font-weight: 500; color: var(--text-primary); margin-bottom: 0.8rem; line-height: 1.6; }
+  .quiz-question .quiz-q-num { font-family: var(--font-mono); font-size: 0.7rem; color: var(--accent-dim); margin-right: 0.4rem; }
+  .quiz-options { display: flex; flex-direction: column; gap: 0.5rem; }
+  .quiz-option {
+    display: flex; align-items: center; gap: 0.8rem;
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px;
+    padding: 0.85rem 1.1rem; cursor: pointer; transition: all 0.2s ease;
+    font-family: var(--font-body); font-size: 0.85rem; color: var(--text-secondary);
+    line-height: 1.5; -webkit-user-select: none; user-select: none;
+  }
+  .quiz-option .quiz-opt-letter {
+    font-family: var(--font-mono); font-size: 0.7rem; font-weight: 600;
+    color: var(--text-muted); min-width: 1.4rem; height: 1.4rem;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--border); border-radius: 4px; flex-shrink: 0; transition: all 0.2s;
+  }
+  .quiz-option:hover { border-color: var(--accent); background: rgba(0,230,118,0.04); }
+  .quiz-option:hover .quiz-opt-letter { border-color: var(--accent); color: var(--accent); }
+  .quiz-option.selected { border-color: var(--accent); background: rgba(0,230,118,0.08); color: var(--text-primary); }
+  .quiz-option.selected .quiz-opt-letter { background: var(--accent); color: var(--bg-primary); border-color: var(--accent); }
+  .quiz-option.correct { border-color: var(--accent); background: rgba(0,230,118,0.12); box-shadow: 0 0 20px rgba(0,230,118,0.1); color: var(--text-primary); pointer-events: none; }
+  .quiz-option.correct .quiz-opt-letter { background: var(--accent); color: var(--bg-primary); border-color: var(--accent); }
+  .quiz-option.wrong { border-color: var(--red); background: rgba(255,82,82,0.1); box-shadow: 0 0 20px rgba(255,82,82,0.08); color: var(--red); pointer-events: none; }
+  .quiz-option.wrong .quiz-opt-letter { background: var(--red); color: #fff; border-color: var(--red); }
+  .quiz-option.disabled { opacity: 0.4; pointer-events: none; }
+  .quiz-submit {
+    display: inline-flex; align-items: center; justify-content: center;
+    margin-top: 1.2rem; padding: 0.8rem 2rem; width: 100%;
+    background: var(--accent); color: var(--bg-primary);
+    font-family: var(--font-body); font-weight: 600; font-size: 0.9rem;
+    border: none; border-radius: 8px; cursor: pointer; transition: all 0.2s;
+  }
+  .quiz-submit:hover { transform: scale(1.02); box-shadow: 0 0 30px rgba(0,230,118,0.15); }
+  .quiz-submit:disabled { background: var(--border); color: var(--text-muted); cursor: not-allowed; transform: none; box-shadow: none; }
+  .quiz-result { margin-top: 1.2rem; padding: 1.2rem; background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; text-align: center; display: none; }
+  .quiz-result.show { display: block; animation: quizFadeIn 0.4s ease; }
+  .quiz-result .quiz-score { font-family: var(--font-display); font-size: 2rem; color: var(--text-primary); margin-bottom: 0.3rem; }
+  .quiz-result .quiz-score-label { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.8rem; }
+  .quiz-result .quiz-message { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0; }
+  .quiz-result.passed { border-color: var(--accent); box-shadow: 0 0 30px rgba(0,230,118,0.1); }
+  .quiz-result.passed .quiz-score { color: var(--accent); }
+  .quiz-result.failed { border-color: var(--amber); box-shadow: 0 0 30px rgba(255,193,7,0.1); }
+  .quiz-result.failed .quiz-score { color: var(--amber); }
+  .quiz-reset {
+    display: inline-flex; align-items: center; justify-content: center;
+    margin-top: 1rem; padding: 0.6rem 1.6rem; background: transparent;
+    color: var(--text-secondary); font-family: var(--font-body); font-weight: 500;
+    font-size: 0.85rem; border: 1px solid var(--border); border-radius: 8px;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .quiz-reset:hover { border-color: var(--accent); color: var(--accent); }
+  .quiz-lock {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(10,14,23,0.75); backdrop-filter: blur(3px);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    z-index: 10; border-radius: 10px;
+  }
+  .quiz-lock .quiz-lock-badge { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); background: rgba(0,230,118,0.1); border: 1px solid var(--accent); padding: 0.5rem 1.5rem; border-radius: 6px; }
+  .quiz-lock .quiz-lock-score { font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); margin-top: 0.4rem; }
+  .quiz-lock .quiz-lock-retake { margin-top: 0.8rem; font-family: var(--font-body); font-size: 0.75rem; color: var(--text-muted); background: transparent; border: 1px solid var(--border); padding: 0.35rem 1rem; border-radius: 6px; cursor: pointer; }
+  @keyframes quizFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  /* ─── LEDGER ─── */
+  .ledger-tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .ledger-tab { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.05em; padding: 0.5rem 1rem; border: 1px solid var(--border); border-radius: 6px; background: transparent; color: var(--text-muted); cursor: pointer; transition: all 0.2s; }
+  .ledger-tab.active { background: var(--accent); color: var(--bg-primary); border-color: var(--accent); }
+  .ledger-panel { display: none; }
+  .ledger-panel.active { display: block; }
+  .ledger-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-bottom: 1.5rem; }
+  .ledger-stat { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 0.8rem; text-align: center; }
+  .ledger-stat .stat-value { font-family: var(--font-display); font-size: 1.3rem; color: var(--text-primary); }
+  .ledger-stat .stat-label { font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-muted); margin-top: 0.2rem; }
+  .ledger-stat .stat-value.positive { color: var(--accent); }
+  .ledger-stat .stat-value.negative { color: var(--red); }
+  .ledger-form { display: flex; flex-direction: column; gap: 0.8rem; }
+  .ledger-field label { display: block; font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.3rem; }
+  .ledger-field input, .ledger-field select, .ledger-field textarea { width: 100%; padding: 0.6rem 0.8rem; background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font-family: var(--font-body); font-size: 0.85rem; }
+  .ledger-field input:focus, .ledger-field select:focus, .ledger-field textarea:focus { outline: none; border-color: var(--accent); }
+  .ledger-field textarea { min-height: 60px; resize: vertical; }
+  .ledger-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+  .ledger-toggle { display: flex; gap: 0.5rem; }
+  .ledger-toggle-btn { flex: 1; padding: 0.5rem; text-align: center; font-family: var(--font-mono); font-size: 0.75rem; font-weight: 600; border: 1px solid var(--border); border-radius: 6px; background: transparent; color: var(--text-muted); cursor: pointer; transition: all 0.2s; }
+  .ledger-toggle-btn.active-long { background: rgba(0,230,118,0.15); color: var(--accent); border-color: var(--accent); }
+  .ledger-toggle-btn.active-short { background: rgba(255,82,82,0.15); color: var(--red); border-color: var(--red); }
+  .ledger-toggle-btn.active-win { background: rgba(0,230,118,0.15); color: var(--accent); border-color: var(--accent); }
+  .ledger-toggle-btn.active-loss { background: rgba(255,82,82,0.15); color: var(--red); border-color: var(--red); }
+  .ledger-toggle-btn.active-be { background: rgba(255,193,7,0.15); color: var(--amber); border-color: var(--amber); }
+  .ledger-save { margin-top: 0.5rem; padding: 0.8rem 2rem; width: 100%; background: var(--accent); color: var(--bg-primary); font-family: var(--font-body); font-weight: 600; font-size: 0.9rem; border: none; border-radius: 8px; cursor: pointer; }
+  .ledger-export { margin-top: 0.5rem; padding: 0.6rem 1.5rem; width: 100%; background: transparent; color: var(--text-secondary); font-family: var(--font-body); font-weight: 500; font-size: 0.85rem; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; }
+  .ledger-export:hover { border-color: var(--accent); color: var(--accent); }
+  .ledger-history { max-height: 60vh; overflow-y: auto; }
+  .ledger-trade-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 0.8rem; margin-bottom: 0.5rem; cursor: pointer; transition: all 0.2s; }
+  .ledger-trade-card:hover { border-color: var(--accent); }
+  .ledger-trade-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem; }
+  .ledger-trade-pair { font-family: var(--font-mono); font-size: 0.8rem; font-weight: 600; color: var(--text-primary); }
+  .ledger-trade-date { font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); }
+  .ledger-trade-meta { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
+  .ledger-trade-tag { font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.05em; padding: 0.15rem 0.5rem; border-radius: 3px; border: 1px solid; }
+  .ledger-trade-tag.long { color: var(--accent); border-color: var(--accent-dim); }
+  .ledger-trade-tag.short { color: var(--red); border-color: var(--red-dim); }
+  .ledger-trade-tag.win { color: var(--accent); border-color: var(--accent-dim); }
+  .ledger-trade-tag.loss { color: var(--red); border-color: var(--red-dim); }
+  .ledger-trade-tag.be { color: var(--amber); border-color: var(--amber); }
+  .ledger-trade-pnl { font-family: var(--font-mono); font-size: 0.8rem; font-weight: 600; }
+  .ledger-trade-pnl.positive { color: var(--accent); }
+  .ledger-trade-pnl.negative { color: var(--red); }
+  .ledger-trade-details { display: none; margin-top: 0.6rem; padding-top: 0.6rem; border-top: 1px solid var(--border); }
+  .ledger-trade-details.show { display: block; }
+  .ledger-trade-detail-row { display: flex; justify-content: space-between; padding: 0.2rem 0; font-size: 0.8rem; }
+  .ledger-trade-detail-row .label { color: var(--text-muted); font-family: var(--font-mono); font-size: 0.7rem; }
+  .ledger-trade-detail-row .value { color: var(--text-secondary); }
+  .ledger-filter-bar { display: flex; gap: 0.4rem; margin-bottom: 1rem; flex-wrap: wrap; }
+  .ledger-filter { font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.05em; padding: 0.35rem 0.7rem; border: 1px solid var(--border); border-radius: 4px; background: transparent; color: var(--text-muted); cursor: pointer; }
+  .ledger-filter.active { background: var(--bg-card); color: var(--accent); border-color: var(--accent); }
+  .ledger-delete { font-size: 0.7rem; color: var(--red); background: transparent; border: 1px solid var(--red-dim); padding: 0.2rem 0.5rem; border-radius: 4px; cursor: pointer; margin-top: 0.5rem; }
+  /* ─── GLOSSARY ─── */
+  .glossary-grid { display: grid; gap: 0.5rem; }
+  .glossary-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 0.8rem 1rem; }
+  .glossary-term { font-family: var(--font-mono); font-size: 0.8rem; font-weight: 600; color: var(--accent); margin-bottom: 0.2rem; }
+  .glossary-def { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5; margin: 0; }
+  @media (min-width: 768px) { .page { padding: 3rem 2rem 5rem; } }
 </style>
 </head>
 <body>
 
+<div id="update-banner" onclick="location.reload()">Update available — tap to refresh</div>
 <div class="progress-bar" id="progressBar"></div>
 <button id="index-btn" onclick="goTo(1)">INDEX</button>
 
 <div id="book">
-
 <div class="page active" data-page="0">
 <div class="cover">
-    <div class="cover-label">Edition 3.0 · Comprehensive · March 2026</div>
+    <div class="cover-label">Edition 4.0 · Comprehensive · March 2026</div>
     <h1>The Trading Playbook</h1>
     <div class="cover-sub">Complete professional trading education — leveraged crypto, forex & beyond</div>
     <div class="cover-meta">
       
       Platforms: TradingView · Bybit Testnet · Naga Demo<br>
       Daily commitment: 45 minutes · Duration: 12 weeks<br>
-      31 chapters · Research-backed · Zero paid groups required
+      42 chapters · Research-backed · Zero paid groups required
     </div>
     <button class="cover-start" onclick="goTo(1)">Open Book →</button>
   </div>
 </div>
+
 
 <div class="page" data-page="1">
 <div class="page-inner">
@@ -446,33 +364,46 @@
 <ul class="index-list">
   <li><a href="#" onclick="goTo(2);return false"><span>The Non-Negotiable Rules</span><span class="idx-num">01</span></a></li>
   <li><a href="#" onclick="goTo(3);return false"><span>Platform Setup</span><span class="idx-num">02</span></a></li>
-  <li><a href="#" onclick="goTo(4);return false"><span>How Markets & Leverage Work</span><span class="idx-phase">WK 1</span><span class="idx-num">03</span></a></li>
-  <li><a href="#" onclick="goTo(5);return false"><span>Candlesticks & Price Action</span><span class="idx-phase">WK 2</span><span class="idx-num">04</span></a></li>
-  <li><a href="#" onclick="goTo(6);return false"><span>Chart Patterns</span><span class="idx-phase">WK 2</span><span class="idx-num">05</span></a></li>
-  <li><a href="#" onclick="goTo(7);return false"><span>Support, Resistance & Structure</span><span class="idx-phase">WK 3</span><span class="idx-num">06</span></a></li>
-  <li><a href="#" onclick="goTo(8);return false"><span>Fibonacci Retracements & Extensions</span><span class="idx-phase">WK 3</span><span class="idx-num">07</span></a></li>
-  <li><a href="#" onclick="goTo(9);return false"><span>Indicators — Only What You Need</span><span class="idx-phase">WK 4</span><span class="idx-num">08</span></a></li>
-  <li><a href="#" onclick="goTo(10);return false"><span>Session Analysis</span><span class="idx-phase">WK 4</span><span class="idx-num">09</span></a></li>
-  <li><a href="#" onclick="goTo(11);return false"><span>Risk Management for Leverage</span><span class="idx-phase">WK 5</span><span class="idx-num">10</span></a></li>
-  <li><a href="#" onclick="goTo(12);return false"><span>Multiple Timeframe Analysis</span><span class="idx-phase">WK 5</span><span class="idx-num">11</span></a></li>
-  <li><a href="#" onclick="goTo(13);return false"><span>Building Your Strategy</span><span class="idx-phase">WK 6</span><span class="idx-num">12</span></a></li>
-  <li><a href="#" onclick="goTo(14);return false"><span>Volume Profile & Order Flow</span><span class="idx-phase">WK 6</span><span class="idx-num">13</span></a></li>
-  <li><a href="#" onclick="goTo(15);return false"><span>Trading Psychology & Journaling</span><span class="idx-phase">WK 7</span><span class="idx-num">14</span></a></li>
-  <li><a href="#" onclick="goTo(16);return false"><span>Liquidity, Smart Money & Judas Swing</span><span class="idx-phase">WK 7</span><span class="idx-num">15</span></a></li>
-  <li><a href="#" onclick="goTo(17);return false"><span>The Wyckoff Method</span><span class="idx-phase">WK 7</span><span class="idx-num">16</span></a></li>
-  <li><a href="#" onclick="goTo(18);return false"><span>SMRT Algo Verdict & Backtesting</span><span class="idx-phase">WK 8</span><span class="idx-num">17</span></a></li>
-  <li><a href="#" onclick="goTo(19);return false"><span>Macro & Fundamental Analysis</span><span class="idx-phase">WK 8</span><span class="idx-num">18</span></a></li>
-  <li><a href="#" onclick="goTo(20);return false"><span>Live Demo Execution</span><span class="idx-phase">WK 9–10</span><span class="idx-num">19</span></a></li>
-  <li><a href="#" onclick="goTo(21);return false"><span>Advanced Trade Management</span><span class="idx-phase">WK 10</span><span class="idx-num">20</span></a></li>
-  <li><a href="#" onclick="goTo(22);return false"><span>Strategy Refinement</span><span class="idx-phase">WK 11</span><span class="idx-num">21</span></a></li>
-  <li><a href="#" onclick="goTo(23);return false"><span>Correlation Analysis</span><span class="idx-phase">WK 11</span><span class="idx-num">22</span></a></li>
-  <li><a href="#" onclick="goTo(24);return false"><span>Go / No-Go Evaluation</span><span class="idx-phase">WK 12</span><span class="idx-num">23</span></a></li>
-  <li><a href="#" onclick="goTo(25);return false"><span>Leverage Reality Table</span><span class="idx-num">24</span></a></li>
-  <li><a href="#" onclick="goTo(26);return false"><span>Free Resources Master List</span><span class="idx-num">25</span></a></li>
-  <li><a href="#" onclick="goTo(27);return false"><span>Backtesting Methodology</span><span class="idx-num">26</span></a></li>
-  <li><a href="#" onclick="goTo(28);return false"><span>Your Formal Trading Plan</span><span class="idx-num">27</span></a></li>
-  <li><a href="#" onclick="goTo(29);return false"><span>Obsidian Trading Ledger Setup</span><span class="idx-num">28</span></a></li>
-  <li><a href="#" onclick="goTo(30);return false"><span>Traps That Will Tempt You</span><span class="idx-num">29</span></a></li>
+  <li><a href="#" onclick="goTo(4);return false"><span>Glossary of Trading Terms</span><span class="idx-num">03</span></a></li>
+  <li><a href="#" onclick="goTo(5);return false"><span>How Markets & Leverage Work</span><span class="idx-phase">WK 1</span><span class="idx-num">04</span></a></li>
+  <li><a href="#" onclick="goTo(6);return false"><span>Order Types Masterclass</span><span class="idx-phase">WK 1</span><span class="idx-num">05</span></a></li>
+  <li><a href="#" onclick="goTo(7);return false"><span>How Liquidation Works</span><span class="idx-phase">WK 1</span><span class="idx-num">06</span></a></li>
+  <li><a href="#" onclick="goTo(8);return false"><span>Candlesticks & Price Action</span><span class="idx-phase">WK 2</span><span class="idx-num">07</span></a></li>
+  <li><a href="#" onclick="goTo(9);return false"><span>Chart Patterns</span><span class="idx-phase">WK 2</span><span class="idx-num">08</span></a></li>
+  <li><a href="#" onclick="goTo(10);return false"><span>Support, Resistance & Structure</span><span class="idx-phase">WK 3</span><span class="idx-num">09</span></a></li>
+  <li><a href="#" onclick="goTo(11);return false"><span>Fibonacci Retracements & Extensions</span><span class="idx-phase">WK 3</span><span class="idx-num">10</span></a></li>
+  <li><a href="#" onclick="goTo(12);return false"><span>Indicators — Only What You Need</span><span class="idx-phase">WK 4</span><span class="idx-num">11</span></a></li>
+  <li><a href="#" onclick="goTo(13);return false"><span>Session Analysis & Kill Zones</span><span class="idx-phase">WK 4</span><span class="idx-num">12</span></a></li>
+  <li><a href="#" onclick="goTo(14);return false"><span>Risk Management for Leverage</span><span class="idx-phase">WK 5</span><span class="idx-num">13</span></a></li>
+  <li><a href="#" onclick="goTo(15);return false"><span>Multiple Timeframe Analysis</span><span class="idx-phase">WK 5</span><span class="idx-num">14</span></a></li>
+  <li><a href="#" onclick="goTo(16);return false"><span>Building Your Strategy</span><span class="idx-phase">WK 6</span><span class="idx-num">15</span></a></li>
+  <li><a href="#" onclick="goTo(17);return false"><span>Volume Profile & Order Flow</span><span class="idx-phase">WK 6</span><span class="idx-num">16</span></a></li>
+  <li><a href="#" onclick="goTo(18);return false"><span>Funding Rates & Perpetual Swaps</span><span class="idx-phase">WK 7</span><span class="idx-num">17</span></a></li>
+  <li><a href="#" onclick="goTo(19);return false"><span>Categorical Trading</span><span class="idx-phase">WK 7</span><span class="idx-num">18</span></a></li>
+  <li><a href="#" onclick="goTo(20);return false"><span>Trading Psychology & Journaling</span><span class="idx-phase">WK 7</span><span class="idx-num">19</span></a></li>
+  <li><a href="#" onclick="goTo(21);return false"><span>Liquidity, Smart Money & Judas Swing</span><span class="idx-phase">WK 7</span><span class="idx-num">20</span></a></li>
+  <li><a href="#" onclick="goTo(22);return false"><span>The Wyckoff Method</span><span class="idx-phase">WK 7</span><span class="idx-num">21</span></a></li>
+  <li><a href="#" onclick="goTo(23);return false"><span>SMRT Algo Verdict & Backtesting</span><span class="idx-phase">WK 8</span><span class="idx-num">22</span></a></li>
+  <li><a href="#" onclick="goTo(24);return false"><span>Macro & Fundamental Analysis</span><span class="idx-phase">WK 8</span><span class="idx-num">23</span></a></li>
+  <li><a href="#" onclick="goTo(25);return false"><span>Live Demo Execution — Crypto</span><span class="idx-phase">WK 9–10</span><span class="idx-num">24</span></a></li>
+  <li><a href="#" onclick="goTo(26);return false"><span>Advanced Trade Management</span><span class="idx-phase">WK 10</span><span class="idx-num">25</span></a></li>
+  <li><a href="#" onclick="goTo(27);return false"><span>Reading the Order Book</span><span class="idx-phase">WK 11</span><span class="idx-num">26</span></a></li>
+  <li><a href="#" onclick="goTo(28);return false"><span>Social Discovery & Sentiment</span><span class="idx-phase">WK 11</span><span class="idx-num">27</span></a></li>
+  <li><a href="#" onclick="goTo(29);return false"><span>Strategy Refinement</span><span class="idx-phase">WK 11</span><span class="idx-num">28</span></a></li>
+  <li><a href="#" onclick="goTo(30);return false"><span>Correlation Analysis</span><span class="idx-phase">WK 11</span><span class="idx-num">29</span></a></li>
+  <li><a href="#" onclick="goTo(31);return false"><span>On-Chain Analysis</span><span class="idx-phase">WK 12</span><span class="idx-num">30</span></a></li>
+  <li><a href="#" onclick="goTo(32);return false"><span>Live Demo Execution — Forex</span><span class="idx-phase">WK 12</span><span class="idx-num">31</span></a></li>
+  <li><a href="#" onclick="goTo(33);return false"><span>Go / No-Go Evaluation</span><span class="idx-phase">WK 12</span><span class="idx-num">32</span></a></li>
+  <li><a href="#" onclick="goTo(34);return false"><span>How to Vet Your Sources</span><span class="idx-num">33</span></a></li>
+  <li><a href="#" onclick="goTo(35);return false"><span>Prop Firm Trading Guide</span><span class="idx-num">34</span></a></li>
+  <li><a href="#" onclick="goTo(36);return false"><span>Leverage Reality Table</span><span class="idx-num">35</span></a></li>
+  <li><a href="#" onclick="goTo(37);return false"><span>Free Resources Master List</span><span class="idx-num">36</span></a></li>
+  <li><a href="#" onclick="goTo(38);return false"><span>Backtesting Methodology</span><span class="idx-num">37</span></a></li>
+  <li><a href="#" onclick="goTo(39);return false"><span>Your Formal Trading Plan</span><span class="idx-num">38</span></a></li>
+  <li><a href="#" onclick="goTo(40);return false"><span>Tax & Record Keeping</span><span class="idx-num">39</span></a></li>
+  <li><a href="#" onclick="goTo(41);return false"><span>Traps That Will Tempt You</span><span class="idx-num">40</span></a></li>
+  <li><a href="#" onclick="goTo(42);return false"><span>Trading Automation 101</span><span class="idx-num">41</span></a></li>
+  <li><a href="#" onclick="goTo(43);return false"><span>Trading Ledger</span><span class="idx-num">42</span></a></li>
 </ul>
 </div>
 </div>
@@ -501,10 +432,6 @@
     <div class="source-tag">Mark Douglas — Trading in the Zone</div>
     <div class="source-tag">Steve Nison — Candlestick Charting</div>
   </div>
-</div>
-
-<!-- ═══ PAGE 3: PLATFORM SETUP ═══ -->
-</div>
 
 <div class="page" data-page="3">
 <div class="page-inner">
@@ -548,10 +475,106 @@
   </div>
 </div>
 
-<!-- ═══ PAGE 4: WEEK 1 ═══ -->
+<div class="page" data-page="4">
+<div class="page-inner">
+<div class="section-label">Reference</div>
+<h2>Glossary of Trading Terms</h2>
+<p>Bookmark this page. You will come back to it constantly. Every term is defined simply and accurately.</p>
+
+<table>
+<thead><tr><th>Term</th><th>Definition</th></tr></thead>
+<tbody>
+<tr><td><strong>ADL</strong></td><td>Auto-Deleveraging. When the insurance fund runs out, profitable traders on the opposite side have their positions reduced to cover losses.</td></tr>
+<tr><td><strong>Ask</strong></td><td>The lowest price a seller is willing to accept. Also called the "offer."</td></tr>
+<tr><td><strong>ATR</strong></td><td>Average True Range. Measures volatility by averaging the range of each candle over a period. ATR(1) = range of the most recent candle.</td></tr>
+<tr><td><strong>Backtest</strong></td><td>Testing a strategy on historical data to see how it would have performed. Use bar replay, not hindsight.</td></tr>
+<tr><td><strong>Bearish</strong></td><td>Expecting price to go down. A bearish candle closes lower than it opened.</td></tr>
+<tr><td><strong>Bid</strong></td><td>The highest price a buyer is willing to pay.</td></tr>
+<tr><td><strong>BOS</strong></td><td>Break of Structure. Price breaks a key swing point, confirming trend continuation.</td></tr>
+<tr><td><strong>Breakout</strong></td><td>Price moves decisively above resistance or below support, often with volume.</td></tr>
+<tr><td><strong>Bullish</strong></td><td>Expecting price to go up. A bullish candle closes higher than it opened.</td></tr>
+<tr><td><strong>Candlestick</strong></td><td>A chart element showing open, high, low, and close for a time period. Body = open-to-close. Wicks = high and low.</td></tr>
+<tr><td><strong>CHoCH</strong></td><td>Change of Character. Price breaks structure in the opposite direction — potential trend reversal.</td></tr>
+<tr><td><strong>Consolidation</strong></td><td>Price moving sideways within a range. No clear trend. Iman's "staying where it has been."</td></tr>
+<tr><td><strong>Cross Margin</strong></td><td>Your entire account balance is used as margin. Lower liquidation risk but your whole account is at stake.</td></tr>
+<tr><td><strong>DCA</strong></td><td>Dollar Cost Averaging. Buying fixed amounts at regular intervals regardless of price.</td></tr>
+<tr><td><strong>Direction</strong></td><td>Price trending to new areas. Iman's "moving to where it hasn't been."</td></tr>
+<tr><td><strong>Doji</strong></td><td>Candlestick where open ≈ close. Signals indecision. Meaning depends on context.</td></tr>
+<tr><td><strong>Drawdown</strong></td><td>The decline from a peak to a trough in your account. Max drawdown = largest peak-to-trough drop.</td></tr>
+<tr><td><strong>DXY</strong></td><td>US Dollar Index. Measures USD strength. Generally inverse to crypto and risk assets.</td></tr>
+<tr><td><strong>EMA</strong></td><td>Exponential Moving Average. Like SMA but weights recent prices more heavily. More responsive to current price.</td></tr>
+<tr><td><strong>Engulfing</strong></td><td>Candlestick pattern where the current candle completely engulfs the previous one. Strong reversal signal at key levels.</td></tr>
+<tr><td><strong>Entry</strong></td><td>The price at which you open a trade.</td></tr>
+<tr><td><strong>Exit</strong></td><td>The price at which you close a trade — by stop loss, take profit, or manual close.</td></tr>
+<tr><td><strong>Fair Value Gap</strong></td><td>Three-candle pattern where the middle candle is so large that candles 1 and 3 don't overlap, creating a "gap." Price tends to return to fill it.</td></tr>
+<tr><td><strong>Fibonacci</strong></td><td>Mathematical ratios (23.6%, 38.2%, 50%, 61.8%, 78.6%) used to identify support/resistance levels during pullbacks.</td></tr>
+<tr><td><strong>Fill</strong></td><td>When your order is executed. A "filled" order means the trade happened.</td></tr>
+<tr><td><strong>Funding Rate</strong></td><td>Periodic payment between longs and shorts on perpetual contracts. Keeps perp price aligned with spot. Paid every 8 hours on Bybit.</td></tr>
+<tr><td><strong>Futures</strong></td><td>Contracts to buy/sell an asset at a future date. Perpetual futures have no expiry. Allow leverage.</td></tr>
+<tr><td><strong>Golden Pocket</strong></td><td>The 0.618–0.65 Fibonacci retracement zone. Considered the highest-probability reversal zone.</td></tr>
+<tr><td><strong>Hammer</strong></td><td>Candlestick with small body and long lower wick. At support = potential bullish reversal.</td></tr>
+<tr><td><strong>Head & Shoulders</strong></td><td>Three-peak reversal pattern — left shoulder, head (highest), right shoulder. Neckline break confirms.</td></tr>
+<tr><td><strong>Isolated Margin</strong></td><td>Only the margin allocated to this specific position is at risk. Your other funds are protected.</td></tr>
+<tr><td><strong>Kill Zone</strong></td><td>ICT concept. Specific windows within trading sessions where high-probability moves occur.</td></tr>
+<tr><td><strong>Leverage</strong></td><td>Borrowing to control a larger position. 10x leverage = $100 controls $1,000. Amplifies gains AND losses equally.</td></tr>
+<tr><td><strong>Limit Order</strong></td><td>An order to buy/sell at a specific price or better. Sits in the order book until filled. You are the "maker."</td></tr>
+<tr><td><strong>Liquidation</strong></td><td>Exchange forcibly closing your position because losses consumed your margin. Your funds are gone.</td></tr>
+<tr><td><strong>Liquidity</strong></td><td>Clusters of orders at a price level. Stop losses create liquidity pools that smart money targets.</td></tr>
+<tr><td><strong>Long</strong></td><td>Buying / betting price goes UP. You profit when price rises.</td></tr>
+<tr><td><strong>MACD</strong></td><td>Moving Average Convergence Divergence. Shows relationship between two EMAs. Redundant if you already understand EMAs.</td></tr>
+<tr><td><strong>Maintenance Margin</strong></td><td>Minimum margin required to keep a position open. Below this = liquidation.</td></tr>
+<tr><td><strong>Maker</strong></td><td>Trader who adds liquidity via limit orders. Pays lower fees than takers.</td></tr>
+<tr><td><strong>Margin</strong></td><td>The collateral you put up to open a leveraged position. Your "skin in the game."</td></tr>
+<tr><td><strong>Market Order</strong></td><td>An order to buy/sell immediately at the current price. You are the "taker." May suffer slippage.</td></tr>
+<tr><td><strong>Mark Price</strong></td><td>A fair price calculated from multiple exchanges. Used for liquidation to prevent manipulation via wicks on one exchange.</td></tr>
+<tr><td><strong>Moving Average</strong></td><td>Average price over a period. Smooths out noise. Common: 20 EMA, 50 EMA, 200 SMA.</td></tr>
+<tr><td><strong>MVRV</strong></td><td>Market Value to Realized Value ratio. On-chain metric. >3 = overheated. <1 = undervalued.</td></tr>
+<tr><td><strong>NFP</strong></td><td>Non-Farm Payrolls. US jobs data released monthly. High-impact event — close leveraged positions before release.</td></tr>
+<tr><td><strong>OHLC</strong></td><td>Open, High, Low, Close — the four data points that define a candlestick.</td></tr>
+<tr><td><strong>Open Interest</strong></td><td>Total number of outstanding leveraged contracts. Rising OI + rising price = strong. Rising OI + flat price = squeeze coming.</td></tr>
+<tr><td><strong>Order Block</strong></td><td>Last candle before a strong impulsive move. Marks where institutional orders were placed. Expect reaction when price returns.</td></tr>
+<tr><td><strong>Order Book</strong></td><td>Live list of all pending buy and sell orders at each price level.</td></tr>
+<tr><td><strong>Overbought</strong></td><td>RSI above 70. Momentum extended to the upside. Not a sell signal alone — just caution.</td></tr>
+<tr><td><strong>Oversold</strong></td><td>RSI below 30. Momentum extended to the downside. Not a buy signal alone — just caution.</td></tr>
+<tr><td><strong>Perpetual</strong></td><td>A futures contract with no expiry date. Most crypto derivatives are perpetual swaps.</td></tr>
+<tr><td><strong>Pip</strong></td><td>Smallest price increment in forex. For EUR/USD, 1 pip = 0.0001. In crypto, often called a "tick."</td></tr>
+<tr><td><strong>POC</strong></td><td>Point of Control. Price level with the highest traded volume on the volume profile. Acts as a magnet.</td></tr>
+<tr><td><strong>Position Size</strong></td><td>How many units/contracts you hold. Calculated from your risk amount and stop loss distance.</td></tr>
+<tr><td><strong>Price Action</strong></td><td>Reading raw price movement (candles, structure) without indicators. The foundation of all analysis.</td></tr>
+<tr><td><strong>Profit Factor</strong></td><td>Gross profits divided by gross losses. Above 1.5 is good. Above 2.0 is excellent.</td></tr>
+<tr><td><strong>Pullback</strong></td><td>Temporary move against the trend before continuation. Where you enter in trend-following strategies.</td></tr>
+<tr><td><strong>R:R</strong></td><td>Risk-to-Reward ratio. 1:2 means you risk $1 to make $2. At 1:2 you only need 34% win rate to break even.</td></tr>
+<tr><td><strong>Range</strong></td><td>Price bouncing between defined support and resistance levels. No clear trend. Trade the boundaries.</td></tr>
+<tr><td><strong>Resistance</strong></td><td>Price level where selling pressure historically prevents further advance. Draw as zones, not lines.</td></tr>
+<tr><td><strong>RSI</strong></td><td>Relative Strength Index (period 14). Momentum oscillator 0-100. Most useful for spotting divergences.</td></tr>
+<tr><td><strong>Scalping</strong></td><td>Very short-term trading (seconds to minutes). Requires experience. Not recommended for beginners.</td></tr>
+<tr><td><strong>Short</strong></td><td>Selling / betting price goes DOWN. You profit when price falls.</td></tr>
+<tr><td><strong>Slippage</strong></td><td>Difference between expected fill price and actual fill price. Worse in volatile or illiquid markets.</td></tr>
+<tr><td><strong>SMA</strong></td><td>Simple Moving Average. Equal weight to all prices in the period. The 200 SMA is watched by institutions.</td></tr>
+<tr><td><strong>Smart Money</strong></td><td>Institutional traders, market makers, whales. They move markets. SMC = Smart Money Concepts.</td></tr>
+<tr><td><strong>Spread</strong></td><td>Difference between the best bid and best ask. Tighter spread = more liquid market.</td></tr>
+<tr><td><strong>Spring</strong></td><td>Wyckoff term. Price dips below accumulation range support, shakes out weak hands, then reverses. Buy signal.</td></tr>
+<tr><td><strong>Stop Loss</strong></td><td>An order that closes your position at a predetermined loss level. Non-negotiable with leverage.</td></tr>
+<tr><td><strong>Support</strong></td><td>Price level where buying pressure historically prevents further decline. Draw as zones.</td></tr>
+<tr><td><strong>Swing</strong></td><td>A swing high is a local peak. A swing low is a local trough. Market structure is defined by swings.</td></tr>
+<tr><td><strong>Take Profit</strong></td><td>An order that closes your position at a predetermined profit level.</td></tr>
+<tr><td><strong>Taker</strong></td><td>Trader who removes liquidity via market orders. Pays higher fees than makers.</td></tr>
+<tr><td><strong>Timeframe</strong></td><td>The period each candle represents. 4H = 4 hours per candle. Higher TF = stronger signals.</td></tr>
+<tr><td><strong>Trailing Stop</strong></td><td>A stop loss that moves with price as it goes in your favor. Locks in profits while allowing the trade to run.</td></tr>
+<tr><td><strong>Trend</strong></td><td>Sustained directional movement. Uptrend = higher highs + higher lows. Downtrend = lower highs + lower lows.</td></tr>
+<tr><td><strong>Upthrust</strong></td><td>Wyckoff term. Price spikes above distribution range, traps buyers, then reverses. Sell signal.</td></tr>
+<tr><td><strong>Value Area</strong></td><td>Volume profile zone containing 70% of traded volume. VAH = upper boundary. VAL = lower boundary.</td></tr>
+<tr><td><strong>Volume</strong></td><td>Number of units traded. High volume = conviction. Low volume = likely fake move. THE most important indicator.</td></tr>
+<tr><td><strong>Volume Profile</strong></td><td>Shows WHERE volume was traded at each price level, not just how much. POC, VAH, VAL are derived from it.</td></tr>
+<tr><td><strong>VWAP</strong></td><td>Volume Weighted Average Price. Institutional benchmark for fair value. Price above VWAP = bullish bias intraday.</td></tr>
+<tr><td><strong>Wick</strong></td><td>The thin lines above/below a candlestick body showing the high and low. Long wicks = rejection at that level.</td></tr>
+<tr><td><strong>Wyckoff</strong></td><td>Richard Wyckoff's method. Explains how institutions accumulate, mark up, distribute, and mark down. 100+ years of use.</td></tr>
+</tbody>
+</table>
+</div>
 </div>
 
-<div class="page" data-page="4">
+<div class="page" data-page="5">
 <div class="page-inner">
     <div class="section-label">Phase 1 · Week 1</div>
     <h2>How Markets & Leverage Actually Work</h2>
@@ -604,12 +627,234 @@
       <p>Someone gives you $100 to go 10x long on BTC at $65,000. BTC drops to $63,500. Calculate the exact dollar loss and whether you get liquidated. If you can't, repeat the week.</p>
     </div>
   </div>
+
+<div class="page" data-page="6">
+<div class="page-inner">
+<div class="section-label">Phase 1 · Week 1 Supplement</div>
+<h2>Order Types Masterclass</h2>
+<p>You cannot trade on Bybit without understanding every order type. Each one exists for a specific purpose. Using the wrong one costs you money through slippage, missed fills, or accidental position increases.</p>
+
+<h3>The Order Types</h3>
+<table>
+<thead><tr><th>Order Type</th><th>What It Does</th><th>When to Use</th><th>Risk</th></tr></thead>
+<tbody>
+<tr><td><strong>Market</strong></td><td>Buys/sells immediately at the best available price</td><td>When you MUST get in or out right now</td><td>Slippage — you may get a worse price than shown, especially in volatile markets</td></tr>
+<tr><td><strong>Limit</strong></td><td>Buys/sells only at your specified price or better. Sits in the order book waiting.</td><td>When you want a specific entry price. You are the "maker" — lower fees.</td><td>May never fill if price doesn't reach your level</td></tr>
+<tr><td><strong>Stop Market</strong></td><td>Triggers a market order when price hits your stop price</td><td>Stop losses. "If price hits $63,000, sell everything at market."</td><td>Slippage on the triggered market order, especially during fast moves</td></tr>
+<tr><td><strong>Stop Limit</strong></td><td>Triggers a limit order (not market) when price hits your stop price</td><td>When you want stop loss protection but also slippage protection</td><td>May NOT fill if price gaps through your limit — you stay in the trade unprotected</td></tr>
+<tr><td><strong>Trailing Stop</strong></td><td>A stop that moves with price by a fixed distance or percentage</td><td>Locking in profits on a winning trade while letting it run</td><td>Tight trails get stopped by normal volatility. Too loose = give back profits.</td></tr>
+<tr><td><strong>Conditional</strong></td><td>Bybit feature: set an order that only activates when a condition is met (price above/below X)</td><td>"If BTC breaks $70,000, place a limit buy at $70,050" — breakout entries</td><td>Condition may trigger during a fake breakout</td></tr>
+<tr><td><strong>Reduce-Only</strong></td><td>Only closes an existing position, never opens a new one</td><td>Ensuring your take-profit or stop doesn't accidentally open a reverse position</td><td>None — this is a safety feature</td></tr>
+<tr><td><strong>Post-Only</strong></td><td>Ensures your order is added to the book as a maker order. If it would immediately fill, it gets cancelled instead.</td><td>Fee optimization — you always pay maker fees (lower) instead of taker fees</td><td>Order may get cancelled if the price moves to your level before placement</td></tr>
+</tbody>
+</table>
+
+<h3>The TP/SL Combo on Bybit</h3>
+<p>When you open a position on Bybit, you can set both <strong>Take Profit</strong> and <strong>Stop Loss</strong> simultaneously. This is the proper way to enter every trade:</p>
+<ul>
+<li>Open your position (market or limit entry)</li>
+<li>Immediately set TP at your target price</li>
+<li>Immediately set SL at your invalidation level</li>
+<li>Walk away. The trade manages itself.</li>
+</ul>
+
+<div class="callout-red callout">
+<p><strong>Market orders during high volatility can destroy you.</strong> During a CPI release or FOMC announcement, the spread can widen massively. A market order to sell during a flash crash might fill 2-5% below the price you saw. With leverage, that's devastating. Use limit orders when possible. Use stop-market for emergencies only.</p>
 </div>
 
-<!-- ═══ PAGE 5: WEEK 2 ═══ -->
+<h3>Maker vs Taker Fees</h3>
+<table>
+<thead><tr><th>Role</th><th>What You Do</th><th>Bybit Fee (Perps)</th></tr></thead>
+<tbody>
+<tr><td><strong>Maker</strong></td><td>Place limit orders that add liquidity to the book</td><td>0.02% (sometimes 0% with promotions)</td></tr>
+<tr><td><strong>Taker</strong></td><td>Place market orders that remove liquidity</td><td>0.055%</td></tr>
+</tbody>
+</table>
+<p>On a $10,000 position: maker fee = $2, taker fee = $5.50. Over 100 trades that's $200 vs $550. <strong>Use limit orders whenever possible.</strong></p>
+
+<h3>Demo Practice</h3>
+<div class="callout">
+<p><strong>Exercise:</strong> Open Bybit Demo. On BTC/USDT perpetual, place one of each order type: market buy, limit buy below current price, stop-market sell, trailing stop, and a conditional order. Watch how each appears in your active orders. Cancel each one. Get comfortable with the UI before you ever trade for real.</p>
 </div>
 
-<div class="page" data-page="5">
+<div class="quiz-container" data-quiz="chapter-6">
+<div class="quiz-title">Chapter Quiz — Order Types</div>
+<div class="quiz-question" data-correct="B">
+<div class="quiz-q-text"><span class="quiz-q-num">Q1.</span> You want to enter a BTC long position only if price breaks above $70,000. Which order type?</div>
+<div class="quiz-options">
+<div class="quiz-option" data-value="A"><span class="quiz-opt-letter">A</span> Market order right now</div>
+<div class="quiz-option" data-value="B"><span class="quiz-opt-letter">B</span> Conditional order: trigger at $70,000, place limit buy at $70,050</div>
+<div class="quiz-option" data-value="C"><span class="quiz-opt-letter">C</span> Limit buy at $70,000</div>
+<div class="quiz-option" data-value="D"><span class="quiz-opt-letter">D</span> Trailing stop at $70,000</div>
+</div></div>
+<div class="quiz-question" data-correct="A">
+<div class="quiz-q-text"><span class="quiz-q-num">Q2.</span> Why should you prefer limit orders over market orders for entries?</div>
+<div class="quiz-options">
+<div class="quiz-option" data-value="A"><span class="quiz-opt-letter">A</span> Lower fees (maker vs taker) and no slippage risk</div>
+<div class="quiz-option" data-value="B"><span class="quiz-opt-letter">B</span> They always fill faster</div>
+<div class="quiz-option" data-value="C"><span class="quiz-opt-letter">C</span> They guarantee you get the exact price shown on screen</div>
+<div class="quiz-option" data-value="D"><span class="quiz-opt-letter">D</span> Market orders are not available on Bybit</div>
+</div></div>
+<div class="quiz-question" data-correct="C">
+<div class="quiz-q-text"><span class="quiz-q-num">Q3.</span> What is the danger of using a stop-limit order as your stop loss?</div>
+<div class="quiz-options">
+<div class="quiz-option" data-value="A"><span class="quiz-opt-letter">A</span> It costs more in fees</div>
+<div class="quiz-option" data-value="B"><span class="quiz-opt-letter">B</span> It executes too quickly</div>
+<div class="quiz-option" data-value="C"><span class="quiz-opt-letter">C</span> If price gaps through your limit, the order may never fill and you stay in a losing trade</div>
+<div class="quiz-option" data-value="D"><span class="quiz-opt-letter">D</span> It cannot be used on perpetual contracts</div>
+</div></div>
+<div class="quiz-question" data-correct="D">
+<div class="quiz-q-text"><span class="quiz-q-num">Q4.</span> What does a "reduce-only" order do?</div>
+<div class="quiz-options">
+<div class="quiz-option" data-value="A"><span class="quiz-opt-letter">A</span> Reduces your leverage automatically</div>
+<div class="quiz-option" data-value="B"><span class="quiz-opt-letter">B</span> Reduces the spread on your trade</div>
+<div class="quiz-option" data-value="C"><span class="quiz-opt-letter">C</span> Reduces your fees to zero</div>
+<div class="quiz-option" data-value="D"><span class="quiz-opt-letter">D</span> Only closes an existing position — never opens a new one accidentally</div>
+</div></div>
+<div class="quiz-question" data-correct="B">
+<div class="quiz-q-text"><span class="quiz-q-num">Q5.</span> Over 100 trades with $10,000 positions, how much do you save by using limit (maker) orders vs market (taker) orders on Bybit?</div>
+<div class="quiz-options">
+<div class="quiz-option" data-value="A"><span class="quiz-opt-letter">A</span> About $50</div>
+<div class="quiz-option" data-value="B"><span class="quiz-opt-letter">B</span> About $350</div>
+<div class="quiz-option" data-value="C"><span class="quiz-opt-letter">C</span> About $1,000</div>
+<div class="quiz-option" data-value="D"><span class="quiz-opt-letter">D</span> No difference</div>
+</div></div>
+<button class="quiz-submit" disabled>Submit Answers</button>
+<div class="quiz-result"><div class="quiz-score"></div><div class="quiz-score-label"></div><p class="quiz-message"></p><button class="quiz-reset">Retry Quiz</button></div>
+</div>
+
+<div class="source-tag">Bybit Learn</div>
+<div class="source-tag">Binance Academy</div>
+</div>
+</div>
+
+<div class="page" data-page="7">
+<div class="page-inner">
+<div class="section-label">Phase 1 · Week 1 Supplement</div>
+<h2>How Liquidation Actually Works</h2>
+<p>Liquidation is the exchange forcibly closing your position because your losses have consumed your margin. If you understand this chapter completely, you will never be liquidated — because you will always use a stop loss that triggers BEFORE the liquidation price.</p>
+
+<h3>Initial Margin vs Maintenance Margin</h3>
+<ul>
+<li><strong>Initial Margin:</strong> The collateral you put up to open the position. At 10x leverage, your initial margin is 10% of the position value ($100 margin opens a $1,000 position).</li>
+<li><strong>Maintenance Margin:</strong> The MINIMUM margin required to keep the position open. Usually 0.5%–1% of position value on Bybit. When your margin drops to this level, you get liquidated.</li>
+</ul>
+
+<h3>Cross Margin vs Isolated Margin</h3>
+<table>
+<thead><tr><th>Mode</th><th>How It Works</th><th>Liquidation Risk</th><th>Best For</th></tr></thead>
+<tbody>
+<tr><td><strong>Isolated</strong></td><td>Only the margin you allocate to THIS trade is at risk. Your other funds are safe.</td><td>Higher — smaller margin buffer means closer liquidation price</td><td>Beginners. Limits your max loss to the margin you assign.</td></tr>
+<tr><td><strong>Cross</strong></td><td>Your ENTIRE available account balance acts as margin for the position.</td><td>Lower — more margin = further liquidation price. But your whole account is at risk.</td><td>Experienced traders who actively manage positions.</td></tr>
+</tbody>
+</table>
+
+<div class="callout-red callout">
+<p><strong>Use Isolated Margin.</strong> As a beginner, ALWAYS use isolated margin. If you make a mistake with cross margin, one bad trade can drain your entire account. With isolated, the worst case is losing the margin you allocated to that specific trade. Everything else stays safe.</p>
+</div>
+
+<h3>How Bybit Calculates Liquidation Price</h3>
+<p>Simplified formula for an isolated long position:</p>
+<div class="formula">
+Liquidation Price ≈ Entry Price × (1 − 1/Leverage + Maintenance Margin Rate)
+</div>
+
+<h4>Worked Example</h4>
+<table>
+<tbody>
+<tr><td>Account</td><td>$1,000</td></tr>
+<tr><td>Trade</td><td>10x long BTC at $65,000 (isolated)</td></tr>
+<tr><td>Position Value</td><td>$1,000 × 10 = $10,000</td></tr>
+<tr><td>Margin Used</td><td>$1,000</td></tr>
+<tr><td>Maintenance Rate</td><td>~0.5%</td></tr>
+<tr><td>Liq Price ≈</td><td>$65,000 × (1 − 0.10 + 0.005) ≈ <strong>$58,825</strong></td></tr>
+<tr><td>Loss at liq</td><td>~$950 (nearly all your margin)</td></tr>
+</tbody>
+</table>
+<p>With a proper stop loss at $64,000 (1.5% move), you lose only $154 (1.5% of $10,000 position). <strong>Your stop loss fired at $64,000. Liquidation was at $58,825. You never even came close.</strong></p>
+
+<h3>Partial vs Full Liquidation</h3>
+<ul>
+<li><strong>Partial liquidation:</strong> Bybit first tries to reduce your position size to lower the margin requirement. This happens when your margin ratio is dangerously low but not yet at zero.</li>
+<li><strong>Full liquidation:</strong> If partial reduction isn't enough, the entire position is closed. Remaining margin goes to the insurance fund.</li>
+</ul>
+
+<h3>The Insurance Fund & ADL</h3>
+<ul>
+<li><strong>Insurance Fund:</strong> A pool of funds collected from liquidated positions. Covers losses when a liquidated position can't be closed at the bankruptcy price.</li>
+<li><strong>ADL (Auto-Deleveraging):</strong> When the insurance fund runs out, profitable traders on the opposite side have their positions forcibly reduced. This is rare but it happens — usually during extreme market events.</li>
+</ul>
+
+<h3>Mark Price vs Last Price</h3>
+<p>Bybit uses <strong>Mark Price</strong> (not Last Price) for liquidation calculations. Mark Price is a fair price derived from multiple exchanges. This prevents a single exchange's price manipulation or a momentary wick from triggering your liquidation unfairly.</p>
+
+<h3>How to NEVER Get Liquidated</h3>
+<div class="rule-box"><div class="rule-num">RULE 1</div><p>Use a stop loss on EVERY leveraged trade. Set it BEFORE you enter.</p></div>
+<div class="rule-box"><div class="rule-num">RULE 2</div><p>Your stop loss should be well above your liquidation price. If your SL and liq price are close, your leverage is too high or your stop is too wide.</p></div>
+<div class="rule-box"><div class="rule-num">RULE 3</div><p>Use Isolated Margin. Protect funds not allocated to this trade.</p></div>
+<div class="rule-box"><div class="rule-num">RULE 4</div><p>Calculate position size from your risk (1%) and stop loss distance. Don't pick position size first.</p></div>
+
+<div class="callout">
+<p><strong>Liquidation is NOT your stop loss.</strong> If you are being liquidated, you have already failed at risk management. A properly managed trade has a stop loss that fires long before liquidation is even close. Think of liquidation as the emergency fire exit — you should never need it because you left through the front door (your stop loss) well in advance.</p>
+</div>
+
+<h3>Demo Practice</h3>
+<div class="callout">
+<p><strong>Exercise:</strong> Open Bybit Demo. Place a 10x long on BTC with $100 margin using isolated mode. Note the liquidation price shown. Now switch to cross margin mode on a second trade. Compare the liquidation prices. Which is further from entry? Close both trades. You should never see a liquidation in real trading — this exercise is to understand the mechanics.</p>
+</div>
+
+<div class="quiz-container" data-quiz="chapter-7">
+<div class="quiz-title">Chapter Quiz — Liquidation Mechanics</div>
+<div class="quiz-question" data-correct="B">
+<div class="quiz-q-text"><span class="quiz-q-num">Q1.</span> What is the difference between initial margin and maintenance margin?</div>
+<div class="quiz-options">
+<div class="quiz-option" data-value="A"><span class="quiz-opt-letter">A</span> They are the same thing</div>
+<div class="quiz-option" data-value="B"><span class="quiz-opt-letter">B</span> Initial margin is what you put up to open the trade; maintenance margin is the minimum to keep it open</div>
+<div class="quiz-option" data-value="C"><span class="quiz-opt-letter">C</span> Maintenance margin is always higher than initial margin</div>
+<div class="quiz-option" data-value="D"><span class="quiz-opt-letter">D</span> Initial margin only applies to spot trading</div>
+</div></div>
+<div class="quiz-question" data-correct="A">
+<div class="quiz-q-text"><span class="quiz-q-num">Q2.</span> Why should beginners use isolated margin instead of cross margin?</div>
+<div class="quiz-options">
+<div class="quiz-option" data-value="A"><span class="quiz-opt-letter">A</span> Isolated limits your loss to the margin allocated to that trade — the rest of your account is protected</div>
+<div class="quiz-option" data-value="B"><span class="quiz-opt-letter">B</span> Isolated margin has lower fees</div>
+<div class="quiz-option" data-value="C"><span class="quiz-opt-letter">C</span> Cross margin is not available on Bybit</div>
+<div class="quiz-option" data-value="D"><span class="quiz-opt-letter">D</span> Isolated margin gives you higher leverage</div>
+</div></div>
+<div class="quiz-question" data-correct="C">
+<div class="quiz-q-text"><span class="quiz-q-num">Q3.</span> You open a 20x long at $40,000 with $500 margin (isolated). Approximately where is your liquidation price?</div>
+<div class="quiz-options">
+<div class="quiz-option" data-value="A"><span class="quiz-opt-letter">A</span> $36,000</div>
+<div class="quiz-option" data-value="B"><span class="quiz-opt-letter">B</span> $39,000</div>
+<div class="quiz-option" data-value="C"><span class="quiz-opt-letter">C</span> $38,200</div>
+<div class="quiz-option" data-value="D"><span class="quiz-opt-letter">D</span> $20,000</div>
+</div></div>
+<div class="quiz-question" data-correct="D">
+<div class="quiz-q-text"><span class="quiz-q-num">Q4.</span> Why does Bybit use Mark Price instead of Last Price for liquidation?</div>
+<div class="quiz-options">
+<div class="quiz-option" data-value="A"><span class="quiz-opt-letter">A</span> Mark Price is always lower</div>
+<div class="quiz-option" data-value="B"><span class="quiz-opt-letter">B</span> Last Price doesn't exist on futures</div>
+<div class="quiz-option" data-value="C"><span class="quiz-opt-letter">C</span> Mark Price updates faster</div>
+<div class="quiz-option" data-value="D"><span class="quiz-opt-letter">D</span> To prevent a single exchange's manipulation or a momentary wick from triggering unfair liquidations</div>
+</div></div>
+<div class="quiz-question" data-correct="B">
+<div class="quiz-q-text"><span class="quiz-q-num">Q5.</span> What is the correct relationship between your stop loss and liquidation price?</div>
+<div class="quiz-options">
+<div class="quiz-option" data-value="A"><span class="quiz-opt-letter">A</span> Stop loss should be at the liquidation price to avoid wasting margin</div>
+<div class="quiz-option" data-value="B"><span class="quiz-opt-letter">B</span> Stop loss should trigger well before the liquidation price — you should never come close to liquidation</div>
+<div class="quiz-option" data-value="C"><span class="quiz-opt-letter">C</span> Liquidation price should be closer to entry than the stop loss</div>
+<div class="quiz-option" data-value="D"><span class="quiz-opt-letter">D</span> They should be at the same price</div>
+</div></div>
+<button class="quiz-submit" disabled>Submit Answers</button>
+<div class="quiz-result"><div class="quiz-score"></div><div class="quiz-score-label"></div><p class="quiz-message"></p><button class="quiz-reset">Retry Quiz</button></div>
+</div>
+
+<div class="source-tag">Bybit Learn</div>
+<div class="source-tag">Binance Academy</div>
+</div>
+</div>
+
+<div class="page" data-page="8">
 <div class="page-inner">
     <div class="section-label">Phase 1 · Week 2</div>
     <h2>Candlestick Patterns & Price Action</h2>
@@ -660,12 +905,8 @@
     </div>
     <div class="source-tag">Steve Nison — Japanese Candlestick Charting Techniques</div>
   </div>
-</div>
 
-<!-- ═══ PAGE 6: WEEK 3 ═══ -->
-</div>
-
-<div class="page" data-page="6">
+<div class="page" data-page="9">
 <div class="page-inner">
 <div class="section-label">Phase 1 · Week 2 Supplement</div>
     <h2>Chart Patterns</h2>
@@ -704,9 +945,8 @@
       <p><strong>The golden rule of chart patterns:</strong> A pattern is NOT confirmed until it BREAKS. Drawing a head and shoulders doesn't mean it will play out. Wait for the neckline break with volume. Anticipation without confirmation is how pattern traders lose money.</p>
     </div>
 </div>
-</div>
 
-<div class="page" data-page="7">
+<div class="page" data-page="10">
 <div class="page-inner">
     <div class="section-label">Phase 1 · Week 3</div>
     <h2>Support, Resistance & Market Structure</h2>
@@ -754,12 +994,8 @@
       <p>Draw S/R on a blank BTC daily chart. Identify current structure (bullish/bearish/ranging). Identify the last BOS or CHoCH. Then zoom out to verify.</p>
     </div>
   </div>
-</div>
 
-<!-- ═══ PAGE 7: WEEK 4 ═══ -->
-</div>
-
-<div class="page" data-page="8">
+<div class="page" data-page="11">
 <div class="page-inner">
 <div class="section-label">Phase 1 · Week 3 Supplement</div>
     <h2>Fibonacci Retracements & Extensions</h2>
@@ -803,7 +1039,7 @@
 </div>
 </div>
 
-<div class="page" data-page="9">
+<div class="page" data-page="12">
 <div class="page-inner">
     <div class="section-label">Phase 1 · Week 4</div>
     <h2>Indicators — Only What You Need</h2>
@@ -853,12 +1089,8 @@
       <p>Remove all indicators. Read the chart using only candles + S/R. Now add them back one by one. Does each <em>confirm</em> what you already see, or <em>confuse</em> you? If it confuses, drop it.</p>
     </div>
   </div>
-</div>
 
-<!-- ═══ PAGE 8: WEEK 5 ═══ -->
-</div>
-
-<div class="page" data-page="10">
+<div class="page" data-page="13">
 <div class="page-inner">
 <div class="section-label">Phase 1 · Week 4 Supplement</div>
     <h2>Session Analysis</h2>
@@ -892,9 +1124,8 @@
       <p><strong>Practical rule:</strong> Don't trade during Asian session unless you have a specific range-trading strategy. Your best setups will come during London and NY sessions when volume supports the move.</p>
     </div>
 </div>
-</div>
 
-<div class="page" data-page="11">
+<div class="page" data-page="14">
 <div class="page-inner">
     <div class="section-label">Phase 2 · Week 5</div>
     <h2>Risk Management for Leveraged Trading</h2>
@@ -959,12 +1190,8 @@ Margin Required = (Position Size × Entry) ÷ Leverage
       <p>$5,000 account. BTC at $70,000. Stop loss at $68,500. Risk 1%. Leverage 5x. Calculate: risk amount, position size, margin required. Solve in under 2 minutes.</p>
     </div>
   </div>
-</div>
 
-<!-- ═══ PAGE 9: WEEK 6 ═══ -->
-</div>
-
-<div class="page" data-page="12">
+<div class="page" data-page="15">
 <div class="page-inner">
 <div class="section-label">Phase 2 · Week 5 Supplement</div>
     <h2>Multiple Timeframe Analysis</h2>
@@ -997,7 +1224,7 @@ Margin Required = (Position Size × Entry) ÷ Leverage
 </div>
 </div>
 
-<div class="page" data-page="13">
+<div class="page" data-page="16">
 <div class="page-inner">
     <div class="section-label">Phase 2 · Week 6</div>
     <h2>Building Your Strategy</h2>
@@ -1041,12 +1268,8 @@ Margin Required = (Position Size × Entry) ÷ Leverage
       <p>Write your complete strategy on ONE index card. Entry, exit, stop, size, conditions. If it doesn't fit on one card, it's too complicated. Simplify.</p>
     </div>
   </div>
-</div>
 
-<!-- ═══ PAGE 10: WEEK 7 ═══ -->
-</div>
-
-<div class="page" data-page="14">
+<div class="page" data-page="17">
 <div class="page-inner">
 <div class="section-label">Phase 2 · Week 6 Supplement</div>
     <h2>Volume Profile & Order Flow</h2>
@@ -1078,9 +1301,260 @@ Margin Required = (Position Size × Entry) ÷ Leverage
       <p><strong>Why this matters for leverage:</strong> Volume Profile tells you which levels are "defended" by heavy volume and which are "air." Placing your stop loss behind a High Volume Node means your stop is protected by a wall of orders. Placing it in a Low Volume Node means it could get run through easily.</p>
     </div>
 </div>
+
+<div class="page" data-page="18">
+<div class="page-inner">
+<div class="section-label">Phase 2 · Week 7 Supplement</div>
+    <h2>Funding Rates & Perpetual Swaps</h2>
+    <p>If you trade crypto on Bybit, Binance, or any derivatives exchange, you are almost certainly trading <strong>perpetual swap contracts</strong> — not spot and not traditional futures. Understanding how perpetual swaps work, and specifically how <strong>funding rates</strong> affect your positions, is essential to avoiding hidden costs and spotting powerful trade signals.</p>
+
+    <h3>What Is a Perpetual Swap?</h3>
+    <p>A traditional futures contract has an <strong>expiry date</strong>. When that date arrives, the contract settles — you either deliver the asset or the contract closes at the settlement price. Quarterly BTC futures on CME, for example, expire every three months.</p>
+    <p>A <strong>perpetual swap</strong> (or "perp") has <strong>no expiry date</strong>. You can hold the position indefinitely — days, weeks, months. This makes perps far more convenient for active traders, which is why they dominate crypto derivatives volume (over 75% of all crypto trading volume is perpetual swaps).</p>
+    <p>But this creates a problem: without an expiry date forcing convergence, there is no natural mechanism to keep the perpetual contract price aligned with the underlying spot price. The contract could trade at a significant premium or discount to spot indefinitely. Enter the funding rate.</p>
+
+    <h3>Why Funding Rates Exist</h3>
+    <p>The <strong>funding rate</strong> is a periodic payment exchanged between long and short traders. Its purpose is simple: <strong>keep the perpetual contract price tethered to the spot price</strong>. It acts as a soft anchor, incentivizing traders to take the less popular side and thereby pushing the perp price back toward spot.</p>
+    <ul>
+      <li>When perp price is <strong>above</strong> spot price (premium) → funding rate is <strong>positive</strong> → <strong>longs pay shorts</strong></li>
+      <li>When perp price is <strong>below</strong> spot price (discount) → funding rate is <strong>negative</strong> → <strong>shorts pay longs</strong></li>
+    </ul>
+    <p>This creates a financial incentive: if the perp trades at a premium, longs are penalized and shorts are rewarded, encouraging more shorts (selling pressure) to push the perp price back down toward spot. The reverse applies when the perp trades at a discount.</p>
+
+    <h3>How Funding Rate Payments Work</h3>
+    <p>On most exchanges, including <strong>Bybit</strong>, funding payments occur every <strong>8 hours</strong> at fixed intervals:</p>
+    <ul>
+      <li><strong>00:00 UTC</strong> (midnight)</li>
+      <li><strong>08:00 UTC</strong></li>
+      <li><strong>16:00 UTC</strong></li>
+    </ul>
+    <p>At each interval, the payment is calculated and transferred directly between traders. <em>The exchange does not take a cut</em> — it is a peer-to-peer transfer between longs and shorts. You only pay or receive funding if you <strong>hold a position at the exact moment</strong> the funding timestamp hits. If you close your position one second before, you pay nothing.</p>
+
+    <h3>The Funding Fee Formula</h3>
+    <div class="formula">Funding Fee = Position Value × Funding Rate</div>
+    <p>Where <strong>Position Value</strong> is your total position size (not your margin, your full leveraged position), and <strong>Funding Rate</strong> is expressed as a percentage.</p>
+
+    <h4>Worked Example</h4>
+    <p>You hold a <strong>$10,000 long</strong> position on BTC/USDT perpetual. The current funding rate is <strong>+0.01%</strong> (positive, meaning longs pay shorts).</p>
+    <ul>
+      <li><strong>Per 8-hour interval:</strong> $10,000 × 0.0001 = <strong>$1.00</strong></li>
+      <li><strong>Per day (3 intervals):</strong> $1.00 × 3 = <strong>$3.00</strong></li>
+      <li><strong>Per week:</strong> $3.00 × 7 = <strong>$21.00</strong></li>
+    </ul>
+    <p>At +0.01%, the cost seems trivial. But funding rates are not always 0.01%. During strong trends, they can spike to 0.05%, 0.1%, or even higher — and the costs scale rapidly.</p>
+
+    <h4>High Funding Rate Example</h4>
+    <p>Same $10,000 position, but funding rate is <strong>+0.1%</strong> (common during euphoric rallies):</p>
+    <ul>
+      <li><strong>Per 8-hour interval:</strong> $10,000 × 0.001 = <strong>$10.00</strong></li>
+      <li><strong>Per day:</strong> $10.00 × 3 = <strong>$30.00</strong></li>
+      <li><strong>Per 3 days:</strong> $30.00 × 3 = <strong>$90.00</strong> — that is 0.9% of your position value</li>
+    </ul>
+
+    <div class="callout-red callout">
+      <p><strong>Funding rates are a hidden cost.</strong> At 0.1% per 8 hours, holding a leveraged position for 3 days costs 0.9% of your position value. This EATS your profits. If you are using 10x leverage, that 0.9% position cost is 9% of your actual margin. Always check the funding rate before entering a trade you plan to hold.</p>
+    </div>
+
+    <h3>How to Check Funding Rates</h3>
+    <h4>On Bybit</h4>
+    <ul>
+      <li>Open any perpetual contract trading page (e.g., BTC/USDT Perp)</li>
+      <li>Look at the top of the chart area — the funding rate and countdown timer are displayed next to the mark price</li>
+      <li>The countdown shows time until the next funding settlement</li>
+      <li>You can also navigate to <strong>Derivatives → Funding Rate History</strong> for historical data</li>
+    </ul>
+    <h4>On CoinGlass</h4>
+    <ul>
+      <li>Go to <strong>coinglass.com/FundingRate</strong></li>
+      <li>This aggregates funding rates across ALL major exchanges in one view</li>
+      <li>You can compare BTC funding on Bybit, Binance, OKX, and others simultaneously</li>
+      <li>CoinGlass also shows <strong>historical funding rate charts</strong> — essential for spotting extreme readings</li>
+      <li>The heatmap view highlights which assets have the most extreme funding, helping you find trade setups</li>
+    </ul>
+
+    <h3>Funding Rate as a Trade Signal</h3>
+    <p>Funding rates reveal market <strong>positioning</strong>. Extreme readings tell you when the market is over-leveraged in one direction — and over-leveraged markets tend to snap back violently. This makes funding rates one of the most reliable contrarian indicators in crypto.</p>
+
+    <table>
+      <thead>
+        <tr><th>Funding Rate</th><th>Market Condition</th><th>What It Means</th><th>Signal</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>> +0.05%</strong></td><td>Heavily long</td><td>Traders are aggressively leveraged long. Too much greed. Perp trading at significant premium to spot.</td><td>Bearish — dump or long squeeze likely. Avoid opening new longs.</td></tr>
+        <tr><td><strong>+0.01% to +0.05%</strong></td><td>Moderately long</td><td>Normal bullish bias. Healthy trend. Longs are dominant but not excessively so.</td><td>Neutral to slightly cautious — monitor for extremes.</td></tr>
+        <tr><td><strong>-0.01% to +0.01%</strong></td><td>Neutral</td><td>Balanced market. No strong directional bias in derivatives positioning.</td><td>No signal from funding alone. Use other confluence.</td></tr>
+        <tr><td><strong>-0.05% to -0.01%</strong></td><td>Moderately short</td><td>Normal bearish bias. Shorts are dominant but not extreme.</td><td>Neutral to slightly bullish — monitor for extremes.</td></tr>
+        <tr><td><strong>< -0.05%</strong></td><td>Heavily short</td><td>Traders are aggressively leveraged short. Too much fear. Perp trading at significant discount to spot.</td><td>Bullish — short squeeze likely. Avoid opening new shorts.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout">
+      <p><strong>Key insight:</strong> Extremely positive funding does not mean price dumps immediately. It means the market is <em>vulnerable</em> to a dump. Think of it as a loaded spring — one catalyst (a whale sell, negative news, a liquidation cascade) and the over-leveraged side gets destroyed. Use funding as <strong>confluence</strong>, not as a standalone trigger.</p>
+    </div>
+
+    <h3>How Funding Affects Multi-Day Holds</h3>
+    <p>If you are a swing trader holding positions for days or weeks, funding becomes a material cost that directly impacts your P&L. You must factor it into your trade plan:</p>
+    <ul>
+      <li><strong>Positive funding + you are long:</strong> You are paying every 8 hours. Your breakeven price moves against you with every payment. You need a larger move to profit.</li>
+      <li><strong>Positive funding + you are short:</strong> You are <em>receiving</em> payment every 8 hours. Your breakeven improves over time. Holding is rewarded.</li>
+      <li><strong>Negative funding + you are short:</strong> You are paying. Same problem as above but reversed.</li>
+      <li><strong>Negative funding + you are long:</strong> You are receiving. Holding is rewarded.</li>
+    </ul>
+    <p><em>Always check the funding rate direction before deciding to hold a position through multiple funding intervals.</em></p>
+
+    <h3>Funding Rate Arbitrage (Awareness Only)</h3>
+    <p>Some traders exploit funding rates with a <strong>delta-neutral strategy</strong>: they go long on spot (buy the actual BTC) and simultaneously short the perpetual contract for the same amount. The price movements cancel out (delta neutral), but they <strong>collect the funding payments</strong> from longs when funding is positive.</p>
+    <p>At +0.1% per 8 hours, this yields roughly <strong>0.3% per day or ~9% per month</strong> — with theoretically zero directional risk. In practice, this requires significant capital, careful execution, and carries exchange risk. It is a strategy used by professional market makers and funds. As a beginner, <strong>understand the concept but do not attempt it</strong> — focus on directional trading with proper risk management first.</p>
+
+    <h3>Demo Practice</h3>
+    <div class="callout">
+      <p><strong>Exercise:</strong> Check CoinGlass right now. What is BTC's current funding rate? Calculate what it would cost you to hold a $10,000 long position for 24 hours at the current rate. Then look at the funding rate heatmap — which altcoins have the most extreme funding? Would any of those qualify as a contrarian signal?</p>
+    </div>
+
+    <div class="source-tag">Bybit Learn</div>
+    <div class="source-tag">CoinGlass</div>
+    <div class="source-tag">Binance Academy</div>
+</div>
 </div>
 
-<div class="page" data-page="15">
+<div class="page" data-page="19"><div class="page-inner">
+<div class="section-label">Phase 2 · Week 7 Supplement</div>
+    <h2>Categorical Trading — Consolidation vs Direction</h2>
+    <p>This framework comes from <strong>Iman Trading</strong> and is deceptively simple yet profoundly effective. The core idea: before you do ANYTHING else — before you pick an entry, set a stop, or choose a target — you must first <strong>categorize</strong> what price is doing. Every moment in the market falls into one of two categories, and your entire approach must change based on which one you are in.</p>
+
+    <h3>The Two Categories</h3>
+    <p>All price action, on every timeframe, in every market, belongs to one of two categories:</p>
+    <ul>
+      <li><strong>Consolidation:</strong> Price is staying where it has been. It oscillates within a range, revisiting the same levels. No new territory is being claimed.</li>
+      <li><strong>Direction:</strong> Price is moving to new areas. It is trending — making higher highs/lows (uptrend) or lower highs/lows (downtrend). New ground is being covered.</li>
+    </ul>
+    <p>That is it. Two categories. But the implications are enormous, because each category demands a <strong>completely different trading strategy</strong>.</p>
+
+    <div class="callout">
+      <p><strong>Iman's key insight:</strong> Most strategies fail because traders apply a trending strategy in a ranging market, or a ranging strategy in a trending market. Categorize FIRST, then choose your approach. Getting this one decision right eliminates the majority of losing trades.</p>
+    </div>
+
+    <h3>How to Identify Consolidation</h3>
+    <ul>
+      <li>Price is <strong>oscillating within a defined range</strong> — bouncing between support and resistance</li>
+      <li>Candles are relatively small and overlapping — no strong impulsive moves</li>
+      <li>Price keeps <strong>revisiting the same levels</strong> — it is "staying where it has been"</li>
+      <li><strong>ATR(1)</strong> (Average True Range with period 1) is <strong>declining or flat</strong> — individual candle sizes are shrinking</li>
+      <li>Higher timeframe shows no clear trend direction</li>
+    </ul>
+
+    <h3>How to Identify Direction</h3>
+    <ul>
+      <li>Price is <strong>moving to new areas</strong> it has not been recently — breaking out of ranges</li>
+      <li>Candles are large and impulsive — strong momentum is visible</li>
+      <li>Clear <strong>higher highs and higher lows</strong> (uptrend) or <strong>lower highs and lower lows</strong> (downtrend)</li>
+      <li><strong>ATR(1) is expanding</strong> — individual candle sizes are getting larger</li>
+      <li>Price is not looking back — pullbacks are shallow relative to the impulse moves</li>
+    </ul>
+
+    <h3>Using ATR(1) to Detect Regime Changes</h3>
+    <p>The <strong>ATR with period 1</strong> (not the default 14) measures the size of each individual candle. This is your regime-detection tool:</p>
+    <ul>
+      <li><strong>ATR(1) expanding</strong> (candles getting bigger): The market is transitioning from Consolidation to Direction. Momentum is building. This is where breakout trades have the highest probability.</li>
+      <li><strong>ATR(1) contracting</strong> (candles getting smaller): The market is transitioning from Direction to Consolidation. Momentum is fading. This is where you stop chasing and switch to range-trading.</li>
+      <li><strong>The transition itself is where the opportunity lives.</strong> Catching the shift from Consolidation to Direction early is how the best trades are found — you enter just as a new trend begins.</li>
+    </ul>
+
+    <h3>Consolidation Trading Rules</h3>
+    <p>When the market is consolidating, the dominant principle is: <strong>"Price is more likely to stay where it has been."</strong></p>
+    <ul>
+      <li><strong>Mean reversion approach:</strong> Buy at the bottom of the range, sell at the top of the range</li>
+      <li><strong>Entries:</strong> Near range boundaries (support to go long, resistance to go short)</li>
+      <li><strong>Profit targets:</strong> Set targets <strong>inside the range</strong> — at or before the opposite boundary. Do not expect price to break out.</li>
+      <li><strong>Stop losses:</strong> Place stops <strong>outside the range</strong> — if price truly breaks out, you are wrong and you exit</li>
+      <li><strong>Leverage:</strong> Lower leverage, because range boundaries CAN break and your stops are wide</li>
+      <li><strong>Mindset:</strong> You are fading moves. Every push to the top is a sell opportunity; every drop to the bottom is a buy opportunity.</li>
+    </ul>
+
+    <h3>Directional Trading Rules</h3>
+    <p>When the market is trending, the dominant principle is: <strong>"Price is more likely to move to new areas."</strong></p>
+    <ul>
+      <li><strong>Momentum approach:</strong> Trade WITH the trend, never against it</li>
+      <li><strong>Entries:</strong> On pullbacks within the trend, or on breakout confirmations</li>
+      <li><strong>Stop losses:</strong> Place stops <strong>inside the previous range</strong> — back where price came from. If price returns to the old range, the trend has failed.</li>
+      <li><strong>Profit targets:</strong> Set targets <strong>beyond current price</strong> — in uncharted territory. Let winners run.</li>
+      <li><strong>Leverage:</strong> Higher conviction entries are possible because you have trend confirmation on your side</li>
+      <li><strong>Mindset:</strong> You are riding momentum. Pullbacks are opportunities to add, not reasons to panic.</li>
+    </ul>
+
+    <h3>Consolidation vs Direction — Comparison</h3>
+    <table>
+      <thead>
+        <tr><th>Aspect</th><th>Consolidation</th><th>Direction</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Price behavior</strong></td><td>Staying where it has been</td><td>Moving to new areas</td></tr>
+        <tr><td><strong>ATR(1)</strong></td><td>Declining or flat</td><td>Expanding</td></tr>
+        <tr><td><strong>Strategy</strong></td><td>Mean reversion (fade extremes)</td><td>Trend following (ride momentum)</td></tr>
+        <tr><td><strong>Entries</strong></td><td>At range boundaries</td><td>On pullbacks within trend</td></tr>
+        <tr><td><strong>Stop losses</strong></td><td>Outside the range</td><td>Inside previous range</td></tr>
+        <tr><td><strong>Targets</strong></td><td>Inside the range (opposite boundary)</td><td>Beyond — into new territory</td></tr>
+        <tr><td><strong>Key risk</strong></td><td>Range breaks out → stopped out</td><td>Trend reverses → stuck in bad position</td></tr>
+        <tr><td><strong>Leverage</strong></td><td>Lower (wider stops, less certain)</td><td>Can be higher (trend confirmation)</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Iman's Bracket Concept</h3>
+    <p>When setting your bracket (your stop loss and take profit around an entry), Iman recommends that <strong>bracket sizes should be approximately half the recent candle sizes</strong>. This keeps your risk proportional to current volatility:</p>
+    <ul>
+      <li>If recent candles are 100 points tall, your stop should be roughly 50 points</li>
+      <li>If the market quiets down and candles shrink to 40 points, your stop should shrink to roughly 20 points</li>
+      <li>This naturally adapts your risk to the current regime — wider stops in volatile markets, tighter stops in quiet markets</li>
+    </ul>
+
+    <h3>The Three Actions</h3>
+    <p>Iman distills the entire trading process into three sequential steps:</p>
+    <ul>
+      <li><strong>1. Categorize:</strong> Is price consolidating or moving directionally? Look at the chart. Check ATR(1). Make the call.</li>
+      <li><strong>2. Adapt:</strong> Choose the correct strategy for the current category. Mean reversion for consolidation, trend following for direction.</li>
+      <li><strong>3. Trade:</strong> Execute with proper risk management — entries, stops, and targets that match your chosen strategy.</li>
+    </ul>
+    <p>If you skip step 1, steps 2 and 3 become random. <strong>Categorization is the foundation.</strong></p>
+
+    <h3>Trade Quality Framework</h3>
+    <p>Iman teaches a critical mindset shift about evaluating your trades. The outcome (win or loss) is <strong>not</strong> what determines if a trade was good:</p>
+    <table>
+      <thead>
+        <tr><th>Trade Quality</th><th>Outcome</th><th>Verdict</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Good trade (followed your plan)</td><td>Won</td><td><strong>Correct</strong> — process and outcome aligned</td></tr>
+        <tr><td>Good trade (followed your plan)</td><td>Lost</td><td><strong>Still correct</strong> — the loss was a natural cost of doing business. Process was right.</td></tr>
+        <tr><td>Bad trade (broke your rules)</td><td>Won</td><td><strong>INCORRECT</strong> — this is the most dangerous outcome. It reinforces bad habits.</td></tr>
+        <tr><td>Bad trade (broke your rules)</td><td>Lost</td><td><strong>Incorrect</strong> — bad process, bad outcome. Learn from it.</td></tr>
+      </tbody>
+    </table>
+    <p>A "good trade that lost" is <strong>better</strong> than a "bad trade that won." The bad win teaches you to gamble. The good loss teaches you that variance is normal and your process works over time.</p>
+
+    <h3>Starting R:R for Beginners</h3>
+    <p>Iman recommends beginners start with a <strong>1:1 risk-to-reward ratio</strong>. This may seem conservative compared to the 1:2 or 1:3 targets often taught, but the reasoning is sound:</p>
+    <ul>
+      <li>1:1 R:R targets get hit more frequently — you experience more wins, building confidence</li>
+      <li>It forces you to focus on <strong>win rate</strong> — you need above 50% to be profitable</li>
+      <li>It simplifies trade management — less temptation to move targets or exits</li>
+      <li>As you gain experience and develop an edge, you can extend to 1:1.5, 1:2, and beyond</li>
+    </ul>
+
+    <div class="callout-amber callout">
+      <p><strong>Common mistake:</strong> Beginners set 1:3 R:R targets that rarely get hit, resulting in a string of "almost-winners" that all close at breakeven or small loss. Starting with 1:1 gets you in the habit of taking clean, high-probability setups and actually banking profits.</p>
+    </div>
+
+    <h3>Demo Practice</h3>
+    <div class="callout">
+      <p><strong>Exercise:</strong> Open BTC/USDT on the 4H timeframe. Add the ATR indicator with period 1. Look at the last 2 weeks of price action. Can you identify periods of Consolidation (range-bound, ATR(1) flat or declining) and Direction (trending, ATR(1) expanding)? Mark them on your chart. Did ATR(1) confirm the transitions between categories? Now ask yourself: if you had been trading during those periods, which strategy would have been correct for each phase?</p>
+    </div>
+
+    <div class="source-tag">ImanTrading.org</div>
+    <div class="source-tag">@ImanTradingLive</div>
+</div>
+</div>
+
+<div class="page" data-page="20">
 <div class="page-inner">
     <div class="section-label">Phase 2 · Week 7</div>
     <h2>Trading Psychology & Journaling</h2>
@@ -1122,12 +1596,8 @@ Margin Required = (Position Size × Entry) ÷ Leverage
     <div class="source-tag">Mark Douglas — Trading in the Zone (2000)</div>
     <div class="source-tag">Mark Douglas — The Disciplined Trader (1990)</div>
   </div>
-</div>
 
-<!-- ═══ PAGE 11: WEEK 8 ═══ -->
-</div>
-
-<div class="page" data-page="16">
+<div class="page" data-page="21">
 <div class="page-inner">
 <div class="section-label">Phase 2 · Week 7 Supplement</div>
     <h2>Liquidity, Smart Money & The Judas Swing</h2>
@@ -1180,9 +1650,8 @@ Margin Required = (Position Size × Entry) ÷ Leverage
     <div class="source-tag">ICT / Inner Circle Trader methodology</div>
     <div class="source-tag">Smart Money Concepts (SMC)</div>
 </div>
-</div>
 
-<div class="page" data-page="17">
+<div class="page" data-page="22">
 <div class="page-inner">
 <div class="section-label">Phase 2 · Week 7 Supplement</div>
     <h2>The Wyckoff Method</h2>
@@ -1220,9 +1689,8 @@ Margin Required = (Position Size × Entry) ÷ Leverage
     <div class="source-tag">Stock Market Institute</div>
     <div class="source-tag">StockCharts Wyckoff Tutorial</div>
 </div>
-</div>
 
-<div class="page" data-page="18">
+<div class="page" data-page="23">
 <div class="page-inner">
     <div class="section-label">Phase 2 · Week 8</div>
     <h2>SMRT Algo Verdict & Deep Backtesting</h2>
@@ -1273,12 +1741,8 @@ Margin Required = (Position Size × Entry) ÷ Leverage
       <p>SMRT Algo decision made (keep or cancel). 50+ backtested scenarios logged. Win rate and R:R calculated. If win rate < 35%, revisit entry criteria before Phase 3.</p>
     </div>
   </div>
-</div>
 
-<!-- ═══ PAGE 12: WEEKS 9-10 ═══ -->
-</div>
-
-<div class="page" data-page="19">
+<div class="page" data-page="24">
 <div class="page-inner">
 <div class="section-label">Phase 2 · Week 8 Supplement</div>
     <h2>Macro & Fundamental Analysis</h2>
@@ -1320,7 +1784,7 @@ Margin Required = (Position Size × Entry) ÷ Leverage
 </div>
 </div>
 
-<div class="page" data-page="20">
+<div class="page" data-page="25">
 <div class="page-inner">
     <div class="section-label">Phase 3 · Weeks 9–10</div>
     <h2>Live Demo Execution</h2>
@@ -1358,10 +1822,7 @@ Margin Required = (Position Size × Entry) ÷ Leverage
   </div>
 </div>
 
-<!-- ═══ PAGE 13: WEEK 11 ═══ -->
-</div>
-
-<div class="page" data-page="21">
+<div class="page" data-page="26">
 <div class="page-inner">
 <div class="section-label">Phase 3 · Week 10 Supplement</div>
     <h2>Advanced Trade Management</h2>
@@ -1401,9 +1862,237 @@ Margin Required = (Position Size × Entry) ÷ Leverage
       <p><strong>The #1 rule:</strong> NEVER add to a losing position with leverage. "Averaging down" with leverage is the fastest way to liquidation. Your stop was hit for a reason. Accept the loss.</p>
     </div>
 </div>
+
+<div class="page" data-page="27">
+<div class="page-inner">
+<div class="section-label">Phase 3 · Week 11 Supplement</div>
+<h2>Reading the Order Book & Tape</h2>
+<p>Most retail traders only read charts. Professional traders read the order book — a live view of all pending buy and sell orders. Combined with tape reading (watching actual trades execute), this gives you a real-time view of supply and demand that charts alone cannot provide.</p>
+
+<h3>What the Order Book Shows</h3>
+<table>
+<thead><tr><th>Side</th><th>Name</th><th>What It Is</th></tr></thead>
+<tbody>
+<tr><td><strong>Left / Green</strong></td><td>Bids (Buyers)</td><td>All pending buy orders at each price level. The highest bid = the most someone will pay right now.</td></tr>
+<tr><td><strong>Right / Red</strong></td><td>Asks (Sellers)</td><td>All pending sell orders at each price level. The lowest ask = the least someone will accept right now.</td></tr>
+<tr><td><strong>The Gap</strong></td><td>Spread</td><td>Difference between best bid and best ask. Tight spread = liquid market. Wide spread = illiquid or volatile.</td></tr>
+</tbody>
+</table>
+
+<h3>Reading Walls and Depth</h3>
+<ul>
+<li><strong>Bid Wall:</strong> A massive buy order at a price level. Appears as a thick bar on the depth chart. Suggests strong support — BUT it can be fake.</li>
+<li><strong>Ask Wall:</strong> A massive sell order. Suggests resistance — also potentially fake.</li>
+<li><strong>Thin areas:</strong> Price levels with few orders. Price moves FAST through these — like air pockets. These are where quick moves happen.</li>
+</ul>
+
+<h3>Spoofing — The Fake Wall Trap</h3>
+<div class="callout-amber callout">
+<p><strong>Spoofing</strong> is placing a large order with the intention of cancelling it before execution. A whale places a massive bid wall at $65,000 to make you think there's support — then cancels it right before price gets there, and the floor drops out. If you see a large wall suddenly appear and then vanish within minutes, that is spoofing. <strong>Walls are intentions, not commitments.</strong></p>
 </div>
 
-<div class="page" data-page="22">
+<h3>Tape Reading (Time & Sales)</h3>
+<p>The "tape" is the stream of actually executed trades. While the order book shows intentions, the tape shows reality.</p>
+<ul>
+<li><strong>Large aggressive market buys</strong> hitting the ask side = bullish pressure. Someone is willing to pay the higher price to get in NOW.</li>
+<li><strong>Large aggressive market sells</strong> hitting the bid side = bearish pressure. Someone needs out urgently.</li>
+<li><strong>Tool:</strong> <a href="https://aggr.trade" target="_blank">aggr.trade</a> — free visual tape reader that shows trade flow with audio/visual intensity based on trade size.</li>
+</ul>
+
+<h3>Order Book Signals</h3>
+<table>
+<thead><tr><th>Signal</th><th>What It Means</th><th>Action</th></tr></thead>
+<tbody>
+<tr><td>Bids much larger than asks</td><td>More buying interest than selling</td><td>Bullish bias, but verify with price action</td></tr>
+<tr><td>Asks much larger than bids</td><td>More selling interest than buying</td><td>Bearish bias, but verify with price action</td></tr>
+<tr><td>Wall appears then vanishes</td><td>Spoofing — manipulation</td><td>Do NOT trust that level as support/resistance</td></tr>
+<tr><td>Large market buys eating through asks</td><td>Aggressive buying — bullish momentum</td><td>Confirms a breakout if aligned with chart pattern</td></tr>
+<tr><td>Thin book on both sides</td><td>Low liquidity — fast moves incoming</td><td>Reduce position size, widen stops, or wait</td></tr>
+</tbody>
+</table>
+
+<div class="callout">
+<p><strong>The order book is context, not signal.</strong> Use it to confirm or deny what your chart analysis already shows. If your chart says "bullish breakout forming" and the order book shows massive bid support with aggressive market buys eating through asks — that is high-conviction confluence. If your chart says bullish but the book shows massive ask walls and no buying pressure — be cautious.</p>
+</div>
+
+<h3>Demo Practice</h3>
+<div class="callout">
+<p><strong>Exercise:</strong> Open Bybit's order book for BTC/USDT. Watch it for 30 minutes. Note: Where are the largest walls? Do any walls disappear suddenly (spoofing)? When a large market buy hits, what happens to price? Open <a href="https://aggr.trade" target="_blank">aggr.trade</a> alongside and listen to the tape — large trades make louder sounds. This builds intuition you cannot get from charts alone.</p>
+</div>
+
+<div class="quiz-container" data-quiz="chapter-27">
+<div class="quiz-title">Chapter Quiz — Order Book & Tape</div>
+<div class="quiz-question" data-correct="C">
+<div class="quiz-q-text"><span class="quiz-q-num">Q1.</span> A massive bid wall appears at $65,000 then vanishes 5 minutes later. What likely happened?</div>
+<div class="quiz-options">
+<div class="quiz-option" data-value="A"><span class="quiz-opt-letter">A</span> A whale bought all the BTC at that level</div>
+<div class="quiz-option" data-value="B"><span class="quiz-opt-letter">B</span> The exchange removed the order</div>
+<div class="quiz-option" data-value="C"><span class="quiz-opt-letter">C</span> Spoofing — the order was placed to create an illusion of support, then cancelled</div>
+<div class="quiz-option" data-value="D"><span class="quiz-opt-letter">D</span> The wall was filled by sellers</div>
+</div></div>
+<div class="quiz-question" data-correct="A">
+<div class="quiz-q-text"><span class="quiz-q-num">Q2.</span> You see large aggressive market buy orders eating through the ask side. What does this indicate?</div>
+<div class="quiz-options">
+<div class="quiz-option" data-value="A"><span class="quiz-opt-letter">A</span> Strong bullish pressure — buyers are willing to pay market price to get in now</div>
+<div class="quiz-option" data-value="B"><span class="quiz-opt-letter">B</span> The market is about to crash</div>
+<div class="quiz-option" data-value="C"><span class="quiz-opt-letter">C</span> Sellers are in control</div>
+<div class="quiz-option" data-value="D"><span class="quiz-opt-letter">D</span> The spread is widening dangerously</div>
+</div></div>
+<div class="quiz-question" data-correct="D">
+<div class="quiz-q-text"><span class="quiz-q-num">Q3.</span> The order book shows very thin orders on both bid and ask sides. What should you do?</div>
+<div class="quiz-options">
+<div class="quiz-option" data-value="A"><span class="quiz-opt-letter">A</span> Go all-in — thin books mean easy profits</div>
+<div class="quiz-option" data-value="B"><span class="quiz-opt-letter">B</span> Place large market orders to move the price</div>
+<div class="quiz-option" data-value="C"><span class="quiz-opt-letter">C</span> Ignore it — the order book doesn't matter</div>
+<div class="quiz-option" data-value="D"><span class="quiz-opt-letter">D</span> Reduce position size or wait — thin books mean fast, unpredictable moves</div>
+</div></div>
+<div class="quiz-question" data-correct="B">
+<div class="quiz-q-text"><span class="quiz-q-num">Q4.</span> How should you use order book data in your trading?</div>
+<div class="quiz-options">
+<div class="quiz-option" data-value="A"><span class="quiz-opt-letter">A</span> As your primary trade signal — buy when bids are large</div>
+<div class="quiz-option" data-value="B"><span class="quiz-opt-letter">B</span> As context and confirmation for what your chart analysis already shows</div>
+<div class="quiz-option" data-value="C"><span class="quiz-opt-letter">C</span> Only for scalping, never for swing trades</div>
+<div class="quiz-option" data-value="D"><span class="quiz-opt-letter">D</span> Ignore it completely — only price action matters</div>
+</div></div>
+<div class="quiz-question" data-correct="C">
+<div class="quiz-q-text"><span class="quiz-q-num">Q5.</span> What is the "spread" in the order book?</div>
+<div class="quiz-options">
+<div class="quiz-option" data-value="A"><span class="quiz-opt-letter">A</span> The total number of orders on both sides</div>
+<div class="quiz-option" data-value="B"><span class="quiz-opt-letter">B</span> The fee charged by the exchange</div>
+<div class="quiz-option" data-value="C"><span class="quiz-opt-letter">C</span> The difference between the best bid and best ask prices</div>
+<div class="quiz-option" data-value="D"><span class="quiz-opt-letter">D</span> The distance between support and resistance</div>
+</div></div>
+<button class="quiz-submit" disabled>Submit Answers</button>
+<div class="quiz-result"><div class="quiz-score"></div><div class="quiz-score-label"></div><p class="quiz-message"></p><button class="quiz-reset">Retry Quiz</button></div>
+</div>
+
+<div class="source-tag">Bybit Learn</div>
+<div class="source-tag">Aggr.trade</div>
+</div>
+</div>
+
+<div class="page" data-page="28">
+<div class="page-inner">
+<div class="section-label">Phase 3 · Week 11 Supplement</div>
+<h2>Social Discovery & Sentiment Workflow</h2>
+<p>Technical analysis tells you what the chart says. Social and sentiment analysis tells you what the CROWD thinks. When both align, your conviction goes up. When the crowd is euphoric and your chart says overbought — that is your edge. This chapter builds your complete research workflow.</p>
+
+<h3>Your Free Research Stack</h3>
+<table>
+<thead><tr><th>Tool</th><th>What It Does</th><th>Cost</th></tr></thead>
+<tbody>
+<tr><td><strong><a href="https://www.coingecko.com/en/highlights/trending-crypto" target="_blank">CoinGecko Trending</a></strong></td><td>Top trending coins by search volume globally, updated every 3 hours</td><td>Free</td></tr>
+<tr><td><strong><a href="https://coinmarketcap.com" target="_blank">CoinMarketCap</a></strong></td><td>New listings + trending coins + recently added tokens</td><td>Free</td></tr>
+<tr><td><strong><a href="https://lunarcrush.com" target="_blank">LunarCrush</a></strong></td><td>Social sentiment scoring. Galaxy Score ranks coins by social + market momentum. Aggregates Twitter, Reddit, YouTube.</td><td>Free tier</td></tr>
+<tr><td><strong><a href="https://app.santiment.net" target="_blank">Santiment</a></strong></td><td>Social volume, dev activity, whale tracking per coin. KEY: extreme social volume spikes during rallies reliably indicate local tops.</td><td>Free tier</td></tr>
+<tr><td><strong><a href="https://www.tradingview.com/markets/cryptocurrencies/ideas/" target="_blank">TradingView Ideas</a></strong></td><td>Community analysis from other traders. See reasoning, not just calls. Check Editors' Picks for quality.</td><td>Free</td></tr>
+<tr><td><strong><a href="https://www.coinglass.com" target="_blank">CoinGlass</a></strong></td><td>Funding rates, open interest, liquidation data across all exchanges</td><td>Free</td></tr>
+<tr><td><strong><a href="https://dexscreener.com" target="_blank">DexScreener</a></strong></td><td>New DEX token listings, real-time volume and liquidity data</td><td>Free</td></tr>
+<tr><td><strong><a href="https://cryptopanic.com" target="_blank">CryptoPanic</a></strong></td><td>Community-ranked crypto news aggregator. Votes surface the most relevant stories.</td><td>Free</td></tr>
+<tr><td><strong><a href="https://platform.arkhamintelligence.com" target="_blank">Arkham Intelligence</a></strong></td><td>Whale wallet identification and tracking. KOL wallet tagging — see what influencers ACTUALLY buy vs what they tell you.</td><td>Free tier</td></tr>
+<tr><td><strong><a href="https://tokensniffer.com" target="_blank">Token Sniffer</a></strong></td><td>Analyzes smart contracts for rug-pull risk indicators (mint functions, ownership controls)</td><td>Free</td></tr>
+</tbody>
+</table>
+
+<h3>Twitter/X Research Workflow</h3>
+<p>Crypto Twitter (CT) is where news breaks first. But it is also where scams propagate fastest. You need a system.</p>
+<ul>
+<li><strong>Follow DATA accounts, not signal callers:</strong> <a href="https://twitter.com/CryptoQuant_com" target="_blank">@CryptoQuant_com</a> (on-chain), <a href="https://twitter.com/CoinGlass_com" target="_blank">@CoinGlass_com</a> (derivatives), <a href="https://twitter.com/WClementeIII" target="_blank">@WClementeIII</a> (macro/BTC analysis)</li>
+<li><strong>Create a "Trading Research" Twitter List.</strong> Keep it separate from your main feed. Check during your 45-min session ONLY.</li>
+<li><strong>The filter:</strong> Does this person explain WHY with charts and data? Or just say "BUY NOW"? No reasoning = unfollow immediately.</li>
+<li><strong>Green flags:</strong> Shows losses AND wins. 2+ years consistent content. No course to sell. Explains reasoning.</li>
+</ul>
+
+<h3>Reddit as a Sentiment Gauge</h3>
+<ul>
+<li><strong>r/CryptoCurrency</strong> — general sentiment. Extreme euphoria = likely top. Extreme fear = likely bottom. Use as a <em>contrarian indicator</em>.</li>
+<li><strong>r/BitcoinMarkets</strong> — more technical, daily discussion threads with actual analysis.</li>
+<li><strong>Rule:</strong> Reddit is a sentiment gauge, NOT a signal source. If everyone is screaming buy, be cautious.</li>
+</ul>
+
+<h3>The Social + Technical Confluence System</h3>
+<p>This is your actual workflow — how social research combines with your technical analysis:</p>
+<div class="rule-box"><div class="rule-num">STEP 1 — SCAN (5 min)</div><p>Check CoinGecko trending, LunarCrush top movers, your Twitter research list</p></div>
+<div class="rule-box"><div class="rule-num">STEP 2 — FILTER (5 min)</div><p>Does any coin showing social momentum ALSO have a technical setup on the chart? (S/R level, pattern forming, volume increasing)</p></div>
+<div class="rule-box"><div class="rule-num">STEP 3 — VALIDATE (5 min)</div><p>Check CoinGlass for that coin's funding rate and OI changes. Check Santiment or CryptoQuant for whale accumulation signals.</p></div>
+<div class="rule-box"><div class="rule-num">STEP 4 — DECIDE</div><p>Social buzz + technical setup + on-chain confirmation = high-conviction watchlist add. NEVER trade social alone. Trending coin + no technical setup = just hype.</p></div>
+
+<h3>Red Flags — How to NOT Get Scammed</h3>
+<div class="callout-red callout">
+<p><strong>98% of new Solana tokens showed pump-and-dump warning signs.</strong> The crypto social space is a minefield. These red flags mean STAY AWAY:</p>
+</div>
+<ul>
+<li>Coin only discussed in one Telegram group → pump & dump</li>
+<li>"1000x gem" or "guaranteed moonshot" language → scam</li>
+<li>No GitHub activity, anonymous team, no audit → stay away</li>
+<li>Sudden 500%+ social volume spike with no news → manufactured hype</li>
+<li>Anyone DMing you about a coin → scam, 100% of the time</li>
+<li>Influencer posts with #ad or #sponsored → paid promotion, not genuine conviction</li>
+<li><strong>The 48-hour rule:</strong> Never buy a coin the same day you discover it socially. Wait 48 hours. If it still looks good technically after the hype cools, THEN evaluate.</li>
+</ul>
+
+<h3>Weekly Watchlist Workflow</h3>
+<ul>
+<li><strong>Monday:</strong> Scan socials + trending. Build a 5-coin watchlist.</li>
+<li><strong>Tue–Thu:</strong> Monitor charts for setups. Only trade if full 7/7 checklist.</li>
+<li><strong>Friday:</strong> Review. What worked? What was noise?</li>
+<li><strong>Log everything in the ledger</strong> — even coins you watched but didn't trade.</li>
+</ul>
+
+<h3>Demo Practice</h3>
+<div class="callout">
+<p><strong>Exercise:</strong> Set up your research stack this week. Spend 15 min/day scanning. Find 3 coins with social + technical + on-chain alignment. Log your analysis in the ledger. Do NOT trade them — just track for 1 week and see if your analysis was correct.</p>
+</div>
+
+<div class="quiz-container" data-quiz="chapter-28">
+<div class="quiz-title">Chapter Quiz — Social Discovery</div>
+<div class="quiz-question" data-correct="D">
+<div class="quiz-q-text"><span class="quiz-q-num">Q1.</span> A coin is trending on CoinGecko and people are excited on Reddit. Should you buy?</div>
+<div class="quiz-options">
+<div class="quiz-option" data-value="A"><span class="quiz-opt-letter">A</span> Yes — social momentum means price will go up</div>
+<div class="quiz-option" data-value="B"><span class="quiz-opt-letter">B</span> Yes — if Reddit says buy, it's usually right</div>
+<div class="quiz-option" data-value="C"><span class="quiz-opt-letter">C</span> No — social media is always wrong</div>
+<div class="quiz-option" data-value="D"><span class="quiz-opt-letter">D</span> Only if there is ALSO a technical setup on the chart and on-chain confirmation</div>
+</div></div>
+<div class="quiz-question" data-correct="B">
+<div class="quiz-q-text"><span class="quiz-q-num">Q2.</span> Someone DMs you on Telegram about a "100x gem" that's about to pump. What do you do?</div>
+<div class="quiz-options">
+<div class="quiz-option" data-value="A"><span class="quiz-opt-letter">A</span> Research it quickly and buy if the chart looks good</div>
+<div class="quiz-option" data-value="B"><span class="quiz-opt-letter">B</span> Ignore and block — unsolicited DMs about coins are scams 100% of the time</div>
+<div class="quiz-option" data-value="C"><span class="quiz-opt-letter">C</span> Buy a small amount to test</div>
+<div class="quiz-option" data-value="D"><span class="quiz-opt-letter">D</span> Share it with your friends first</div>
+</div></div>
+<div class="quiz-question" data-correct="A">
+<div class="quiz-q-text"><span class="quiz-q-num">Q3.</span> Santiment shows a coin's social volume just spiked 500% during a price rally. What does this typically signal?</div>
+<div class="quiz-options">
+<div class="quiz-option" data-value="A"><span class="quiz-opt-letter">A</span> A local top — extreme social spikes during rallies reliably indicate peak hype</div>
+<div class="quiz-option" data-value="B"><span class="quiz-opt-letter">B</span> The rally is just beginning</div>
+<div class="quiz-option" data-value="C"><span class="quiz-opt-letter">C</span> Nothing — social volume doesn't correlate with price</div>
+<div class="quiz-option" data-value="D"><span class="quiz-opt-letter">D</span> Time to add to your position</div>
+</div></div>
+<div class="quiz-question" data-correct="C">
+<div class="quiz-q-text"><span class="quiz-q-num">Q4.</span> What is the "48-hour rule" for socially discovered coins?</div>
+<div class="quiz-options">
+<div class="quiz-option" data-value="A"><span class="quiz-opt-letter">A</span> Buy within 48 hours before the hype dies</div>
+<div class="quiz-option" data-value="B"><span class="quiz-opt-letter">B</span> Hold for at least 48 hours after buying</div>
+<div class="quiz-option" data-value="C"><span class="quiz-opt-letter">C</span> Wait 48 hours before acting — if it still looks good technically after hype cools, then evaluate</div>
+<div class="quiz-option" data-value="D"><span class="quiz-opt-letter">D</span> Check the coin every 48 hours for updates</div>
+</div></div>
+<div class="quiz-question" data-correct="B">
+<div class="quiz-q-text"><span class="quiz-q-num">Q5.</span> What kind of Twitter accounts should you follow for trading research?</div>
+<div class="quiz-options">
+<div class="quiz-option" data-value="A"><span class="quiz-opt-letter">A</span> Accounts with the most followers and biggest gains shown</div>
+<div class="quiz-option" data-value="B"><span class="quiz-opt-letter">B</span> Data accounts that explain reasoning with charts, show losses AND wins, and never sell signals</div>
+<div class="quiz-option" data-value="C"><span class="quiz-opt-letter">C</span> Anyone who predicted the last move correctly</div>
+<div class="quiz-option" data-value="D"><span class="quiz-opt-letter">D</span> Signal groups that post buy/sell alerts</div>
+</div></div>
+<button class="quiz-submit" disabled>Submit Answers</button>
+<div class="quiz-result"><div class="quiz-score"></div><div class="quiz-score-label"></div><p class="quiz-message"></p><button class="quiz-reset">Retry Quiz</button></div>
+</div>
+</div>
+</div>
+
+<div class="page" data-page="29">
 <div class="page-inner">
     <div class="section-label">Phase 3 · Week 11</div>
     <h2>Strategy Refinement</h2>
@@ -1441,12 +2130,8 @@ Margin Required = (Position Size × Entry) ÷ Leverage
       <p>Douglas's key insight applies here: your last result should not influence your next decision. Lose, and you get timid. Win, and you get reckless. Treat each trade as an independent event. Master this, and you break the emotional cycle.</p>
     </div>
   </div>
-</div>
 
-<!-- ═══ PAGE 14: WEEK 12 ═══ -->
-</div>
-
-<div class="page" data-page="23">
+<div class="page" data-page="30">
 <div class="page-inner">
 <div class="section-label">Phase 3 · Week 11 Supplement</div>
     <h2>Correlation Analysis</h2>
@@ -1482,7 +2167,139 @@ Margin Required = (Position Size × Entry) ÷ Leverage
 </div>
 </div>
 
-<div class="page" data-page="24">
+<div class="page" data-page="31">
+<div class="page-inner">
+<div class="section-label">Phase 3 · Week 12 Supplement</div>
+<h2>On-Chain Analysis for Traders</h2>
+<p>On-chain data is publicly visible blockchain transaction data. It cannot be faked. You can see what whales and institutions are DOING — not what they are saying. Stock traders do not have this advantage. Blockchain transparency is unique to crypto.</p>
+
+<h3>Key On-Chain Metrics</h3>
+<table>
+<thead><tr><th>Metric</th><th>What It Shows</th><th>Bullish Signal</th><th>Bearish Signal</th><th>Tool</th></tr></thead>
+<tbody>
+<tr><td><strong>Exchange Netflows</strong></td><td>BTC moving on/off exchanges</td><td>Outflows (accumulation)</td><td>Inflows (preparing to sell)</td><td>CryptoQuant, Glassnode</td></tr>
+<tr><td><strong>Whale Transactions</strong></td><td>Large transfers >$1M</td><td>Spike during accumulation zone</td><td>Spike at resistance/highs</td><td>Whale Alert, Santiment</td></tr>
+<tr><td><strong>MVRV Ratio</strong></td><td>Market value vs realized value</td><td>Below 1.0 = undervalued</td><td>Above 3.0 = overheated</td><td>Glassnode, CryptoQuant</td></tr>
+<tr><td><strong>NUPL</strong></td><td>Net Unrealized Profit/Loss</td><td>Negative = capitulation (buy zone)</td><td>High positive = euphoria (sell zone)</td><td>Glassnode</td></tr>
+<tr><td><strong>Open Interest</strong></td><td>Total open leveraged positions</td><td>Rising OI + rising price = strong trend</td><td>Rising OI + flat price = squeeze coming</td><td>CoinGlass</td></tr>
+<tr><td><strong>Stablecoin Supply on Exchanges</strong></td><td>USDT/USDC sitting on exchanges</td><td>Increasing = dry powder ready to buy</td><td>Decreasing = already deployed</td><td>CryptoQuant</td></tr>
+<tr><td><strong>Miner Behavior</strong></td><td>Are miners selling or holding?</td><td>Holding = bullish confidence</td><td>Selling = bearish pressure</td><td>CryptoQuant</td></tr>
+</tbody>
+</table>
+
+<h3>Free Tools Comparison</h3>
+<table>
+<thead><tr><th>Tool</th><th>Best For</th><th>Free Tier</th></tr></thead>
+<tbody>
+<tr><td><strong><a href="https://www.coinglass.com" target="_blank">CoinGlass</a></strong></td><td>OI, funding rates, liquidation heatmaps</td><td>Most features free</td></tr>
+<tr><td><strong><a href="https://cryptoquant.com" target="_blank">CryptoQuant</a></strong></td><td>Exchange flows, miner data, whale alerts</td><td>Limited free tier</td></tr>
+<tr><td><strong><a href="https://glassnode.com" target="_blank">Glassnode</a></strong></td><td>MVRV, NUPL, NVT, macro cycle indicators</td><td>Limited free tier</td></tr>
+<tr><td><strong><a href="https://app.santiment.net" target="_blank">Santiment</a></strong></td><td>Social + on-chain combined, alt analysis</td><td>Limited free tier</td></tr>
+<tr><td><strong><a href="https://dune.com" target="_blank">Dune Analytics</a></strong></td><td>Custom community dashboards, DeFi/protocol data</td><td>Public dashboards free</td></tr>
+<tr><td><strong><a href="https://platform.arkhamintelligence.com" target="_blank">Arkham Intelligence</a></strong></td><td>Wallet identification, whale watching, entity tracking</td><td>Limited free tier</td></tr>
+</tbody>
+</table>
+
+<div class="callout">
+<p><strong>The core principle:</strong> Outflows from exchanges to private wallets = buying and holding (bullish). Inflows from wallets back to exchanges = preparing to sell (bearish). Individual transactions are noise — sustained directional flow is the signal.</p>
+</div>
+
+<h3>Demo Practice</h3>
+<div class="callout">
+<p><strong>Exercise:</strong> Go to CoinGlass. Check BTC exchange netflows for the past 7 days. Go to CryptoQuant. Check exchange reserves trend. Is BTC flowing on or off exchanges? Write a 3-sentence on-chain summary in your ledger. Then combine this with your current technical view — does on-chain data confirm or contradict your chart analysis?</p>
+</div>
+
+<div class="quiz-container" data-quiz="chapter-31">
+<div class="quiz-title">Chapter Quiz — On-Chain Analysis</div>
+<div class="quiz-question" data-correct="A">
+<div class="quiz-q-text"><span class="quiz-q-num">Q1.</span> BTC is flowing off exchanges rapidly while price is flat. What does this typically suggest?</div>
+<div class="quiz-options">
+<div class="quiz-option" data-value="A"><span class="quiz-opt-letter">A</span> Accumulation — someone is buying and moving to cold storage, bullish</div>
+<div class="quiz-option" data-value="B"><span class="quiz-opt-letter">B</span> Bearish — people are leaving the market</div>
+<div class="quiz-option" data-value="C"><span class="quiz-opt-letter">C</span> No signal — exchange flows don't matter</div>
+<div class="quiz-option" data-value="D"><span class="quiz-opt-letter">D</span> Liquidation is imminent</div>
+</div></div>
+<div class="quiz-question" data-correct="C">
+<div class="quiz-q-text"><span class="quiz-q-num">Q2.</span> The MVRV ratio for BTC is at 3.5. What does this indicate?</div>
+<div class="quiz-options">
+<div class="quiz-option" data-value="A"><span class="quiz-opt-letter">A</span> BTC is severely undervalued — time to buy aggressively</div>
+<div class="quiz-option" data-value="B"><span class="quiz-opt-letter">B</span> Normal market conditions</div>
+<div class="quiz-option" data-value="C"><span class="quiz-opt-letter">C</span> Market is overheated — historically, corrections follow MVRV above 3.0</div>
+<div class="quiz-option" data-value="D"><span class="quiz-opt-letter">D</span> Miners are selling their BTC</div>
+</div></div>
+<div class="quiz-question" data-correct="B">
+<div class="quiz-q-text"><span class="quiz-q-num">Q3.</span> Stablecoin supply on exchanges is increasing sharply. What does this mean?</div>
+<div class="quiz-options">
+<div class="quiz-option" data-value="A"><span class="quiz-opt-letter">A</span> People are panic selling crypto for stablecoins</div>
+<div class="quiz-option" data-value="B"><span class="quiz-opt-letter">B</span> Dry powder is building up — capital is ready to be deployed into the market (bullish)</div>
+<div class="quiz-option" data-value="C"><span class="quiz-opt-letter">C</span> Stablecoins are about to depeg</div>
+<div class="quiz-option" data-value="D"><span class="quiz-opt-letter">D</span> Exchange fees are increasing</div>
+</div></div>
+<div class="quiz-question" data-correct="D">
+<div class="quiz-q-text"><span class="quiz-q-num">Q4.</span> What makes on-chain data unique compared to traditional stock market data?</div>
+<div class="quiz-options">
+<div class="quiz-option" data-value="A"><span class="quiz-opt-letter">A</span> It updates faster</div>
+<div class="quiz-option" data-value="B"><span class="quiz-opt-letter">B</span> It only works for Bitcoin</div>
+<div class="quiz-option" data-value="C"><span class="quiz-opt-letter">C</span> It requires expensive software</div>
+<div class="quiz-option" data-value="D"><span class="quiz-opt-letter">D</span> Blockchain transactions are public and cannot be faked — you see exactly what wallets are doing</div>
+</div></div>
+<div class="quiz-question" data-correct="A">
+<div class="quiz-q-text"><span class="quiz-q-num">Q5.</span> Open interest is rising while BTC price is flat. What might happen next?</div>
+<div class="quiz-options">
+<div class="quiz-option" data-value="A"><span class="quiz-opt-letter">A</span> A squeeze — leveraged positions are building up and a sharp move in either direction is likely</div>
+<div class="quiz-option" data-value="B"><span class="quiz-opt-letter">B</span> Nothing — OI doesn't correlate with price</div>
+<div class="quiz-option" data-value="C"><span class="quiz-opt-letter">C</span> Guaranteed upward movement</div>
+<div class="quiz-option" data-value="D"><span class="quiz-opt-letter">D</span> Exchange maintenance is coming</div>
+</div></div>
+<button class="quiz-submit" disabled>Submit Answers</button>
+<div class="quiz-result"><div class="quiz-score"></div><div class="quiz-score-label"></div><p class="quiz-message"></p><button class="quiz-reset">Retry Quiz</button></div>
+</div>
+<div class="source-tag">CryptoQuant</div>
+<div class="source-tag">Glassnode</div>
+<div class="source-tag">Santiment</div>
+<div class="source-tag">CoinGlass</div>
+</div>
+</div>
+
+<div class="page" data-page="32">
+<div class="page-inner">
+<div class="section-label">Phase 3 · Week 12</div>
+<h2>Live Demo Execution — Forex</h2>
+<p>You have spent 11 weeks mastering crypto. Now apply your skills to a different market. Forex is the largest financial market in the world ($7.5 trillion daily volume). The same principles — price action, S/R, risk management, psychology — apply directly.</p>
+
+<h3>Why Forex After Crypto</h3>
+<ul>
+<li>Forex pairs are <strong>less volatile</strong> than crypto — tighter ranges, more predictable sessions</li>
+<li>Your crypto skills <strong>transfer directly</strong> — candlesticks, S/R, Fibonacci, MTA all work the same way</li>
+<li>Forex has <strong>defined session hours</strong> — London and NY sessions are when the action happens</li>
+<li>Diversification — don't depend on one market for income</li>
+</ul>
+
+<h3>Your Forex Pairs (Naga Demo)</h3>
+<table>
+<thead><tr><th>Pair</th><th>Character</th><th>Best For</th></tr></thead>
+<tbody>
+<tr><td><strong>EUR/USD</strong></td><td>Most liquid, tightest spreads, steady trends</td><td>Your primary learning pair</td></tr>
+<tr><td><strong>GBP/USD</strong></td><td>Slightly more volatile, wider swings</td><td>Good for crypto-trained eye</td></tr>
+</tbody>
+</table>
+<p><em>Do NOT touch exotic pairs, gold, oil, or indices yet. Master the majors first.</em></p>
+
+<h3>Execution Rules</h3>
+<ul>
+<li>Same strategy, same 7-check system, same risk management</li>
+<li>Same journal template in the in-app ledger</li>
+<li>10+ trades over 1 week on Naga Demo</li>
+<li>Compare: are your forex results better or worse than crypto? Why?</li>
+</ul>
+
+<div class="callout">
+<p><strong>Key difference from crypto:</strong> Forex has no funding rates but has wider spreads during off-hours. Always trade during London or NY sessions. Check ForexFactory for economic events — red-folder releases move forex pairs just as hard as CPI moves BTC.</p>
+</div>
+</div>
+</div>
+
+<div class="page" data-page="33">
 <div class="page-inner">
     <div class="section-label">Phase 3 · Week 12</div>
     <h2>Go / No-Go Evaluation</h2>
@@ -1524,10 +2341,117 @@ Margin Required = (Position Size × Entry) ÷ Leverage
   </div>
 </div>
 
-<!-- ═══ PAGE 15: LEVERAGE TABLE ═══ -->
+<div class="page" data-page="34">
+<div class="page-inner">
+<div class="section-label">Reference</div>
+<h2>How to Vet Your Own Sources</h2>
+<p>The trading education space is filled with people who make more money selling courses than trading. This chapter teaches you to identify trustworthy sources and avoid getting scammed. The CFTC (Commodity Futures Trading Commission) explicitly warns about fake trading educators.</p>
+
+<h3>Red Flags</h3>
+<div class="rule-box"><div class="rule-num">RED FLAG 01</div><p>Promises guaranteed returns. "200% monthly" or "risk-free trading" — impossible claims.</p></div>
+<div class="rule-box"><div class="rule-num">RED FLAG 02</div><p>Only shows wins, never losses. Every real trader has losing streaks. If they only show green, they're lying.</p></div>
+<div class="rule-box"><div class="rule-num">RED FLAG 03</div><p>Sells expensive courses ($500+) as prerequisite to learning. The best trading education is free.</p></div>
+<div class="rule-box"><div class="rule-num">RED FLAG 04</div><p>Uses fake urgency: "Only 10 spots left!" or "Price going up tomorrow!" — pressure tactics.</p></div>
+<div class="rule-box"><div class="rule-num">RED FLAG 05</div><p>No verifiable trade history. If they can't prove they trade profitably, they can't teach you to.</p></div>
+<div class="rule-box"><div class="rule-num">RED FLAG 06</div><p>Screenshots of P&L that could be faked or from demo accounts. Real results come with verified records.</p></div>
+<div class="rule-box"><div class="rule-num">RED FLAG 07</div><p>DMs you first about trading opportunities. Legitimate educators don't cold-DM people.</p></div>
+<div class="rule-box"><div class="rule-num">RED FLAG 08</div><p>"Secret strategy" that only they know. There are no secrets — only frameworks applied with discipline.</p></div>
+
+<h3>Green Flags</h3>
+<ul>
+<li><strong>Shows losses AND wins transparently</strong></li>
+<li><strong>Explains reasoning</strong> with charts and data, not just calls</li>
+<li><strong>2+ years of consistent content</strong> with no pivots to "crypto signal group"</li>
+<li><strong>Professional certifications</strong> (CMT, CFA) or verifiable trade history (MyFXBook, prop firm payouts)</li>
+<li><strong>Never sells signals</strong> or promises returns</li>
+<li><strong>Free content that actually teaches</strong> — not just a teaser for paid content</li>
+<li><strong>Independent positive reviews</strong> on Trustpilot, Reddit, or trading forums</li>
+</ul>
+
+<h3>The Verification Workflow</h3>
+<ul>
+<li><strong>Step 1:</strong> Search "[name] scam" and "[name] review" on Google</li>
+<li><strong>Step 2:</strong> Check Trustpilot for independent reviews (beware fake reviews too)</li>
+<li><strong>Step 3:</strong> Search Reddit for unbiased opinions from actual students</li>
+<li><strong>Step 4:</strong> Watch their free content for 2+ weeks before paying for ANYTHING</li>
+<li><strong>Step 5:</strong> Ask yourself: are they teaching me to think, or to follow?</li>
+</ul>
+
+<h3>Example: A Vetted Source</h3>
+<p><strong>ImanTrading</strong> — never sold a course, documented his journey transparently, shows losses, $34k+ in verified prop firm payouts, 5 stars on Trustpilot with 140+ reviews, monetizes only through disclosed affiliate links. This is what a trustworthy source looks like.</p>
+
+<div class="callout">
+<p><strong>The best trading education is free.</strong> BabyPips, Investopedia, CME Group, Bybit Learn, ImanTrading — all free. If someone charges $997 for what you can learn for free, they are monetizing your impatience, not your education.</p>
+</div>
+<div class="source-tag">CFTC — Learn to Trade Without Getting Scammed</div>
+<div class="source-tag">ImanTrading.org</div>
+</div>
 </div>
 
-<div class="page" data-page="25">
+<div class="page" data-page="35">
+<div class="page-inner">
+<div class="section-label">Reference</div>
+<h2>Prop Firm Trading — True Leverage</h2>
+<p>A prop firm gives you capital to trade. You keep 80–90% of profits. They take the risk. Iman Trading calls this "true leverage" — you are leveraging someone else's capital, not your own. The math is compelling.</p>
+
+<h3>How It Works</h3>
+<ul>
+<li><strong>Step 1:</strong> Pay $50–150 for an evaluation account ($25k–$150k simulated capital)</li>
+<li><strong>Step 2:</strong> Hit the profit target without exceeding the max loss limit</li>
+<li><strong>Step 3:</strong> Pass = you get a funded account. Trade their capital, keep 80–90% of profits.</li>
+<li><strong>Step 4:</strong> Fail = you lose only the evaluation fee. Nothing more.</li>
+</ul>
+
+<h3>The Math That Changes Everything</h3>
+<div class="callout">
+<p><strong>Iman's example:</strong> He paid $77 for a $50k evaluation. Made a $5,000 payout. He would have to FAIL 26 evaluations at $77 ($2,002 total) to spend the same as losing one $2,000 personal deposit. And with failures, you owe nothing more. With a personal account, you could lose it ALL and then some with margin calls.</p>
+</div>
+
+<h3>Example 50K Evaluation</h3>
+<table>
+<tbody>
+<tr><td>Account Size</td><td>$50,000</td></tr>
+<tr><td>Profit Target</td><td>$3,000 (6%)</td></tr>
+<tr><td>Max Loss Limit</td><td>$2,000 (4%)</td></tr>
+<tr><td>Evaluation Fee</td><td>~$90</td></tr>
+<tr><td>Payout Qualification</td><td>5 winning days at $150+ min, $500 min payout</td></tr>
+<tr><td>Profit Split</td><td>80–90% to you</td></tr>
+</tbody>
+</table>
+
+<h3>Recommended Firms</h3>
+<table>
+<thead><tr><th>Firm</th><th>Strength</th></tr></thead>
+<tbody>
+<tr><td><strong>Lucid Trading</strong></td><td>#1 for affordability and ease of evaluation</td></tr>
+<tr><td><strong>MyFundedFutures</strong></td><td>Most reliable, fastest payouts</td></tr>
+<tr><td><strong>Purdia Capital</strong></td><td>Best instant-funding model</td></tr>
+<tr><td><strong>Tradeify</strong></td><td>Solid alternative with flexible rules</td></tr>
+</tbody>
+</table>
+
+<h3>Key Rules to Know</h3>
+<ul>
+<li><strong>Consistency rules:</strong> No single day's profit can exceed a percentage of your total. Prevents lucky gamblers from passing.</li>
+<li><strong>Drawdown types:</strong> Trailing intraday drawdown vs end-of-day drawdown. Know which your firm uses — they are VERY different.</li>
+<li><strong>Minimum trading days:</strong> Most require 5–10 trading days minimum.</li>
+<li><strong>News restrictions:</strong> Many firms prohibit trading during high-impact news (CPI, FOMC). Check the rules.</li>
+</ul>
+
+<h3>Tax Implications</h3>
+<div class="callout-amber callout">
+<p><strong>Prop firm payouts are self-employment income</strong> (1099-NEC in the US). You LOSE the favorable 60/40 futures tax treatment available in personal accounts. Self-employment tax applies. Factor this into your earnings calculations.</p>
+</div>
+
+<div class="callout-red callout">
+<p><strong>Do NOT attempt a prop firm evaluation until you have passed the Week 12 Go/No-Go checklist.</strong> Most prop firm revenue comes from unprepared traders who fail repeatedly. Don't be their revenue source. Be profitable on demo first.</p>
+</div>
+<div class="source-tag">ImanTrading.org — Prop Firm Guide</div>
+<div class="source-tag">MyFundedFutures</div>
+</div>
+</div>
+
+<div class="page" data-page="36">
 <div class="page-inner">
     <div class="section-label">Reference</div>
     <h2>Leverage Reality Table</h2>
@@ -1556,10 +2480,7 @@ Margin Required = (Position Size × Entry) ÷ Leverage
   </div>
 </div>
 
-<!-- ═══ PAGE 16: RESOURCES ═══ -->
-</div>
-
-<div class="page" data-page="26">
+<div class="page" data-page="37">
 <div class="page-inner">
     <div class="section-label">Reference</div>
     <h2>Free Resources Master List</h2>
@@ -1623,10 +2544,7 @@ Margin Required = (Position Size × Entry) ÷ Leverage
   </div>
 </div>
 
-<!-- ═══ PAGE 17: TRAPS ═══ -->
-</div>
-
-<div class="page" data-page="27">
+<div class="page" data-page="38">
 <div class="page-inner">
 <div class="section-label">Reference</div>
     <h2>Backtesting Methodology</h2>
@@ -1665,9 +2583,8 @@ Margin Required = (Position Size × Entry) ÷ Leverage
       <p><strong>The backtest litmus test:</strong> If your backtested win rate is above 70%, something is wrong. Either you're using hindsight, cherry-picking, or curve-fitting. Real-world strategies typically have 40-60% win rates with good R:R. Suspiciously good results are a red flag, not a green one.</p>
     </div>
 </div>
-</div>
 
-<div class="page" data-page="28">
+<div class="page" data-page="39">
 <div class="page-inner">
 <div class="section-label">Reference</div>
     <h2>Your Formal Trading Plan</h2>
@@ -1698,108 +2615,54 @@ Margin Required = (Position Size × Entry) ÷ Leverage
       <p>Daily: Journal every trade.<br>Weekly (Sunday 30 min): Review all trades, calculate metrics.<br>Monthly: Full performance audit. Strategy adjustments based on data only.<br>Quarterly: Reassess entire trading plan.</p>
     </div>
 </div>
-</div>
 
-<div class="page" data-page="29">
+<div class="page" data-page="40">
 <div class="page-inner">
 <div class="section-label">Reference</div>
-    <h2>Obsidian Trading Ledger Setup</h2>
-    <p>Obsidian is a free, local-first markdown note-taking app. It's perfect for a trading ledger because: your data stays on your device (privacy), it's searchable, linkable, and you can build a knowledge base that grows with your trading career. No subscription needed for core features.</p>
-    
-    <h3>Step 1: Install & Create Your Vault</h3>
-    <ul>
-      <li>Download Obsidian from <strong>obsidian.md</strong> (free for personal use)</li>
-      <li>Create a new vault called <strong>"Trading Vault"</strong></li>
-      <li>Go to Settings → Community Plugins → Enable community plugins</li>
-      <li>Install: <strong>Templater</strong> (for trade templates), <strong>Dataview</strong> (for dashboards), <strong>Calendar</strong> (for daily navigation)</li>
-      <li>Optional: Install <strong>Journalit</strong> plugin — purpose-built for trading journals with built-in templates</li>
-    </ul>
+<h2>Tax & Record Keeping</h2>
+<p>Every trade is a taxable event in most jurisdictions. Yes, even crypto-to-crypto. Ignoring this does not make it go away — exchanges report to tax authorities. Start keeping clean records from day one.</p>
 
-    <h3>Step 2: Folder Structure</h3>
-    <div class="formula">
-Trading Vault/<br>
-├── 01-Daily-Journal/     (one note per trading day)<br>
-├── 02-Trade-Log/         (one note per trade)<br>
-├── 03-Setups/            (documented setups with screenshots)<br>
-├── 04-Strategy/          (your trading plan, rules, checklists)<br>
-├── 05-Education/         (notes from books, videos, concepts)<br>
-├── 06-Weekly-Reviews/    (weekly performance analysis)<br>
-├── 07-Monthly-Reviews/   (monthly audits)<br>
-├── 08-Screenshots/       (chart screenshots as attachments)<br>
-└── Templates/            (reusable templates)<br>
-    </div>
+<h3>What You Need to Know</h3>
+<ul>
+<li><strong>Every sale, swap, or closed position</strong> creates a taxable event</li>
+<li><strong>Short-term gains</strong> (held < 1 year) are taxed at your income rate — which is higher</li>
+<li><strong>Long-term gains</strong> (held > 1 year) get preferential rates — but this rarely applies to active trading</li>
+<li><strong>Futures 60/40 rule (US):</strong> Futures profits are taxed at 60% long-term / 40% short-term regardless of holding period. This is a significant tax advantage over spot trading.</li>
+<li><strong>Prop firm income:</strong> Treated as self-employment income (1099-NEC). You lose the 60/40 advantage and pay self-employment tax.</li>
+</ul>
 
-    <h3>Step 3: Trade Log Template</h3>
-    <p>Create a file in Templates/ called "Trade Template.md" with this structure:</p>
-    <div class="formula">
----<br>
-date: {{date}}<br>
-pair: <br>
-direction: long/short<br>
-leverage: <br>
-entry: <br>
-stop_loss: <br>
-take_profit: <br>
-position_size: <br>
-risk_amount: <br>
-rr_ratio: <br>
-result: <br>
-pnl: <br>
-emotion_before: <br>
-emotion_after: <br>
-checklist_score: /7<br>
-tags: [trade]<br>
----<br>
-## Entry Reason<br>
-(Why did I take this trade? What was the setup?)<br><br>
-## Exit Reason<br>
-(Why did I exit? SL/TP/Manual?)<br><br>
-## Screenshot<br>
-![[paste chart screenshot here]]<br><br>
-## Lesson<br>
-(One sentence. What did this trade teach me?)<br><br>
-## Rule Violations<br>
-(Any rules broken? Be honest.)
-    </div>
+<h3>Records to Keep</h3>
+<table>
+<thead><tr><th>Record</th><th>Why</th></tr></thead>
+<tbody>
+<tr><td>Date and time of every trade</td><td>Determines holding period and tax year</td></tr>
+<tr><td>Asset pair (BTC/USDT, etc.)</td><td>Identifies the transaction</td></tr>
+<tr><td>Entry and exit prices</td><td>Calculates gain or loss</td></tr>
+<tr><td>Position size</td><td>Determines total P&L</td></tr>
+<tr><td>Fees paid (trading + funding)</td><td>Deductible as trading expenses</td></tr>
+<tr><td>P&L for each trade</td><td>Required for tax reporting</td></tr>
+</tbody>
+</table>
 
-    <h3>Step 4: Daily Journal Template</h3>
-    <div class="formula">
----<br>
-date: {{date}}<br>
-market_bias: bullish/bearish/neutral<br>
-trades_taken: 0<br>
-daily_pnl: 0<br>
-rules_followed: yes/no<br>
-tags: [daily]<br>
----<br>
-## Pre-Session Plan<br>
-(What am I looking for today? Key levels?)<br><br>
-## Session Notes<br>
-(What happened? What did I observe?)<br><br>
-## Trades<br>
-- [[link to trade notes]]<br><br>
-## End-of-Day Review<br>
-(Did I follow my plan? Emotional state?)
-    </div>
+<h3>Tools to Automate Tax Reporting</h3>
+<ul>
+<li><strong><a href="https://koinly.io" target="_blank">Koinly</a></strong> — Crypto tax reporting. Imports from Bybit, Binance, and 300+ exchanges. Free tier for tracking.</li>
+<li><strong><a href="https://www.cointracker.io" target="_blank">CoinTracker</a></strong> — Portfolio tracking + tax calculation. Supports most major exchanges.</li>
+<li><strong><a href="https://cryptotaxcalculator.io" target="_blank">CryptoTaxCalculator</a></strong> — Specialized in complex DeFi and futures tax calculations.</li>
+</ul>
 
-    <h3>Step 5: Dataview Dashboard</h3>
-    <p>Create a note called "Dashboard.md" and add this Dataview query to see all your trades with stats:</p>
-    <div class="formula">
-```dataview<br>
-TABLE pair, direction, leverage, result, pnl, rr_ratio<br>
-FROM "02-Trade-Log"<br>
-SORT date DESC<br>
-```
-    </div>
-    <p>This automatically generates a table of all your trades. You can filter by pair, result (win/loss), or date range. As your trade log grows, this becomes your personal analytics dashboard.</p>
+<h3>The Simple Habit</h3>
+<div class="callout">
+<p><strong>Export your trades monthly.</strong> Don't wait until tax season. Your in-app ledger + a monthly CSV export from Bybit = clean records that save you hours (and potentially thousands in penalties) later. Your future self will thank you.</p>
+</div>
 
-    <div class="callout">
-      <p><strong>The key habit:</strong> After EVERY trade, create a new note from the trade template, fill it in, and link it from your daily journal. Screenshot your chart and paste it in. This takes 5 minutes and it's the single most valuable thing you can do for your development as a trader. The traders who journal consistently improve. The ones who don't, repeat the same mistakes forever.</p>
-    </div>
+<div class="callout-amber callout">
+<p><strong>Disclaimer:</strong> This is general education, not tax advice. Tax laws vary by jurisdiction and change frequently. Consult a qualified tax professional for your specific situation.</p>
+</div>
 </div>
 </div>
 
-<div class="page" data-page="30">
+<div class="page" data-page="41">
 <div class="page-inner">
     <div class="section-label">Final Warning</div>
     <h2>Traps That Will Tempt You</h2>
@@ -1822,11 +2685,160 @@ SORT date DESC<br>
   </div>
 </div>
 
+<div class="page" data-page="42">
+<div class="page-inner">
+<div class="section-label">Reference</div>
+<h2>Trading Automation 101</h2>
+<p>When your manual strategy is consistently profitable over 50+ trades with clear, repeatable rules, you can start automating parts of it. Automation removes emotion, executes 24/7, and enforces perfect discipline. But automating a bad strategy just loses money faster.</p>
+
+<h3>When to Automate</h3>
+<ul>
+<li><strong>ONLY</strong> after your manual strategy is profitable with 50+ trade sample</li>
+<li>Your rules must be <strong>objective and repeatable</strong> — "when X happens, do Y"</li>
+<li>If your strategy requires discretion and "feel," it cannot be fully automated</li>
+</ul>
+
+<h3>Level 1: TradingView Alerts (No Code)</h3>
+<ul>
+<li>Set alerts on any indicator, price level, or condition</li>
+<li>Alert types: price crossing a level, RSI crossing 30/70, EMA crossover</li>
+<li>Delivery: push notification to phone, email, or webhook</li>
+<li>Example: "Alert me when BTC RSI(14) crosses below 30 on the 4H chart"</li>
+<li><strong>This alone is powerful.</strong> You don't need to watch charts — let alerts come to you.</li>
+</ul>
+
+<h3>Level 2: Pine Script Basics</h3>
+<ul>
+<li>TradingView's built-in scripting language for custom indicators and strategies</li>
+<li>You can backtest custom strategies directly in TradingView</li>
+<li>Resources: TradingView Pine Script documentation (free), Pine Script tutorials on YouTube</li>
+<li><strong>Note:</strong> Pine Script strategies backtest but do NOT auto-execute trades on exchanges</li>
+</ul>
+
+<h3>Level 3: Webhooks to Bybit</h3>
+<ul>
+<li>How it works: TradingView alert triggers → sends webhook to a bot → bot executes trade on Bybit</li>
+<li>Tools: 3Commas, PineConnector (connects TV alerts to exchanges)</li>
+<li>Bybit API is free, well-documented, supports all order types</li>
+<li><strong>CRITICAL:</strong> Start with demo API endpoint (api-demo.bybit.com) before touching live</li>
+</ul>
+
+<h3>Risks of Automation</h3>
+<div class="callout-red callout">
+<p><strong>A bot that automates a bad strategy loses money faster and more consistently than you ever could manually.</strong> Fix the strategy first. Automate second. And NEVER set-and-forget with leverage. Always have a kill switch (max daily loss that stops the bot).</p>
+</div>
+<ul>
+<li>Bugs can execute wrong trades or wrong position sizes</li>
+<li>Market conditions change — a bot doesn't know when to stop</li>
+<li>Flash crashes can trigger cascading orders</li>
+<li>Always have a max daily loss limit that halts all automated trading</li>
+<li>Monitor daily, even with automation running</li>
+</ul>
+
+<table>
+<thead><tr><th>Level</th><th>Difficulty</th><th>Risk</th><th>Best For</th></tr></thead>
+<tbody>
+<tr><td>TV Alerts</td><td>Easy</td><td>Zero (alerts only)</td><td>Everyone — start here</td></tr>
+<tr><td>Pine Script</td><td>Medium</td><td>Zero (backtesting only)</td><td>Strategy validation</td></tr>
+<tr><td>Webhooks/API</td><td>Advanced</td><td>High (real execution)</td><td>Profitable traders with proven strategies only</td></tr>
+</tbody>
+</table>
+<div class="source-tag">TradingView Pine Script Docs</div>
+<div class="source-tag">Bybit API Documentation</div>
+</div>
+</div>
+
+<div class="page" data-page="43">
+<div class="page-inner">
+<div class="section-label">Your Trading Ledger</div>
+<h2>Trading Ledger</h2>
+
+<!-- Stats Dashboard -->
+<div class="ledger-stats" id="ledgerStats">
+<div class="stat-grid">
+<div class="stat-box"><div class="stat-num" id="statTrades">0</div><div class="stat-label">Trades</div></div>
+<div class="stat-box"><div class="stat-num" id="statWinRate">0%</div><div class="stat-label">Win Rate</div></div>
+<div class="stat-box"><div class="stat-num" id="statAvgRR">0</div><div class="stat-label">Avg R:R</div></div>
+<div class="stat-box"><div class="stat-num" id="statPnL">$0</div><div class="stat-label">Total P&L</div></div>
+<div class="stat-box"><div class="stat-num" id="statPF">0</div><div class="stat-label">Profit Factor</div></div>
+<div class="stat-box"><div class="stat-num" id="statStreak">0</div><div class="stat-label">Streak</div></div>
+</div>
+</div>
+
+<!-- Filter Buttons -->
+<div class="ledger-filters">
+<button class="filter-btn active" onclick="filterTrades('all')">All</button>
+<button class="filter-btn" onclick="filterTrades('win')">Wins</button>
+<button class="filter-btn" onclick="filterTrades('loss')">Losses</button>
+<button class="filter-btn" onclick="filterTrades('BTC')">BTC</button>
+<button class="filter-btn" onclick="filterTrades('ETH')">ETH</button>
+</div>
+
+<!-- Trade History -->
+<div class="ledger-history" id="tradeHistory">
+<p style="color:var(--text-muted);text-align:center;padding:2rem 0;">No trades logged yet. Add your first trade below.</p>
+</div>
+
+<!-- Add Trade Form -->
+<h3 style="margin-top:2rem;">Log a Trade</h3>
+<div class="ledger-form" id="tradeForm">
+<div class="form-row">
+<div class="form-group"><label>Date</label><input type="date" id="tfDate"></div>
+<div class="form-group"><label>Pair</label><select id="tfPair"><option>BTC/USDT</option><option>ETH/USDT</option><option>EUR/USD</option><option>GBP/USD</option><option>Other</option></select></div>
+</div>
+<div class="form-row">
+<div class="form-group"><label>Direction</label>
+<div class="toggle-group"><button class="toggle-btn active" data-val="Long" onclick="toggleBtn(this)">Long</button><button class="toggle-btn" data-val="Short" onclick="toggleBtn(this)">Short</button></div></div>
+<div class="form-group"><label>Leverage</label><input type="number" id="tfLev" placeholder="e.g. 5" min="1" max="125"></div>
+</div>
+<div class="form-row">
+<div class="form-group"><label>Entry Price</label><input type="number" id="tfEntry" step="any" placeholder="65000"></div>
+<div class="form-group"><label>Stop Loss</label><input type="number" id="tfSL" step="any" placeholder="64000"></div>
+<div class="form-group"><label>Take Profit</label><input type="number" id="tfTP" step="any" placeholder="67000"></div>
+</div>
+<div class="form-row">
+<div class="form-group"><label>Position Size ($)</label><input type="number" id="tfSize" step="any" placeholder="1000"></div>
+<div class="form-group"><label>R:R Ratio</label><input type="number" id="tfRR" step="any" placeholder="2.0"></div>
+</div>
+<div class="form-row">
+<div class="form-group"><label>Result</label>
+<div class="toggle-group"><button class="toggle-btn" data-val="Win" onclick="toggleBtn(this)">Win</button><button class="toggle-btn" data-val="Loss" onclick="toggleBtn(this)">Loss</button><button class="toggle-btn" data-val="BE" onclick="toggleBtn(this)">BE</button></div></div>
+<div class="form-group"><label>P&L ($)</label><input type="number" id="tfPnL" step="any" placeholder="+150 or -100"></div>
+</div>
+<div class="form-row">
+<div class="form-group"><label>Checklist Score</label><select id="tfScore"><option>7/7</option><option>6/7</option><option>5/7</option><option>4/7</option><option>3/7</option><option>2/7</option><option>1/7</option><option>0/7</option></select></div>
+<div class="form-group"><label>Emotion Before</label><select id="tfEmoBefore"><option>Calm</option><option>Confident</option><option>Anxious</option><option>Excited</option><option>FOMO</option><option>Revenge</option><option>Tired</option><option>Tilted</option></select></div>
+<div class="form-group"><label>Emotion After</label><select id="tfEmoAfter"><option>Calm</option><option>Satisfied</option><option>Frustrated</option><option>Relieved</option><option>Angry</option><option>Confident</option></select></div>
+</div>
+<div class="form-group" style="width:100%"><label>Notes</label><textarea id="tfNotes" rows="3" placeholder="Entry reason, exit reason, lessons learned..."></textarea></div>
+<button class="ledger-save" onclick="saveTrade()">Save Trade</button>
+</div>
+
+<!-- Daily Journal -->
+<h3 style="margin-top:2rem;">Daily Journal</h3>
+<div class="ledger-form">
+<div class="form-row">
+<div class="form-group"><label>Date</label><input type="date" id="jDate"></div>
+<div class="form-group"><label>Market Bias</label>
+<div class="toggle-group"><button class="toggle-btn" data-val="Bullish" onclick="toggleBtn(this)">Bullish</button><button class="toggle-btn" data-val="Bearish" onclick="toggleBtn(this)">Bearish</button><button class="toggle-btn" data-val="Neutral" onclick="toggleBtn(this)">Neutral</button></div></div>
+</div>
+<div class="form-group" style="width:100%"><label>Notes</label><textarea id="jNotes" rows="4" placeholder="Pre-session plan, session observations, end-of-day review..."></textarea></div>
+<button class="ledger-save" onclick="saveJournal()">Save Journal Entry</button>
+</div>
+
+<!-- Export -->
+<div style="text-align:center;margin-top:2rem;">
+<button class="ledger-save" onclick="exportCSV()" style="background:var(--blue);">Export All Trades to CSV</button>
+</div>
+</div>
+</div>
+
+
 </div><!-- end #book -->
 
 <div id="nav-bar">
   <button class="nav-btn" id="prevBtn" onclick="prev()">← Prev</button>
-  <span id="page-indicator">0 / 30</span>
+  <span id="page-indicator">0 / 43</span>
   <button class="nav-btn" id="nextBtn" onclick="next()">Next →</button>
 </div>
 
@@ -1857,15 +2869,6 @@ SORT date DESC<br>
         pages[current].scrollTop = 0;
       });
     });
-    // Clean up old page after transition
-    const old = dir === 'left' ? current - 1 : current + 1;
-    if (old >= 0 && old <= total && old !== current) {
-      setTimeout(() => {
-        pages[old].classList.remove('slide-left', 'slide-right', 'active');
-        pages[old].style.display = '';
-      }, 400);
-    }
-    // Clean all non-current
     setTimeout(() => {
       pages.forEach((p, i) => {
         if (i !== current) {
@@ -1875,6 +2878,8 @@ SORT date DESC<br>
       });
     }, 450);
     updateUI();
+    // Initialize quizzes on the new page
+    initQuizzesOnPage(pages[current]);
   }
 
   function next() { goTo(current + 1); }
@@ -1889,6 +2894,7 @@ SORT date DESC<br>
 
   // Keyboard
   document.addEventListener('keydown', e => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
     if (e.key === 'ArrowRight' || e.key === 'ArrowDown') next();
     if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') prev();
   });
@@ -1905,7 +2911,6 @@ SORT date DESC<br>
     const dx = e.changedTouches[0].screenX - touchStartX;
     const dy = e.changedTouches[0].screenY - touchStartY;
     const dt = Date.now() - touchStartTime;
-    // Only trigger on horizontal swipe that's faster than a scroll
     if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5 && dt < 500) {
       if (dx < 0) next();
       else prev();
@@ -1914,10 +2919,277 @@ SORT date DESC<br>
 
   updateUI();
 
-  // Register Service Worker for PWA
+  // ─── SERVICE WORKER + UPDATE DETECTION ───
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js');
+    navigator.serviceWorker.register('./sw.js').then(reg => {
+      reg.addEventListener('updatefound', () => {
+        const newWorker = reg.installing;
+        newWorker.addEventListener('statechange', () => {
+          if (newWorker.state === 'activated') {
+            document.getElementById('updateBanner').style.display = 'flex';
+          }
+        });
+      });
+    });
+    navigator.serviceWorker.addEventListener('message', event => {
+      if (event.data && (event.data.type === 'SW_UPDATED' || event.data.type === 'CONTENT_UPDATED')) {
+        document.getElementById('updateBanner').style.display = 'flex';
+      }
+    });
   }
+
+  function applyUpdate() {
+    window.location.reload(true);
+  }
+
+  // ─── QUIZ SYSTEM ───
+  function initQuizzes() {
+    document.querySelectorAll('.quiz-container').forEach(container => initSingleQuiz(container));
+  }
+
+  function initQuizzesOnPage(page) {
+    page.querySelectorAll('.quiz-container').forEach(container => {
+      if (container.dataset.initialized) return;
+      container.dataset.initialized = 'true';
+      initSingleQuiz(container);
+    });
+  }
+
+  function initSingleQuiz(container) {
+    const quizId = container.getAttribute('data-quiz');
+    if (!quizId) return;
+
+    const saved = localStorage.getItem('tradingbook_quiz_' + quizId);
+    if (saved) {
+      try {
+        const data = JSON.parse(saved);
+        if (data.passed) { showQuizLock(container, data.score, data.total); return; }
+      } catch(e) {}
+    }
+
+    container.querySelectorAll('.quiz-question').forEach(q => {
+      q.querySelectorAll('.quiz-option').forEach(opt => {
+        opt.addEventListener('click', () => {
+          q.querySelectorAll('.quiz-option').forEach(o => o.classList.remove('selected'));
+          opt.classList.add('selected');
+          checkAllAnswered(container);
+        });
+      });
+    });
+
+    const submitBtn = container.querySelector('.quiz-submit');
+    const resetBtn = container.querySelector('.quiz-reset');
+    if (submitBtn) submitBtn.addEventListener('click', () => submitQuiz(container));
+    if (resetBtn) resetBtn.addEventListener('click', () => resetQuiz(container));
+  }
+
+  function checkAllAnswered(container) {
+    const questions = container.querySelectorAll('.quiz-question');
+    const submitBtn = container.querySelector('.quiz-submit');
+    let all = true;
+    questions.forEach(q => { if (!q.querySelector('.quiz-option.selected')) all = false; });
+    if (submitBtn) submitBtn.disabled = !all;
+  }
+
+  function submitQuiz(container) {
+    const quizId = container.getAttribute('data-quiz');
+    const questions = container.querySelectorAll('.quiz-question');
+    const submitBtn = container.querySelector('.quiz-submit');
+    const resultEl = container.querySelector('.quiz-result');
+    let correct = 0;
+    const total = questions.length;
+
+    questions.forEach(q => {
+      const ans = q.getAttribute('data-correct');
+      q.querySelectorAll('.quiz-option').forEach(opt => {
+        const v = opt.getAttribute('data-value');
+        if (v === ans) opt.classList.add('correct');
+        else if (opt.classList.contains('selected')) opt.classList.add('wrong');
+        else opt.classList.add('disabled');
+      });
+      const sel = q.querySelector('.quiz-option.selected');
+      if (sel && sel.getAttribute('data-value') === ans) correct++;
+    });
+
+    if (submitBtn) submitBtn.style.display = 'none';
+    if (resultEl) {
+      const pct = Math.round((correct / total) * 100);
+      const passed = pct >= 80;
+      resultEl.querySelector('.quiz-score').textContent = correct + '/' + total;
+      resultEl.querySelector('.quiz-score-label').textContent = pct + '% correct';
+      resultEl.querySelector('.quiz-message').textContent = passed
+        ? 'Chapter mastered. Progress saved.'
+        : 'You need 80% to pass. Review the chapter and try again.';
+      resultEl.classList.add('show', passed ? 'passed' : 'failed');
+      resultEl.classList.remove(passed ? 'failed' : 'passed');
+      if (passed) localStorage.setItem('tradingbook_quiz_' + quizId, JSON.stringify({passed:true,score:correct,total:total,pct:pct,timestamp:Date.now()}));
+    }
+  }
+
+  function resetQuiz(container) {
+    container.querySelectorAll('.quiz-option').forEach(o => o.classList.remove('selected','correct','wrong','disabled'));
+    const s = container.querySelector('.quiz-submit');
+    if (s) { s.style.display = ''; s.disabled = true; }
+    const r = container.querySelector('.quiz-result');
+    if (r) r.classList.remove('show','passed','failed');
+    const lock = container.querySelector('.quiz-lock');
+    if (lock) lock.remove();
+  }
+
+  function showQuizLock(container, score, total) {
+    const pct = Math.round((score / total) * 100);
+    const lock = document.createElement('div');
+    lock.className = 'quiz-lock';
+    lock.innerHTML = '<div class="quiz-lock-badge">Passed</div><div class="quiz-lock-score">' + score + '/' + total + ' (' + pct + '%)</div><button class="quiz-lock-retake">Retake Quiz</button>';
+    lock.querySelector('.quiz-lock-retake').addEventListener('click', e => {
+      e.stopPropagation();
+      localStorage.removeItem('tradingbook_quiz_' + container.getAttribute('data-quiz'));
+      lock.remove();
+      resetQuiz(container);
+      container.dataset.initialized = '';
+      initSingleQuiz(container);
+    });
+    container.style.position = 'relative';
+    container.appendChild(lock);
+  }
+
+  // ─── LEDGER SYSTEM ───
+  function getTrades() {
+    try { return JSON.parse(localStorage.getItem('tradingbook_trades') || '[]'); } catch(e) { return []; }
+  }
+  function saveTrades(trades) { localStorage.setItem('tradingbook_trades', JSON.stringify(trades)); }
+
+  function saveTrade() {
+    const dir = document.querySelector('#tradeForm .toggle-group:first-of-type .toggle-btn.active');
+    const res = document.querySelector('#tradeForm .toggle-group:nth-of-type(2) .toggle-btn.active');
+    const trade = {
+      id: Date.now(),
+      date: document.getElementById('tfDate').value || new Date().toISOString().split('T')[0],
+      pair: document.getElementById('tfPair').value,
+      direction: dir ? dir.dataset.val : 'Long',
+      leverage: parseFloat(document.getElementById('tfLev').value) || 1,
+      entry: parseFloat(document.getElementById('tfEntry').value) || 0,
+      sl: parseFloat(document.getElementById('tfSL').value) || 0,
+      tp: parseFloat(document.getElementById('tfTP').value) || 0,
+      size: parseFloat(document.getElementById('tfSize').value) || 0,
+      rr: parseFloat(document.getElementById('tfRR').value) || 0,
+      result: res ? res.dataset.val : 'Win',
+      pnl: parseFloat(document.getElementById('tfPnL').value) || 0,
+      score: document.getElementById('tfScore').value,
+      emoBefore: document.getElementById('tfEmoBefore').value,
+      emoAfter: document.getElementById('tfEmoAfter').value,
+      notes: document.getElementById('tfNotes').value
+    };
+    const trades = getTrades();
+    trades.unshift(trade);
+    saveTrades(trades);
+    renderTrades(trades);
+    updateStats(trades);
+    // Clear form
+    document.getElementById('tfEntry').value = '';
+    document.getElementById('tfSL').value = '';
+    document.getElementById('tfTP').value = '';
+    document.getElementById('tfSize').value = '';
+    document.getElementById('tfRR').value = '';
+    document.getElementById('tfPnL').value = '';
+    document.getElementById('tfNotes').value = '';
+  }
+
+  function renderTrades(trades, filter) {
+    const el = document.getElementById('tradeHistory');
+    let filtered = trades;
+    if (filter === 'win') filtered = trades.filter(t => t.result === 'Win');
+    else if (filter === 'loss') filtered = trades.filter(t => t.result === 'Loss');
+    else if (filter === 'BTC') filtered = trades.filter(t => t.pair.includes('BTC'));
+    else if (filter === 'ETH') filtered = trades.filter(t => t.pair.includes('ETH'));
+
+    if (filtered.length === 0) {
+      el.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:2rem 0;">No trades found.</p>';
+      return;
+    }
+    let html = '<table><thead><tr><th>Date</th><th>Pair</th><th>Dir</th><th>Lev</th><th>Result</th><th>P&L</th><th>R:R</th></tr></thead><tbody>';
+    filtered.forEach(t => {
+      const color = t.result === 'Win' ? 'var(--accent)' : t.result === 'Loss' ? 'var(--red)' : 'var(--amber)';
+      html += '<tr><td>' + t.date + '</td><td>' + t.pair + '</td><td>' + t.direction + '</td><td>' + t.leverage + 'x</td><td style="color:' + color + '">' + t.result + '</td><td style="color:' + color + '">$' + t.pnl + '</td><td>' + t.rr + '</td></tr>';
+    });
+    html += '</tbody></table>';
+    el.innerHTML = html;
+  }
+
+  function updateStats(trades) {
+    if (!trades.length) return;
+    const wins = trades.filter(t => t.result === 'Win');
+    const losses = trades.filter(t => t.result === 'Loss');
+    const winRate = Math.round((wins.length / trades.length) * 100);
+    const totalPnL = trades.reduce((s, t) => s + (t.pnl || 0), 0);
+    const avgRR = trades.length ? (trades.reduce((s, t) => s + (t.rr || 0), 0) / trades.length).toFixed(1) : 0;
+    const grossWins = wins.reduce((s, t) => s + Math.abs(t.pnl || 0), 0);
+    const grossLosses = losses.reduce((s, t) => s + Math.abs(t.pnl || 0), 0);
+    const pf = grossLosses > 0 ? (grossWins / grossLosses).toFixed(2) : grossWins > 0 ? '∞' : '0';
+
+    let streak = 0, streakType = '';
+    for (let i = 0; i < trades.length; i++) {
+      if (i === 0) { streakType = trades[i].result; streak = 1; }
+      else if (trades[i].result === streakType) streak++;
+      else break;
+    }
+
+    document.getElementById('statTrades').textContent = trades.length;
+    document.getElementById('statWinRate').textContent = winRate + '%';
+    document.getElementById('statAvgRR').textContent = avgRR;
+    document.getElementById('statPnL').textContent = '$' + totalPnL.toFixed(0);
+    document.getElementById('statPnL').style.color = totalPnL >= 0 ? 'var(--accent)' : 'var(--red)';
+    document.getElementById('statPF').textContent = pf;
+    document.getElementById('statStreak').textContent = streak + (streakType === 'Win' ? 'W' : streakType === 'Loss' ? 'L' : '');
+  }
+
+  let currentFilter = 'all';
+  function filterTrades(f) {
+    currentFilter = f;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    renderTrades(getTrades(), f);
+  }
+
+  function toggleBtn(btn) {
+    btn.parentElement.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  function saveJournal() {
+    const entry = {
+      date: document.getElementById('jDate').value || new Date().toISOString().split('T')[0],
+      bias: document.querySelector('#tradeForm ~ div .toggle-group .toggle-btn.active')?.dataset.val || 'Neutral',
+      notes: document.getElementById('jNotes').value
+    };
+    const journal = JSON.parse(localStorage.getItem('tradingbook_journal') || '[]');
+    journal.unshift(entry);
+    localStorage.setItem('tradingbook_journal', JSON.stringify(journal));
+    document.getElementById('jNotes').value = '';
+    alert('Journal entry saved!');
+  }
+
+  function exportCSV() {
+    const trades = getTrades();
+    if (!trades.length) { alert('No trades to export.'); return; }
+    const headers = ['Date','Pair','Direction','Leverage','Entry','SL','TP','Size','RR','Result','PnL','Score','EmoBefore','EmoAfter','Notes'];
+    let csv = headers.join(',') + '\n';
+    trades.forEach(t => {
+      csv += [t.date,t.pair,t.direction,t.leverage,t.entry,t.sl,t.tp,t.size,t.rr,t.result,t.pnl,t.score,t.emoBefore,t.emoAfter,'"'+(t.notes||'').replace(/"/g,'""')+'"'].join(',') + '\n';
+    });
+    const blob = new Blob([csv], {type:'text/csv'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'trading_ledger_' + new Date().toISOString().split('T')[0] + '.csv';
+    a.click();
+  }
+
+  // Initialize on load
+  document.getElementById('tfDate').value = new Date().toISOString().split('T')[0];
+  document.getElementById('jDate').value = new Date().toISOString().split('T')[0];
+  const loadedTrades = getTrades();
+  if (loadedTrades.length) { renderTrades(loadedTrades); updateStats(loadedTrades); }
+  initQuizzes();
 </script>
 </body>
 </html>
