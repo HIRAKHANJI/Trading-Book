@@ -1,12 +1,13 @@
 {
   "name": "The Trading Playbook",
   "short_name": "Trading Book",
-  "description": "A comprehensive trading education playbook covering market fundamentals to advanced strategies.",
+  "description": "Complete professional trading education — leveraged crypto, forex & beyond. 42 chapters, interactive quizzes, built-in trade journal.",
   "start_url": "./tradebook.html",
   "display": "standalone",
   "background_color": "#0a0e17",
   "theme_color": "#0a0e17",
   "orientation": "portrait-primary",
+  "categories": ["education", "finance"],
   "icons": [
     {
       "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='64' fill='%230a0e17'/><text x='256' y='340' font-size='280' text-anchor='middle' fill='%2300e676' font-family='serif'>T</text></svg>",
