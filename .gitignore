@@ -1,0 +1,4 @@
+# Build artifacts (temporary assembly files)
+build.sh
+parts/
+tradebook_part1.html

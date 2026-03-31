@@ -1,114 +1,191 @@
-# Architecture — The Trading Playbook
+# Architecture -- The Trading Playbook
 
 ## Overview
 
-The Trading Playbook is a single-page application (SPA) built with zero dependencies. The entire app — markup, styles, and logic — lives in one HTML file (`tradebook.html`), supported by PWA infrastructure files for offline capability and installability.
+The Trading Playbook is a single-page application built with zero dependencies. The entire app -- markup, styles, quizzes, trading ledger, and navigation logic -- lives in one HTML file (`tradebook.html`), supported by PWA infrastructure files for offline capability and installability.
 
-## System Diagram
+## File Structure
 
-```
-┌─────────────────────────────────────────────────┐
-│                  GitHub Pages                     │
-│                                                   │
-│  index.html ──redirect──► tradebook.html          │
-│                              │                    │
-│                    ┌─────────┼─────────┐          │
-│                    │         │         │          │
-│                   CSS       HTML       JS         │
-│                (embedded) (30 pages) (embedded)   │
-│                                                   │
-│  manifest.json ◄── linked from <head>             │
-│  sw.js ◄── registered on page load                │
-└─────────────────────────────────────────────────┘
-```
+| File | Purpose |
+|---|---|
+| `tradebook.html` | The entire app: CSS, HTML (42 pages), and JS in one file |
+| `index.html` | GitHub Pages entry point, redirects to `tradebook.html` |
+| `manifest.json` | PWA manifest (app name, icons, display mode, theme) |
+| `sw.js` | Service worker for caching and offline support |
 
-## File Responsibilities
+## Page System
 
-### `tradebook.html` — The App
-The core of the project. Contains:
+Each page is a `<div class="page" data-page="N">` where N is 0-42:
 
-- **`<style>` block**: All CSS including custom properties, page transitions, navigation bar, cover page, content typography, callout boxes, rule boxes, responsive layout, and scrollbar styling.
-- **`<body>` markup**: 30 page `<div>` elements (data-page 0–30), each containing structured trading content. Page 0 is the cover, page 1 is the table of contents, pages 2–30 are content.
-- **`<script>` block**: Page navigation system with:
-  - `goTo(n)` — transition to page N with directional slide animation
-  - `next()` / `prev()` — sequential navigation
-  - Touch swipe detection (horizontal swipe > 60px, within 500ms)
-  - Keyboard arrow key support
-  - Progress bar and page indicator updates
+- **Page 0**: Cover page with title and start button
+- **Page 1**: Table of contents with `goTo(n)` links to all chapters
+- **Pages 2-42**: Content chapters
 
-### `index.html` — Entry Point
-A minimal redirect page for GitHub Pages. GitHub Pages serves `index.html` by default, so this file redirects visitors to `tradebook.html`.
+Only one page is visible at a time. The active page receives the `.active` class which sets `display: flex` and triggers the entry transition. Page transitions use CSS `translateX` transforms with opacity fading for a directional slide effect. The direction (left or right) is determined by comparing the target page number against the current page.
 
-### `manifest.json` — PWA Manifest
-Declares the app as a standalone PWA with:
-- App name, short name, description
-- Start URL pointing to `tradebook.html`
-- Display mode: `standalone`
-- Theme and background colors matching the dark UI
-- Icon declarations (uses inline SVG data URIs — no external image files needed)
+### Navigation Functions
 
-### `sw.js` — Service Worker
-Implements offline-first caching:
-- **Install**: Pre-caches `tradebook.html`, `manifest.json`, and the Google Fonts CSS
-- **Fetch**: Cache-first strategy — serves from cache, falls back to network, then caches the response for future use
-- **Activate**: Cleans up old cache versions on update
-- Versioned cache name (`trading-book-v1`) for cache busting on updates
+- `goTo(n)` -- Sets the target page active with directional slide animation
+- `next()` -- Advances to `currentPage + 1` (clamped to max)
+- `prev()` -- Returns to `currentPage - 1` (clamped to 0)
+- `updateUI()` -- Refreshes the page indicator text, progress bar width, and prev/next button disabled states
 
-## Page Structure
+### Input Methods
 
-```
-Page 0:  Cover (title, start button)
-Page 1:  Table of Contents (linked index)
-Page 2:  Non-Negotiable Rules (Foundation)
-Page 3:  Platform Setup
-Pages 4-12:  Phase 1 content (Weeks 1-4) + supplements
-Pages 13-19: Phase 2 content (Weeks 5-8) + supplements
-Pages 20-24: Phase 3 content (Weeks 9-12) + supplements
-Pages 25-29: Reference material
-Page 30:  Final warnings / traps
+1. **Swipe**: Touch events detect horizontal swipes (>60px delta, <500ms duration, dominant horizontal movement)
+2. **Keyboard**: Left/Up arrows call `prev()`, Right/Down arrows call `next()`
+3. **Buttons**: Prev/Next buttons in the fixed bottom navigation bar
+4. **TOC links**: Direct jump from table of contents via `onclick="goTo(n)"` calls
+5. **Index button**: Fixed button to return to the table of contents (page 1)
+
+## Quiz System
+
+Interactive quizzes are embedded directly in chapter pages to reinforce learning.
+
+### Structure
+
+```html
+<div class="quiz-container" data-quiz="quizId">
+  <p class="quiz-question">Question text</p>
+  <div class="quiz-options">
+    <button class="quiz-option" data-correct>Correct answer</button>
+    <button class="quiz-option">Wrong answer</button>
+    <button class="quiz-option">Wrong answer</button>
+  </div>
+  <div class="quiz-feedback"></div>
+</div>
 ```
 
-## Navigation System
+### Flow
 
-Navigation works through three input methods:
+1. `initQuizzes()` runs on page load, finds all `.quiz-container` elements
+2. Click handlers are attached to each `.quiz-option` button
+3. On click: checks for `data-correct` attribute, shows feedback, disables further clicks
+4. Completion state and score are saved to localStorage
+5. Previously completed quizzes are restored from localStorage on load
 
-1. **Swipe**: Touch events detect horizontal swipes (>60px delta, <500ms, dominant horizontal movement)
-2. **Keyboard**: Arrow keys (left/right and up/down)
-3. **Buttons**: Prev/Next buttons in the fixed bottom nav bar
-4. **TOC Links**: Direct jump from Table of Contents via `goTo(n)` calls
+### localStorage Keys
 
-Page transitions use CSS transforms (`translateX`) with opacity fading, creating a directional slide effect.
+Quiz keys follow the pattern `quiz-{quizId}` where the value stores whether the quiz was answered correctly.
+
+## Ledger System
+
+The in-app trading ledger lets users log and analyze trades without leaving the app.
+
+### Trade Object Schema
+
+```json
+{
+  "id": "timestamp-based unique ID",
+  "pair": "BTC/USDT",
+  "direction": "long|short",
+  "entry": 45000,
+  "exit": 46500,
+  "stopLoss": 44200,
+  "takeProfit": 47000,
+  "size": 0.1,
+  "pnl": 150,
+  "date": "2026-03-31",
+  "notes": "Clean breakout from consolidation"
+}
+```
+
+### Features
+
+- **Stats calculation**: Win rate, average R:R, total P&L, best/worst trade, current and max win/loss streaks
+- **CSV export**: Downloads all trades as a CSV file for external analysis
+- **Persistent storage**: Trades stored as a JSON array under the `tradeLedger` localStorage key
+
+## PWA Architecture
+
+### Service Worker Strategy
+
+The service worker (`sw.js`) uses a dual caching strategy:
+
+**HTML files (stale-while-revalidate)**:
+1. Serve the cached version immediately for instant load
+2. Fetch a fresh copy from the network in the background
+3. Update the cache with the fresh copy
+4. Notify the client via `postMessage({ type: 'CONTENT_UPDATED' })` so the UI can prompt a reload
+
+**All other assets (cache-first)**:
+1. Check the cache first
+2. If not cached, fetch from network and cache the response
+3. If both fail, return null
+
+### Update Notification
+
+When the service worker activates a new version, it sends `postMessage({ type: 'SW_UPDATED' })` to all open clients. The app listens for this message and can display a notification banner prompting the user to reload.
+
+### Offline Fallback
+
+If a navigation request has no cache and the network is unavailable, the service worker returns a styled offline page (inline HTML, no external dependencies).
+
+### Pre-cached Assets
+
+On install, the service worker pre-caches:
+- `./` (root)
+- `./index.html`
+- `./tradebook.html`
+- `./manifest.json`
+- Google Fonts CSS URL
+
+### Manifest Configuration
+
+- Display: `standalone` (no browser chrome)
+- Orientation: `portrait-primary`
+- Theme/background: `#0a0e17` (dark)
+- Icons: Inline SVG data URIs (no external image files)
 
 ## Styling Architecture
 
-All styles use CSS custom properties for consistency:
+### CSS Custom Properties
 
 | Variable | Purpose |
 |---|---|
-| `--bg-primary` | Main background (#0a0e17) |
-| `--bg-card` | Card/callout backgrounds |
-| `--accent` | Primary green accent (#00e676) |
-| `--red`, `--amber`, `--blue` | Semantic colors |
+| `--bg-primary` | Main background (`#0a0e17`) |
+| `--bg-card` | Card and callout backgrounds |
+| `--accent` | Primary green accent (`#00e676`) |
+| `--red` | Danger/warning red |
+| `--amber` | Caution amber |
+| `--blue` | Informational blue |
 | `--font-display` | DM Serif Display (headings) |
 | `--font-body` | Outfit (body text) |
 | `--font-mono` | JetBrains Mono (labels, code) |
 
-## PWA Lifecycle
+### Component Classes
 
-```
-1. User visits index.html
-2. Redirect to tradebook.html
-3. Page loads, registers service worker (sw.js)
-4. SW installs → pre-caches core assets
-5. Subsequent visits → served from cache (offline-capable)
-6. Browser prompts "Add to Home Screen" (if supported)
-7. Installed app opens in standalone mode (no browser chrome)
-```
+| Class | Usage |
+|---|---|
+| `.page` | Page container, full-viewport |
+| `.section-label` | Phase/category label |
+| `.callout` | Green tip/key-point box |
+| `.callout-red` | Red warning box |
+| `.callout-amber` | Amber caution box |
+| `.rule-box` + `.rule-num` | Numbered rule boxes |
+| `.quiz-container` | Quiz wrapper |
+| `.quiz-option` | Quiz answer button |
+| `.ledger-container` | Trading ledger UI |
 
-## Design Decisions
+### Responsive Design
 
-- **Single file**: No build tooling, no bundler, no framework. Keeps the project simple and deployable anywhere.
-- **No images**: Icons use inline SVG data URIs in the manifest. Zero external image dependencies.
-- **Cache-first SW**: Prioritizes speed and offline access over freshness. Version bump in `sw.js` triggers cache refresh.
-- **CSS transitions over JS animations**: Page transitions use CSS `transform` and `opacity` for GPU-accelerated 60fps performance.
-- **Mobile-first**: Touch events, viewport meta tags, `-webkit-overflow-scrolling`, and responsive `clamp()` font sizes.
+- Mobile-first approach with `clamp()` font sizes
+- Touch-optimized with `-webkit-overflow-scrolling: touch`
+- Viewport meta tag prevents zoom issues on mobile
+
+## Data Model
+
+All persistent data uses the browser's localStorage API.
+
+| Key | Type | Description |
+|---|---|---|
+| `quiz-{quizId}` | String | Completion state and correctness for each quiz |
+| `tradeLedger` | JSON Array | Array of trade objects logged in the ledger |
+
+## Performance
+
+- **Single-file advantage**: One network request loads the entire app -- no waterfall of CSS, JS, and HTML files
+- **GPU-accelerated transitions**: Page slides use CSS `transform: translateX()` and `opacity`, which are composited on the GPU for 60fps performance
+- **No framework overhead**: Zero runtime library cost, minimal JS footprint
+- **Pre-caching**: Service worker caches all assets on first visit, making subsequent loads instantaneous
+- **Inline SVG icons**: Manifest icons use data URIs, eliminating image requests
