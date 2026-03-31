@@ -2780,11 +2780,12 @@ Margin Required = (Position Size × Entry) ÷ Leverage
 </div>
 
 <!-- Add Trade Form -->
-<h3 style="margin-top:2rem;">Log a Trade</h3>
+<h3 style="margin-top:2rem;">Log a Closed Trade</h3>
+<p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:1rem;">Log each trade <strong style="color:var(--accent);">after it closes</strong> — when you know the result, final P&L, and can reflect honestly on your emotions and decisions.</p>
 <div class="ledger-form" id="tradeForm">
 <div class="form-row">
-<div class="form-group"><label>Date</label><input type="date" id="tfDate"></div>
-<div class="form-group"><label>Pair</label><select id="tfPair"><option>BTC/USDT</option><option>ETH/USDT</option><option>EUR/USD</option><option>GBP/USD</option><option>Other</option></select></div>
+<div class="form-group"><label>Date Closed</label><input type="date" id="tfDate"></div>
+<div class="form-group"><label>Pair</label><input type="text" id="tfPair" list="pairList" placeholder="BTC/USDT" autocomplete="off"><datalist id="pairList"><option value="BTC/USDT"><option value="ETH/USDT"><option value="SOL/USDT"><option value="XRP/USDT"><option value="EUR/USD"><option value="GBP/USD"></datalist></div>
 </div>
 <div class="form-row">
 <div class="form-group"><label>Direction</label>
@@ -2807,8 +2808,8 @@ Margin Required = (Position Size × Entry) ÷ Leverage
 </div>
 <div class="form-row">
 <div class="form-group"><label>Checklist Score</label><select id="tfScore"><option>7/7</option><option>6/7</option><option>5/7</option><option>4/7</option><option>3/7</option><option>2/7</option><option>1/7</option><option>0/7</option></select></div>
-<div class="form-group"><label>Emotion Before</label><select id="tfEmoBefore"><option>Calm</option><option>Confident</option><option>Anxious</option><option>Excited</option><option>FOMO</option><option>Revenge</option><option>Tired</option><option>Tilted</option></select></div>
-<div class="form-group"><label>Emotion After</label><select id="tfEmoAfter"><option>Calm</option><option>Satisfied</option><option>Frustrated</option><option>Relieved</option><option>Angry</option><option>Confident</option></select></div>
+<div class="form-group"><label>Emotion Before Entry</label><select id="tfEmoBefore"><option>Calm</option><option>Confident</option><option>Anxious</option><option>Excited</option><option>FOMO</option><option>Revenge</option><option>Tired</option><option>Tilted</option></select></div>
+<div class="form-group"><label>Emotion After Close</label><select id="tfEmoAfter"><option>Calm</option><option>Satisfied</option><option>Frustrated</option><option>Relieved</option><option>Angry</option><option>Confident</option></select></div>
 </div>
 <div class="form-group" style="width:100%"><label>Notes</label><textarea id="tfNotes" rows="3" placeholder="Entry reason, exit reason, lessons learned..."></textarea></div>
 <button class="ledger-save" onclick="saveTrade()">Save Trade</button>
