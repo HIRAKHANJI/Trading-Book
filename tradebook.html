@@ -986,13 +986,25 @@ Liquidation Price ≈ Entry Price × (1 − 1/Leverage + Maintenance Margin Rate
       <li><strong>Change of Character (CHoCH):</strong> Price breaks structure in the OPPOSITE direction — potential reversal signal</li>
     </ul>
 
+    <h3>Premium & Discount Zones (Dealing Ranges)</h3>
+    <p>After price sweeps both a swing high AND a swing low, the resulting expansion move creates a "dealing range." Split this range at the 50% midpoint:</p>
+    <ul>
+      <li><strong>Upper half = Premium zone.</strong> Price is expensive relative to the range. This is where you look for SHORTS.</li>
+      <li><strong>Lower half = Discount zone.</strong> Price is cheap relative to the range. This is where you look for LONGS.</li>
+    </ul>
+    <p>The rule is simple: <strong>only buy in the discount, only sell in the premium.</strong> If your entry is in the premium half and you want to go long, you are buying at a bad price — the odds are against you. Wait for price to pull back into the discount.</p>
+
+    <div class="callout">
+      <p><strong>Combine with Fibonacci:</strong> The 50% midpoint of a dealing range often aligns with the 0.5 Fibonacci level. The discount zone overlaps with the 0.618–0.786 Fib retracement (the golden pocket). When premium/discount zones align with Fib levels AND an S/R zone, you have triple confluence — the highest-probability entry.</p>
+    </div>
+
     <div class="callout-red callout">
       <p><strong>Why this matters for leverage:</strong> S/R levels are where you place stop losses and take profits. Wrong levels with leverage = liquidation. Right levels = controlled risk.</p>
     </div>
 
     <div class="checkpoint">
       <h4>✓ End-of-Week Checkpoint</h4>
-      <p>Draw S/R on a blank BTC daily chart. Identify current structure (bullish/bearish/ranging). Identify the last BOS or CHoCH. Then zoom out to verify.</p>
+      <p>Draw S/R on a blank BTC daily chart. Identify current structure (bullish/bearish/ranging). Identify the last BOS or CHoCH. Mark the most recent dealing range and its premium/discount zones. Then zoom out to verify.</p>
     </div>
   </div>
 </div>
@@ -1120,7 +1132,21 @@ Liquidation Price ≈ Entry Price × (1 − 1/Leverage + Maintenance Margin Rate
 
     <h3>The New York Midnight Open</h3>
     <p>The candle that opens at 00:00 New York time is the most important reference point in ICT methodology. It serves as the daily "equilibrium." Bullish days tend to trade above it. Bearish days tend to trade below. The Judas Swing is measured relative to this level.</p>
-    
+
+    <h3>Daily Bias from Yesterday's Candle Close</h3>
+    <p>Before you even look at your entry timeframe, determine today's directional bias using yesterday's daily candle. This is mechanical — no subjectivity.</p>
+    <table>
+      <thead><tr><th>Yesterday's Candle</th><th>What It Means</th><th>Today's Bias</th></tr></thead>
+      <tbody>
+        <tr><td>Closed <strong>above</strong> previous day's high</td><td>Buyers pushed through and held — genuine breakout</td><td>Bullish continuation. Look for longs on pullbacks.</td></tr>
+        <tr><td><strong>Wicked above</strong> previous day's high but <strong>closed below</strong> it</td><td>False breakout — buyers got trapped, sellers took over</td><td>Bearish reversal likely. Look for shorts.</td></tr>
+        <tr><td>Closed <strong>below</strong> previous day's low</td><td>Sellers pushed through and held — genuine breakdown</td><td>Bearish continuation. Look for shorts on pullbacks.</td></tr>
+        <tr><td><strong>Wicked below</strong> previous day's low but <strong>closed above</strong> it</td><td>False breakdown — sellers got trapped, buyers took over</td><td>Bullish reversal likely. Look for longs.</td></tr>
+        <tr><td>Closed <strong>inside</strong> previous day's range</td><td>No conviction either way — consolidation</td><td>Neutral. Wait for a clearer signal or trade the range.</td></tr>
+      </tbody>
+    </table>
+    <p>Check this <strong>every morning before your session</strong>. It takes 30 seconds and gives you a directional filter that prevents you from fighting the trend.</p>
+
     <div class="callout">
       <p><strong>Practical rule:</strong> Don't trade during Asian session unless you have a specific range-trading strategy. Your best setups will come during London and NY sessions when volume supports the move.</p>
     </div>
@@ -1185,6 +1211,22 @@ Margin Required = (Position Size × Entry) ÷ Leverage
         <tr><td>Post-12</td><td>10–20x</td><td>50+ real trades, 3+ month track record</td></tr>
       </tbody>
     </table>
+
+    <h3>Advanced: Dynamic Risk Scaling</h3>
+    <p>Fixed 1% risk is correct for beginners. Once you have 50+ trades and proven consistency, consider dynamic scaling — press harder when your edge is working, protect capital when it isn't:</p>
+    <table>
+      <thead><tr><th>Account Performance</th><th>Risk Per Trade</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td>Starting / baseline</td><td>0.5%</td><td>Conservative start — prove the system works first</td></tr>
+        <tr><td>Account up +1%</td><td>1.0%</td><td>System is working — press your edge</td></tr>
+        <tr><td>Account up +3%</td><td>1.25%</td><td>Strong streak — capitalize but don't get reckless</td></tr>
+        <tr><td>Account back to 0%</td><td>0.5%</td><td>Edge may be fading — reduce exposure</td></tr>
+        <tr><td>Account down -3%</td><td>0.25%</td><td>Capital preservation mode — survive the drawdown</td></tr>
+      </tbody>
+    </table>
+    <div class="callout-amber callout">
+      <p><strong>Do NOT use dynamic scaling until Phase 3 at the earliest.</strong> Start with fixed 1% for all of Phase 1 and Phase 2. You need 50+ trades of data to know your real win rate and max drawdown before adjusting risk dynamically. Premature scaling amplifies mistakes.</p>
+    </div>
 
     <div class="checkpoint">
       <h4>✓ End-of-Week Checkpoint</h4>
@@ -2597,6 +2639,19 @@ Margin Required = (Position Size × Entry) ÷ Leverage
       <li><strong>Ignoring slippage and fees:</strong> On leveraged trades, funding rates and fees eat into profits. Account for them.</li>
     </ul>
 
+    <h3>The Reality Gap: Backtest vs Live</h3>
+    <p>Your live results WILL be worse than your backtest. This is normal. One professional trader tracked 300 backtested setups at 70% win rate / 2.3 R:R, then achieved 62% win rate / 2.36 R:R across 198 real trades. That 8% degradation is typical because:</p>
+    <ul>
+      <li>Emotions affect execution — hesitation, early exits, skipped setups</li>
+      <li>Slippage and fees eat into results more than you estimate</li>
+      <li>Hindsight leaks into backtests no matter how careful you are</li>
+    </ul>
+    <p><strong>Expect 5–10% worse performance live.</strong> If your backtest shows 50% win rate, plan for 40–45% live. If your system is only profitable at 50%+, it has no margin of error — go back and improve it.</p>
+
+    <div class="callout-amber callout">
+      <p><strong>50 is the minimum. 300 is the real target.</strong> This book says 50 backtested trades to start. That gets you a preliminary signal. But for genuine statistical confidence, aim for 300+ backtested setups over time. At 65% win rate, you can still get 7+ consecutive losses — and you need enough data to know that's normal variance, not a broken strategy. Keep backtesting even after going live.</p>
+    </div>
+
     <div class="callout">
       <p><strong>The backtest litmus test:</strong> If your backtested win rate is above 70%, something is wrong. Either you're using hindsight, cherry-picking, or curve-fitting. Real-world strategies typically have 40-60% win rates with good R:R. Suspiciously good results are a red flag, not a green one.</p>
     </div>
@@ -2632,6 +2687,20 @@ Margin Required = (Position Size × Entry) ÷ Leverage
     <div class="rule-box"><div class="rule-num">SECTION 6: REVIEW SCHEDULE</div>
       <p>Daily: Journal every trade.<br>Weekly (Sunday 30 min): Review all trades, calculate metrics.<br>Monthly: Full performance audit. Strategy adjustments based on data only.<br>Quarterly: Reassess entire trading plan.</p>
     </div>
+
+    <div class="rule-box"><div class="rule-num">SECTION 7: DO NOT TRADE CONDITIONS</div>
+      <p>Knowing when to stay flat is as important as knowing when to enter. Do NOT trade when:</p>
+    </div>
+    <ul>
+      <li><strong>1 day before AND after</strong> FOMC, CPI, or NFP releases — volatility is chaotic, not tradeable</li>
+      <li><strong>First and last trading day of each month</strong> — institutional rebalancing creates erratic moves</li>
+      <li><strong>Market is overextended</strong> with no pullback to a key level — chasing is not trading</li>
+      <li><strong>Higher timeframe targets already reached</strong> — the move is done, don't force another entry</li>
+      <li><strong>Price is stuck between two key levels</strong> with no clear directional bias — no edge exists</li>
+      <li><strong>R:R is below 2:1</strong> — the math doesn't work long-term below this threshold</li>
+      <li><strong>You are emotional</strong> — angry, tired, distracted, just had a fight, just lost 2 in a row</li>
+      <li><strong>Your checklist scores below 6/7</strong> — the setup isn't there, wait for the next one</li>
+    </ul>
 
     <h3>Your 90-Day Commitment</h3>
     <p>Don't leave your 12 weeks to chance. Plan all 90 days now. Open a calendar and mark:</p>
